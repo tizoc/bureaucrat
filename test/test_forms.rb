@@ -1,0 +1,93 @@
+require File.dirname(__FILE__) + "/test_helper"
+
+class TestForm < BureaucratTestCase
+  describe 'inherited form with a CharField' do
+    class OneForm < Forms::Form
+      include Bureaucrat::Fields
+
+      field :name, CharField.new
+    end
+
+    should 'return an instance of Media when calling #media' do
+      form = OneForm.new
+      assert_kind_of(Widgets::Media, form.media)
+    end
+
+    should 'have a BoundField in [:name]' do
+      form = OneForm.new
+      assert_kind_of(Forms::BoundField, form[:name])
+    end
+
+    should 'be bound when data is provided' do
+      form = OneForm.new(:name => 'name')
+      assert_equal(true, form.bound?)
+    end
+
+    describe 'when calling #valid?' do
+      should 'return false when data isn\'t valid' do
+        form = OneForm.new(:name => nil)
+        assert_equal(false, form.valid?)
+      end
+
+      should 'return true when data is valid' do
+        form = OneForm.new(:name => 'valid')
+        assert_equal(true, form.valid?)
+      end
+    end
+
+    describe 'when calling #errors' do
+      should 'have errors when invalid' do
+        form = OneForm.new(:name => nil)
+        assert_operator(form.errors.size, :>, 0)
+      end
+
+      should 'not have errors when valid' do
+        form = OneForm.new(:name => 'valid')
+        assert_equal(form.errors.size, 0)
+      end
+    end
+
+    describe 'when calling #changed_data' do
+      should 'return an empty list if no field was changed' do
+        form = OneForm.new
+        assert_equal([], form.changed_data)
+      end
+
+      should 'return a list of changed fields when modified' do
+        form = OneForm.new(:name => 'changed')
+        assert_equal([:name], form.changed_data)
+      end
+    end
+  end
+
+  describe 'inherited form with two charfields when rendered' do
+    class TwoForm < Forms::Form
+      include Bureaucrat::Fields
+
+      field :name, CharField.new
+      field :color, CharField.new
+    end
+
+    def setup
+      @form = TwoForm.new(:name => 'name')
+    end
+
+    should 'should correctly render as table' do
+      expected = normalize_html("<tr><th/><td><input name='name' id='id_name' type='text'/></td></tr>\n<tr><th/><td><ul class='errorlist'><li>This field is required</li></ul><input name='color' id='id_color' type='text'/></td></tr>")
+      rendered = normalize_html(@form.as_table)
+      assert_equal(expected, rendered)
+    end
+
+    should 'should correctly render as ul' do
+      expected = normalize_html("<li> <input name='name' id='id_name' type='text'/></li>\n<li><ul class='errorlist'><li>This field is required</li></ul> <input name='color' id='id_color' type='text'/></li>")
+      rendered = normalize_html(@form.as_ul)
+      assert_equal(expected, rendered)
+    end
+
+    should 'should correctly render as p' do
+      expected = normalize_html("<p> <input name='name' id='id_name' type='text'/></p>\nThis field is required\n<p> <input name='color' id='id_color' type='text'/></p>")
+      rendered = normalize_html(@form.as_p)
+      assert_equal(expected, rendered)
+    end
+  end
+end
