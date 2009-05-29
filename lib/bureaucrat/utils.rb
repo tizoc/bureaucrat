@@ -119,4 +119,9 @@ module_function
       end
     output
   end
+
+  def pretty_name(name)
+    name.to_s.capitalize.gsub!(/_/, ' ')
+  end
+
 end; end

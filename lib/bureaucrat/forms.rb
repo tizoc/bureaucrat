@@ -3,11 +3,6 @@ require 'bureaucrat/widgets'
 require 'bureaucrat/fields'
 
 module Bureaucrat; module Forms
-  def pretty_name(name)
-    name.to_s.capitalize.gsub!(/_/, ' ')
-  end
-  module_function :pretty_name
-
   class BoundField
     include Utils
 
@@ -19,7 +14,7 @@ module Bureaucrat; module Forms
       @name = name
       @html_name = form.add_prefix(name)
       @html_initial_name = form.add_initial_prefix(name)
-      @label = @field.label || Forms.pretty_name(name)
+      @label = @field.label || pretty_name(name)
       @help_text = @field.help_text || ''
     end
 
