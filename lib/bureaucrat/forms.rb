@@ -105,7 +105,7 @@ module Bureaucrat; module Forms
 
     @base_fields = OrderedHash.new
 
-    attr_accessor :error_class, :auto_id
+    attr_accessor :error_class, :auto_id, :initial
 
     def bound? ; @is_bound; end
 
