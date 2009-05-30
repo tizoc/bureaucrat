@@ -82,7 +82,6 @@ module Bureaucrat; module Fields
     attr_accessor :max_length, :min_length
 
     def initialize(options={})
-      options = options.dup
       @max_length = options.delete(:max_length)
       @min_length = options.delete(:min_length)
       super(options)
@@ -106,6 +105,7 @@ module Bureaucrat; module Fields
     end
   end
 
+  # TODO: add tests
   class IntegerField < Field
     self.default_error_messages = {
         :invalid => 'Enter a whole number.',
@@ -126,19 +126,20 @@ module Bureaucrat; module Fields
       begin
         value = Integer(value)
       rescue ArgumentError
-        raise ValidationError(@error_messages[:invalid])
+        raise ValidationError.new(@error_messages[:invalid])
       end
 
-      raise ValidationError(@error_messages[:max_value] % @max_value) if
-        !@max_value.nil? && value > @max_value
+      raise ValidationError.new(@error_messages[:max_value] % @max_value) if
+        @max_value && value > @max_value
 
-      raise ValidationError(@error_messages[:min_value] % @min_value) if
-        !@min_value.nil? && value < @min_value
+      raise ValidationError.new(@error_messages[:min_value] % @min_value) if
+        @min_value && value < @min_value
 
       value
     end
   end
 
+  # TODO: add tests
   class FloatField < Field
     self.default_error_messages = {
         :invalid => 'Enter a number.',
@@ -157,31 +158,123 @@ module Bureaucrat; module Fields
       return nil if empty_value?(value)
 
       begin
-        value = Float(value)
+        value = make_float(value)
       rescue ArgumentError
-        raise ValidationError(@error_messages[:invalid])
+        raise ValidationError.new(@error_messages[:invalid])
       end
 
-      raise ValidationError(@error_messages[:max_value] % @max_value) if
-        !@max_value.nil? && value > @max_value
+      raise ValidationError.new(@error_messages[:max_value] % @max_value) if
+        @max_value && value > @max_value
 
-      raise ValidationError(@error_messages[:min_value] % @min_value) if
-        !@min_value.nil? && value < @min_value
+      raise ValidationError.new(@error_messages[:min_value] % @min_value) if
+        @min_value && value < @min_value
 
       value
     end
   end
 
-  # DecialField
+  class BigDecimalField < Field
+    self.default_error_messages = {
+        :invalid => 'Enter a number.',
+        :max_value => 'Ensure this value is less than or equal to %s.',
+        :min_value => 'Ensure this value is greater than or equal to %s.',
+        :max_digits => 'Ensure that there are no more than %s digits in total.',
+        :max_decimal_places => 'Ensure that there are no more than %s decimal places.',
+        :max_whole_digits => 'Ensure that there are no more than %s digits before the decimal point.'
+      }
+
+    def initialize(options={})
+      @max_value = options.delete(:max_value)
+      @min_value = options.delete(:min_value)
+      @max_digits = options.delete(:max_digits)
+      @max_decimal_places = options.delete(:max_decimal_places)
+      @whole_digits = @max_digits - @decimal_places if
+        @max_digits && @decimal_places
+      super(options)
+    end
+
+    def clean(value)
+      super(value)
+      return nil if !@required && empty_value?(value)
+      value = value.to_s.strip
+
+      begin
+        make_float(value)
+      rescue ArgumentError
+        raise ValidationError.new(@error_messages[:invalid])
+      end
+
+      value = BigDecimal.new(value)
+
+      sign, alldigits, _, whole_digits = value.split
+      decimals = alldigits.length - whole_digits
+
+      raise ValidationError.new(@error_messages[:max_value] % @max_value) if
+        @max_value && value > @max_value
+
+      raise ValidationError.new(@error_messages[:min_value] % @min_value) if
+        @min_value && value < @min_value
+
+      raise ValidationError.new(@error_messages[:max_digits] % @max_digits) if
+        @max_digits && digits > @max_digits
+
+      raise ValidationError.new(@error_messages[:max_decimal_places] %
+                                @decimal_places) if
+        @decimal_places && decimals > @decimal_places
+
+      raise ValidationError.new(@error_messages[:max_whole_digits] %
+                                @whole_digits) if
+        @whole_digits && whole_digits > @whole_digits
+
+      value
+    end
+  end
+
   # DateField
   # TimeField
   # DateTimeField
-  # RegexField
-  # EmailField
+  # TODO: add tests
+  class RegexField < CharField
+    def initialize(regex, options={})
+      error_message = options.delete(:error_message)
+      if error_message
+        options[:error_messages] ||= {}
+        options[:error_messages][:invalid] = error_messages
+      end
+      super(options)
+      @regex = regex
+    end
 
+    def clean(value)
+      value = super(value)
+      return value if value.empty?
+      raise ValidationError.new(@error_messages[:invalid]) if @regexp !~ value
+      value
+    end
+  end
+
+  # TODO: add tests
+  class EmailField < RegexField
+    # Original from Django's EmailField:
+    # email_re = re.compile(
+    #    r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
+    #    r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
+    #    r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
+    EMAIL_RE = /(^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*")@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/i
+
+    self.default_error_messages = {
+        :invalid => 'Enter a valid e-mail address.'
+      }
+
+    def initialize(options={})
+      super(EMAIL_RE, options)
+    end
+  end
+
+  # TODO: add tests
   class FileField < Field
     widget = Bureaucrat::Widgets::FileInput
-    default_error_messages = {
+    self.default_error_messages = {
       :invalid =>"No file was submitted. Check the encoding type on the form.",
       :missing =>"No file was submitted.",
       :empty =>"The submitted file is empty.",
@@ -207,18 +300,18 @@ module Bureaucrat; module Fields
         file_name = data.name
         file_size = data.size
       rescue NoMethodError
-        raise ValidationError(@error_messages[:invalid])
+        raise ValidationError.new(@error_messages[:invalid])
       end
 
-      if !@max_length.nil? && file_name.length > @max_length
+      if @max_length && file_name.length > @max_length
         error_values = { :max => @max_length, :length => file_name.length }
-        raise ValidationError(format_string(@error_messages['max_length'],
+        raise ValidationError.new(format_string(@error_messages['max_length'],
                                             error_values))
       end
 
-      raise ValidationError(@error_messages[:invalid]) unless file_name
+      raise ValidationError.new(@error_messages[:invalid]) unless file_name
 
-      raise ValidationError(@error_messages[:empty]) unless
+      raise ValidationError.new(@error_messages[:empty]) unless
         file_size || file_size == 0
 
       data

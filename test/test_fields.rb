@@ -139,4 +139,40 @@ class TestFields < BureaucratTestCase
     end
 
   end
+
+  describe 'BigDecimalField' do
+      # TODO: add more tests
+    describe 'on clean' do
+      setup do
+        @field = Fields::BigDecimalField.new
+      end
+
+      should 'not validate invalid formats' do
+        invalid_formats = ['a', 'hello', '23eeee', '.', 'hi323',
+                           'joe@example.com', '___3232___323',
+                           '123..', '123..4']
+
+        assert_raise Utils::ValidationError do
+          invalid_formats.each do |invalid|
+            @field.clean(invalid)
+          end
+        end
+      end
+
+      should 'validate valid formats' do
+        valid_formats = ['3.14', "100", "1233.", ".3333", "0.434", "0.0"]
+
+        assert_nothing_raised do
+          valid_formats.each do |valid|
+            @field.clean(valid)
+          end
+        end
+      end
+
+      should 'return an instance of BigDecimal if valid' do
+        result = @field.clean('3.14')
+        assert_instance_of(BigDecimal, result)
+      end
+    end
+  end
 end

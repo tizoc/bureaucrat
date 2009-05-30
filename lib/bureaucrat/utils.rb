@@ -124,4 +124,8 @@ module_function
     name.to_s.capitalize.gsub!(/_/, ' ')
   end
 
+  def make_float(value)
+    value += '0' if value.is_a?(String) && value[-1,1] == '.'
+    Float(value)
+  end
 end; end

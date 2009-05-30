@@ -1,3 +1,4 @@
+require 'bigdecimal'
 require 'rubygems'
 require "contest"
 
