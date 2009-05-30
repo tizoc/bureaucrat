@@ -39,7 +39,7 @@ module Bureaucrat; module Forms
         if @field.is_a?(Fields::FileField) && @data.nil?
           data = @form.initial.fetch(@name, @field.initial)
         else
-          data = @data
+          data = self.data
         end
       end
 
@@ -105,7 +105,7 @@ module Bureaucrat; module Forms
 
     @base_fields = OrderedHash.new
 
-    attr_accessor :error_class, :auto_id, :initial
+    attr_accessor :error_class, :auto_id, :initial, :data, :files
 
     def bound? ; @is_bound; end
 
