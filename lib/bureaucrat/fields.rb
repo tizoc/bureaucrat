@@ -16,8 +16,8 @@ module Bureaucrat; module Fields
       end
     end
 
-    self.widget = Bureaucrat::Widgets::TextInput
-    self.hidden_widget = Bureaucrat::Widgets::HiddenInput
+    self.widget = Widgets::TextInput
+    self.hidden_widget = Widgets::HiddenInput
     self.default_error_messages = {
       :required => 'This field is required',
       :invalid => 'Enter a valid value'
@@ -273,7 +273,7 @@ module Bureaucrat; module Fields
 
   # TODO: add tests
   class FileField < Field
-    widget = Bureaucrat::Widgets::FileInput
+    self.widget = Widgets::FileInput
     self.default_error_messages = {
       :invalid =>"No file was submitted. Check the encoding type on the form.",
       :missing =>"No file was submitted.",
