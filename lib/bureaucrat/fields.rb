@@ -335,7 +335,6 @@ module Fields
     end
   end
 
-  # TODO: tests
   class NullBooleanField < BooleanField
     self.widget = Widgets::NullBooleanSelect
 

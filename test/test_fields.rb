@@ -501,4 +501,42 @@ class TestFields < BureaucratTestCase
       end
     end
   end
+
+  describe 'NullBooleanField' do
+    setup do
+      @true_values = [true, 'true', '1']
+      @false_values = [false, 'false', '0']
+      @null_values = [nil, '', 'banana']
+      @field = Fields::NullBooleanField.new
+    end
+
+    describe 'on clean' do
+      should 'return true for true values' do
+        @true_values.each do |true_value|
+          assert_equal(true, @field.clean(true_value))
+        end
+      end
+
+      should 'return false for false values' do
+        @false_values.each do |false_value|
+          assert_equal(false, @field.clean(false_value))
+        end
+      end
+
+      should 'return nil for null values' do
+        @null_values.each do |null_value|
+          assert_equal(nil, @field.clean(null_value))
+        end
+      end
+
+      should 'validate on all values' do
+        all_values = @true_values + @false_values + @null_values
+        assert_nothing_raised do
+          all_values.each do |value|
+            @field.clean(value)
+          end
+        end
+      end
+    end
+  end
 end
