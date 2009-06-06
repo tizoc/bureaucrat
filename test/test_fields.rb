@@ -204,8 +204,8 @@ class TestFields < BureaucratTestCase
                            'joe@example.com', '___3232___323',
                            '123.0', '123..4']
 
-        assert_raise(Utils::ValidationError) do
-          invalid_formats.each do |invalid|
+        invalid_formats.each do |invalid|
+          assert_raise(Utils::ValidationError) do
             @field.clean(invalid)
           end
         end
@@ -287,8 +287,8 @@ class TestFields < BureaucratTestCase
                            'joe@example.com', '___3232___323',
                            '123..', '123..4']
 
-        assert_raise(Utils::ValidationError) do
-          invalid_formats.each do |invalid|
+        invalid_formats.each do |invalid|
+          assert_raise(Utils::ValidationError) do
             @field.clean(invalid)
           end
         end
@@ -369,8 +369,8 @@ class TestFields < BureaucratTestCase
                            'joe@example.com', '___3232___323',
                            '123..', '123..4']
 
-        assert_raise(Utils::ValidationError) do
-          invalid_formats.each do |invalid|
+        invalid_formats.each do |invalid|
+          assert_raise(Utils::ValidationError) do
             @field.clean(invalid)
           end
         end
@@ -389,6 +389,38 @@ class TestFields < BureaucratTestCase
       should 'return an instance of BigDecimal if valid' do
         result = @field.clean('3.14')
         assert_instance_of(BigDecimal, result)
+      end
+    end
+  end
+
+  describe 'RegexField' do
+    setup do
+      @field = Fields::RegexField.new(/ba(na){2,}/)
+    end
+
+    describe 'on clean' do
+      should 'validate matching values' do
+        valid_values = ['banana', 'bananananana']
+        valid_values.each do |valid|
+          assert_nothing_raised do
+            @field.clean(valid)
+          end
+        end
+      end
+
+      should 'not validate non-matching values' do
+        invalid_values = ['bana', 'spoon']
+        assert_raise(Utils::ValidationError) do
+          invalid_values.each do |invalid|
+            @field.clean(invalid)
+          end
+        end
+      end
+
+      should 'return a blank string if value is empty and required is false' do
+        @field.required = false
+        empty_value = ''
+        assert_equal('', @field.clean(empty_value))
       end
     end
   end

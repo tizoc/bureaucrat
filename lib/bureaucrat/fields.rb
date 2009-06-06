@@ -247,7 +247,7 @@ module Fields
     def clean(value)
       value = super(value)
       return value if value.empty?
-      raise ValidationError.new(@error_messages[:invalid]) if @regexp !~ value
+      raise ValidationError.new(@error_messages[:invalid]) if @regex !~ value
       value
     end
   end

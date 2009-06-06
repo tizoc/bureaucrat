@@ -126,7 +126,7 @@ module_function
   end
 
   def make_float(value)
-    value += '0' if value.is_a?(String) && value[-1,1] == '.'
+    value += '0' if value.is_a?(String) && value != '.' && value[-1,1] == '.'
     Float(value)
   end
 
