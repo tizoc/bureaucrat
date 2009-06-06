@@ -131,10 +131,6 @@ module_function
   end
 
   def make_bool(value)
-    if value.respond_to?(:empty?)
-      !value.empty?
-    else
-      [0, nil, false].include?(value)
-    end
+    !(value.respond_to?(:empty?) ? value.empty? : [0, nil, false].include?(value))
   end
 end; end

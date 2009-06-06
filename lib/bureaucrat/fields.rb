@@ -46,7 +46,7 @@ module Fields
 
     def clean(value)
       raise ValidationError.new(@error_messages[:required]) if
-        @required && (value.nil? || value.empty?)
+        @required && empty_value?(value)
 
       value
     end
@@ -320,7 +320,7 @@ module Fields
   #end
 
   # URLField
-  # TODO: tests
+
   class BooleanField < Field
     self.widget = Widgets::CheckboxInput
 

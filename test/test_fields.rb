@@ -453,4 +453,52 @@ class TestFields < BureaucratTestCase
       end
     end
   end
+
+  describe 'BooleanField' do
+    setup do
+      @true_values = [1, true, 'true', '1']
+      @false_values = [nil, 0, false, 'false', '0']
+      @field = Fields::BooleanField.new
+    end
+
+    describe 'on clean' do
+      should 'return true for true values' do
+        @true_values.each do |true_value|
+          assert_equal(true, @field.clean(true_value))
+        end
+      end
+
+      should 'return false for false values' do
+        @field.required = false
+        @false_values.each do |false_value|
+          assert_equal(false, @field.clean(false_value))
+        end
+      end
+
+      should 'validate on true values when required' do
+        assert_nothing_raised do
+          @true_values.each do |true_value|
+            @field.clean(true_value)
+          end
+        end
+      end
+
+      should 'not validate on false values when required' do
+        @false_values.each do |false_value|
+          assert_raise(Utils::ValidationError) do
+            @field.clean(false_value)
+          end
+        end
+      end
+
+      should 'validate on false values when not required' do
+        @field.required = false
+        assert_nothing_raised do
+          @false_values.each do |false_value|
+            @field.clean(false_value)
+          end
+        end
+      end
+    end
+  end
 end
