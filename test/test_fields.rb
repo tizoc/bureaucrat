@@ -9,7 +9,7 @@ class TestFields < BureaucratTestCase
 
       should 'be required' do
         blank_value = ''
-        assert_raise Utils::ValidationError do
+        assert_raise(Utils::ValidationError) do
           @field.clean(blank_value)
         end
       end
@@ -90,8 +90,8 @@ class TestFields < BureaucratTestCase
         end
       end
 
-      should 'not allow values with length <= 10' do
-        assert_raise Utils::ValidationError do
+      should 'not allow values with length > 10' do
+        assert_raise(Utils::ValidationError) do
           @field.clean('a' * 11)
         end
       end
@@ -109,7 +109,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values with length < 10' do
-        assert_raise Utils::ValidationError do
+        assert_raise(Utils::ValidationError) do
           @field.clean('a' * 9)
         end
       end
@@ -140,8 +140,179 @@ class TestFields < BureaucratTestCase
 
   end
 
+  describe 'IntegerField' do
+    describe 'with max value of 10' do
+      setup do
+        @field = Fields::IntegerField.new(:max_value => 10)
+      end
+
+      should 'allow values <= 10' do
+        assert_nothing_raised do
+          @field.clean('10')
+        end
+      end
+
+      should 'not allow values > 10' do
+        assert_raise(Utils::ValidationError) do
+          @field.clean('11')
+        end
+      end
+    end
+
+    describe 'with min value of 10' do
+      setup do
+        @field = Fields::IntegerField.new(:min_value => 10)
+      end
+
+      should 'allow values >= 10' do
+        assert_nothing_raised do
+          @field.clean('10')
+        end
+      end
+
+      should 'not allow values < 10' do
+        assert_raise(Utils::ValidationError) do
+          @field.clean('9')
+        end
+      end
+
+    end
+
+    describe 'on clean' do
+      setup do
+        @field = Fields::IntegerField.new
+      end
+
+      should 'return an integer if valid' do
+        valid_value = '123'
+        assert_equal(123, @field.clean(valid_value))
+      end
+
+      should 'return nil if value is nil and required is false' do
+        @field.required = false
+        assert_nil(@field.clean(nil))
+      end
+
+      should 'return nil if value is empty and required is false' do
+        @field.required = false
+        empty_value = ''
+        assert_nil(@field.clean(empty_value))
+      end
+
+      should 'not validate invalid formats' do
+        invalid_formats = ['a', 'hello', '23eeee', '.', 'hi323',
+                           'joe@example.com', '___3232___323',
+                           '123.0', '123..4']
+
+        assert_raise(Utils::ValidationError) do
+          invalid_formats.each do |invalid|
+            @field.clean(invalid)
+          end
+        end
+      end
+
+      should 'validate valid formats' do
+        valid_formats = ['3', '100', '-100', '0', '-0']
+
+        assert_nothing_raised do
+          valid_formats.each do |valid|
+            @field.clean(valid)
+          end
+        end
+      end
+
+      should 'return an instance of Integer if valid' do
+        result = @field.clean('7')
+        assert_kind_of(Integer, result)
+      end
+    end
+
+  end
+
+  describe 'FloatField' do
+    describe 'with max value of 10' do
+      setup do
+        @field = Fields::FloatField.new(:max_value => 10.5)
+      end
+
+      should 'allow values <= 10.5' do
+        assert_nothing_raised do
+          @field.clean('10.5')
+        end
+      end
+
+      should 'not allow values > 10.5' do
+        assert_raise(Utils::ValidationError) do
+          @field.clean('10.55')
+        end
+      end
+    end
+
+    describe 'with min value of 10.5' do
+      setup do
+        @field = Fields::FloatField.new(:min_value => 10.5)
+      end
+
+      should 'allow values >= 10.5' do
+        assert_nothing_raised do
+          @field.clean('10.5')
+        end
+      end
+
+      should 'not allow values < 10.5' do
+        assert_raise(Utils::ValidationError) do
+          @field.clean('10.49')
+        end
+      end
+    end
+
+    describe 'on clean' do
+      setup do
+        @field = Fields::FloatField.new
+      end
+
+      should 'return nil if value is nil and required is false' do
+        @field.required = false
+        assert_nil(@field.clean(nil))
+      end
+
+      should 'return nil if value is empty and required is false' do
+        @field.required = false
+        empty_value = ''
+        assert_nil(@field.clean(empty_value))
+      end
+
+      should 'not validate invalid formats' do
+        invalid_formats = ['a', 'hello', '23eeee', '.', 'hi323',
+                           'joe@example.com', '___3232___323',
+                           '123..', '123..4']
+
+        assert_raise(Utils::ValidationError) do
+          invalid_formats.each do |invalid|
+            @field.clean(invalid)
+          end
+        end
+      end
+
+      should 'validate valid formats' do
+        valid_formats = ['3.14', "100", "1233.", ".3333", "0.434", "0.0"]
+
+        assert_nothing_raised do
+          valid_formats.each do |valid|
+            @field.clean(valid)
+          end
+        end
+      end
+
+      should 'return an instance of Float if valid' do
+        result = @field.clean('3.14')
+        assert_instance_of(Float, result)
+      end
+    end
+  end
+
   describe 'BigDecimalField' do
-      # TODO: add more tests
+    # TODO: add more tests
     describe 'on clean' do
       setup do
         @field = Fields::BigDecimalField.new
@@ -152,7 +323,7 @@ class TestFields < BureaucratTestCase
                            'joe@example.com', '___3232___323',
                            '123..', '123..4']
 
-        assert_raise Utils::ValidationError do
+        assert_raise(Utils::ValidationError) do
           invalid_formats.each do |invalid|
             @field.clean(invalid)
           end

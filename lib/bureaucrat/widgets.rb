@@ -2,7 +2,8 @@ require 'uri'
 
 require 'bureaucrat/utils'
 
-module Bureaucrat; module Widgets
+module Bureaucrat
+module Widgets
   class Media
     include Utils
 
@@ -188,13 +189,13 @@ module Bureaucrat; module Widgets
   class PasswordInput < Input
     self.input_type = 'password'
 
-    def initilize(attrs=nil, render_value=true)
+    def initialize(attrs=nil, render_value=true)
       super(attrs)
       @render_value = render_value
     end
 
     def render(name, value, attrs=nil)
-      value = nil unless self.render_value
+      value = nil unless @render_value
       super(name, value, attrs)
     end
   end
@@ -205,6 +206,7 @@ module Bureaucrat; module Widgets
   end
 
   class MultipleHiddenInput < HiddenInput
+    # Used by choice fields
     attr_accessor :choices
 
     def initialize(attrs=nil, choices=[])
@@ -215,10 +217,11 @@ module Bureaucrat; module Widgets
 
     def render(name, value, attrs=nil, choices=[])
       value ||= []
-      final_attrs = build_attrs(attrs, :type => @input_type, :name => name)
+      final_attrs = build_attrs(attrs, :type => self.class.input_type,
+                                :name => name)
       mark_safe(value.map do |v|
-                  attrs = {:value => v.to_s}.merge(final_attrs)
-                  '<input%s />' % flatatt(attrs)
+                  rattrs = {:value => v.to_s}.merge(final_attrs)
+                  '<input%s />' % flatatt(rattrs)
                 end.join("\n"))
     end
 
@@ -237,7 +240,7 @@ module Bureaucrat; module Widgets
     self.needs_multipart_form = true
 
     def render(name, value, attrs=nil)
-      super(name, None, attrs)
+      super(name, nil, attrs)
     end
 
     def value_from_datahash(data, files, name)
@@ -262,5 +265,106 @@ module Bureaucrat; module Widgets
         mark_safe('<textarea%s>%s</textarea>' % [flatatt(final_attrs),
                                                  conditional_escape(value.to_s)])
       end
+  end
+
+  # DateInput
+  # DateTimeInput
+  # TimeInput
+
+  class CheckboxInput < Widget
+    def initialize(attrs=nil, check_test=nil)
+      super(attrs)
+      @check_test = check_test || lambda {|v| make_bool(v)}
+    end
+
+    def render(name, value, attrs=nil)
+      final_attrs = build_attrs(attrs, :type => 'checkbox', :name => name)
+      result = self.check_test(value) rescue false
+      final_attrs[:checked] = 'checked' if result
+      final_attrs[:value] = value.to_s unless
+        ['', true, false, nil].include?(value)
+      mark_safe('<input%s />' % flatatt(final_attrs))
+    end
+
+    def value_from_datadict(data, files, name)
+      data.include?(name) ? super(data, files, name) : false
+    end
+
+    def has_changed(initial, data)
+      make_bool(initial) != make_bool(data)
+    end
+  end
+
+  class Select < Widget
+    def initialize(attrs=nil, choices=[])
+      super(attrs)
+      @choices = choices.collect
+    end
+
+    def render(name, value, attrs=nil, choices=[])
+      value = '' if value.nil?
+      final_attrs = build_attrs(attrs, :name => name)
+      output = ['<select%s>' % flatatt(final_attrs)]
+      options = render_options(choices, [value])
+      output << options if options && !options.empty?
+      output << '</select>'
+      mark_safe(output.join("\n"))
+    end
+
+    def render_options(choices, selected_choices)
+      selected_choices = selected_choices.map(&:to_s).uniq
+      output = []
+      (@choices + choices).each do |option_value, option_label|
+          if option_label.is_a?(Array)
+            output << '<optgroup label="%s">' % escape(option_value.to_s)
+            option_label.each do |option|
+              val, label = option
+              output << render_option(val, label, selected_choices)
+            end
+            output << '</optgroup>'
+          else
+            output << render_option(option_value, option_label,
+                                    selected_choices)
+          end
+        end
+      output.join("\n")
+    end
+
+    def render_option(option_value, option_label, selected_choices)
+      option_value = option_value.to_s
+      selected_html = selected_choices.include?(option_value) ? ' selected="selected"' : ''
+      '<option value="%s"%s>%s</option>' %
+        [escape(option_value), selected_html,
+         conditional_escape(option_label.to_s)]
+    end
+  end
+
+  class NullBooleanSelect < Select
+    def initialize(attrs=nil)
+      choices = [['1', 'Unknown'], ['2', 'Yes'], ['3', 'No']]
+      super(attrs, choices)
+    end
+
+    def render(name, value, attrs=nil, choices=[])
+      value = case value
+              when true, '2' then '2'
+              when false, '3' then '3'
+              else '1'
+              end
+      super(name, value, attrs, choices)
+    end
+
+    def value_from_datadict(data, files, name)
+      value = data[name]
+      case value
+      when '2', true then true
+      when '3', false then false
+      else nil
+      end
+    end
+
+    def has_changed?(initial, data)
+      make_bool(initial) != make_bool(data)
+    end
   end
 end; end

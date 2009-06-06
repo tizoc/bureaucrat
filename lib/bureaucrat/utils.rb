@@ -1,4 +1,5 @@
-module Bureaucrat; module Utils
+module Bureaucrat
+module Utils
 
   module SafeData
   end
@@ -127,5 +128,13 @@ module_function
   def make_float(value)
     value += '0' if value.is_a?(String) && value[-1,1] == '.'
     Float(value)
+  end
+
+  def make_bool(value)
+    if value.respond_to?(:empty?)
+      !value.empty?
+    else
+      [0, nil, false].include?(value)
+    end
   end
 end; end

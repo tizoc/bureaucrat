@@ -129,4 +129,151 @@ class TestWidgets < BureaucratTestCase
       end
     end
   end
+
+  describe 'PasswordInput widget' do
+    describe 'with render_value=true' do
+      should 'render correctly including value' do
+        input = Widgets::PasswordInput.new
+        excepted = normalize_html("<input name='test' type='password' value='secret'/>")
+        rendered = normalize_html(input.render('test', 'secret'))
+        assert_equal(excepted, rendered)
+      end
+    end
+
+    describe 'with render_value=false' do
+      should 'render correctly not including value' do
+        input = Widgets::PasswordInput.new(nil, false)
+        excepted = normalize_html("<input name='test' type='password'/>")
+        rendered = normalize_html(input.render('test', 'secret'))
+        assert_equal(excepted, rendered)
+      end
+    end
+  end
+
+  describe 'HiddenInput widget' do
+    should 'correctly render' do
+      input = Widgets::HiddenInput.new
+      excepted = normalize_html("<input name='test' type='hidden' value='secret'/>")
+      rendered = normalize_html(input.render('test', 'secret'))
+      assert_equal(excepted, rendered)
+    end
+  end
+
+  describe 'MultipleHiddenInput widget' do
+    should 'correctly render' do
+      input = Widgets::MultipleHiddenInput.new
+      excepted = normalize_html("<input name='test' type='hidden' value='v1'/>\n<input name='test' type='hidden' value='v2'/>")
+      rendered = normalize_html(input.render('test', ['v1', 'v2']))
+      assert_equal(excepted, rendered)
+    end
+    # TODO: value_from_datahash
+  end
+
+  describe 'FileInput widget' do
+    should 'correctly render' do
+      input = Widgets::FileInput.new
+      excepted = normalize_html("<input name='test' type='file'/>")
+      rendered = normalize_html(input.render('test', "anything"))
+      assert_equal(excepted, rendered)
+    end
+    # TODO: value_from_datahash, has_changed?
+  end
+
+  describe 'Textarea widget' do
+    should 'correctly render' do
+      input = Widgets::Textarea.new(:cols => '50', :rows => '15')
+      excepted = normalize_html("<textarea name='test' rows='15' cols='50'>hello</textarea>")
+      rendered = normalize_html(input.render('test', "hello"))
+      assert_equal(excepted, rendered)
+    end
+  end
+
+  describe 'CheckboxInput widget' do
+    should 'correctly render with a false value' do
+      input = Widgets::CheckboxInput.new
+      excepted = normalize_html("<input name='test' type='checkbox' value='false'/>")
+      rendered = normalize_html(input.render('test', 'false'))
+      assert_equal(excepted, rendered)
+    end
+
+    should 'correctly render with a true value' do
+      input = Widgets::CheckboxInput.new
+      excepted = normalize_html("<input name='test' type='checkbox' value='true'/>")
+      rendered = normalize_html(input.render('test', 'true'))
+      assert_equal(excepted, rendered)
+    end
+
+    should 'correctly render with a non boolean value' do
+      input = Widgets::CheckboxInput.new
+      excepted = normalize_html("<input name='test' type='checkbox' value='anything'/>")
+      rendered = normalize_html(input.render('test', 'anything'))
+      assert_equal(excepted, rendered)
+    end
+    # TODO: value_from_datahash, has_changed?
+  end
+
+  describe 'Select widget' do
+    def setup
+      @choices = [['1', 'One'], ['2', 'Two']]
+      @groupchoices = [['numbers', ['1', 'One'], ['2', 'Two']],
+                       ['words', [['spoon', 'Spoon'], ['banana', 'Banana']]]]
+    end
+
+    describe 'with empty choices' do
+      should 'correctly render' do
+        input = Widgets::Select.new
+        excepted = normalize_html("<select name='test'>\n</select>")
+        rendered = normalize_html(input.render('test', 'hello'))
+        assert_equal(excepted, rendered)
+      end
+    end
+
+    describe 'with flat choices' do
+      should 'correctly render (none selected)' do
+        input = Widgets::Select.new(nil, @choices)
+        excepted = normalize_html("<select name='test'>\n<option value='1'>One</option>\n<option value='2'>Two</option>\n</select>")
+        rendered = normalize_html(input.render('test', 'hello'))
+        assert_equal(excepted, rendered)
+      end
+
+      should 'correctly render (with selected)' do
+        input = Widgets::Select.new(nil, @choices)
+        excepted = normalize_html("<select name='test'>\n<option value='1'>One</option>\n<option value='2' selected='selected'>Two</option>\n</select>")
+        rendered = normalize_html(input.render('test', '2'))
+        assert_equal(excepted, rendered)
+      end
+    end
+
+    describe 'with group choices' do
+      should 'correctly render (none selected)' do
+        input = Widgets::Select.new(nil, @groupchoices)
+        excepted = normalize_html("<select name='test'>\n<optgroup label='numbers'>\n<option value='1'/>\n<option value='One'/>\n</optgroup>\n<optgroup label='words'>\n<option value='spoon'>Spoon</option>\n<option value='banana'>Banana</option>\n</optgroup>\n</select>")
+        rendered = normalize_html(input.render('test', 'hello'))
+        assert_equal(excepted, rendered)
+      end
+
+      should 'correctly render (with selected)' do
+        input = Widgets::Select.new(nil, @groupchoices)
+        excepted = normalize_html("<select name='test'>\n<optgroup label='numbers'>\n<option value='1'/>\n<option value='One'/>\n</optgroup>\n<optgroup label='words'>\n<option value='spoon'>Spoon</option>\n<option value='banana' selected='selected'>Banana</option>\n</optgroup>\n</select>")
+        rendered = normalize_html(input.render('test', 'banana'))
+        assert_equal(excepted, rendered)
+      end
+    end
+  end
+
+  describe 'NullBooleanSelect widget' do
+    should 'correctly render with "Unknown" as the default value when none is selected' do
+      input = Widgets::NullBooleanSelect.new
+      excepted = normalize_html("<select name='test'>\n<option selected='selected' value='1'>Unknown</option>\n<option value='2'>Yes</option>\n<option value='3'>No</option>\n</select>")
+      rendered = normalize_html(input.render('test', nil))
+      assert_equal(excepted, rendered)
+    end
+
+    should 'correctly render (with selected)' do
+      input = Widgets::NullBooleanSelect.new
+      excepted = normalize_html("<select name='test'>\n<option value='1'>Unknown</option>\n<option selected='selected' value='2'>Yes</option>\n<option value='3'>No</option>\n</select>")
+      rendered = normalize_html(input.render('test', '2'))
+      assert_equal(excepted, rendered)
+    end
+  end
 end

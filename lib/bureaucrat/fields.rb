@@ -1,7 +1,8 @@
 require 'bureaucrat/utils'
 require 'bureaucrat/widgets'
 
-module Bureaucrat; module Fields
+module Bureaucrat
+module Fields
   class Field
     include Utils
 
@@ -105,7 +106,6 @@ module Bureaucrat; module Fields
     end
   end
 
-  # TODO: add tests
   class IntegerField < Field
     self.default_error_messages = {
         :invalid => 'Enter a whole number.',
@@ -139,7 +139,6 @@ module Bureaucrat; module Fields
     end
   end
 
-  # TODO: add tests
   class FloatField < Field
     self.default_error_messages = {
         :invalid => 'Enter a number.',
@@ -322,8 +321,34 @@ module Bureaucrat; module Fields
   #end
 
   # URLField
-  # BooleanField
-  # NullBooleanField
+  # TODO: tests
+  class BooleanField < Field
+    self.widget = Widgets::CheckboxInput
+
+    def clean(value)
+      value = ['false', '0'].include?(value) ? false : make_bool(value)
+
+      super(value)
+      raise ValidationError.new(@error_messages[:required]) if
+        !value && @required
+
+      value
+    end
+  end
+
+  # TODO: tests
+  class NullBooleanField < BooleanField
+    self.widget = Widgets::NullBooleanSelect
+
+    def clean(value)
+      case value
+      when true, 'true', '1' then true
+      when false, 'false', '0' then false
+      else nil
+      end
+    end
+  end
+
   # ChoiceField
   # TypedChoiceField
   # MultipleChoiceField
