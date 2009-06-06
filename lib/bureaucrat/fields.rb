@@ -304,8 +304,8 @@ module Fields
 
       if @max_length && file_name.length > @max_length
         error_values = { :max => @max_length, :length => file_name.length }
-        raise ValidationError.new(format_string(@error_messages['max_length'],
-                                            error_values))
+        raise ValidationError.new(format_string(@error_messages[:max_length],
+                                                error_values))
       end
 
       raise ValidationError.new(@error_messages[:invalid]) unless file_name

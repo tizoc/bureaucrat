@@ -230,7 +230,7 @@ class TestFields < BureaucratTestCase
   end
 
   describe 'FloatField' do
-    describe 'with max value of 10' do
+    describe 'with max value of 10.5' do
       setup do
         @field = Fields::FloatField.new(:max_value => 10.5)
       end
@@ -312,10 +312,56 @@ class TestFields < BureaucratTestCase
   end
 
   describe 'BigDecimalField' do
-    # TODO: add more tests
+    describe 'with max value of 10.5' do
+      setup do
+        @field = Fields::BigDecimalField.new(:max_value => 10.5)
+      end
+
+      should 'allow values <= 10.5' do
+        assert_nothing_raised do
+          @field.clean('10.5')
+        end
+      end
+
+      should 'not allow values > 10.5' do
+        assert_raise(Utils::ValidationError) do
+          @field.clean('10.55')
+        end
+      end
+    end
+
+    describe 'with min value of 10.5' do
+      setup do
+        @field = Fields::BigDecimalField.new(:min_value => 10.5)
+      end
+
+      should 'allow values >= 10.5' do
+        assert_nothing_raised do
+          @field.clean('10.5')
+        end
+      end
+
+      should 'not allow values < 10.5' do
+        assert_raise(Utils::ValidationError) do
+          @field.clean('10.49')
+        end
+      end
+    end
+
     describe 'on clean' do
       setup do
         @field = Fields::BigDecimalField.new
+      end
+
+      should 'return nil if value is nil and required is false' do
+        @field.required = false
+        assert_nil(@field.clean(nil))
+      end
+
+      should 'return nil if value is empty and required is false' do
+        @field.required = false
+        empty_value = ''
+        assert_nil(@field.clean(empty_value))
       end
 
       should 'not validate invalid formats' do
