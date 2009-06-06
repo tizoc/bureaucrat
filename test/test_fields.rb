@@ -424,4 +424,33 @@ class TestFields < BureaucratTestCase
       end
     end
   end
+
+  describe 'EmailField' do
+    setup do
+      @field = Fields::EmailField.new
+    end
+
+    describe 'on clean' do
+      should 'validate email-matching values' do
+        valid_values = ['email@domain.com', 'email+extra@domain.com',
+                        'email@domain.fm', 'email@domain.co.uk']
+        valid_values.each do |valid|
+          assert_nothing_raised do
+            @field.clean(valid)
+          end
+        end
+      end
+
+      should 'not validate non-email-matching values' do
+        invalid_values = ['banana', 'spoon', 'invalid#bla@domain.com',
+                          'invalid@@domain.com', 'invalid@domain',
+                          'invalid@.com']
+        assert_raise(Utils::ValidationError) do
+          invalid_values.each do |invalid|
+            @field.clean(invalid)
+          end
+        end
+      end
+    end
+  end
 end

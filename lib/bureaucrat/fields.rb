@@ -232,7 +232,7 @@ module Fields
   # DateField
   # TimeField
   # DateTimeField
-  # TODO: add tests
+
   class RegexField < CharField
     def initialize(regex, options={})
       error_message = options.delete(:error_message)
@@ -252,7 +252,6 @@ module Fields
     end
   end
 
-  # TODO: add tests
   class EmailField < RegexField
     # Original from Django's EmailField:
     # email_re = re.compile(
