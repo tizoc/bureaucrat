@@ -347,7 +347,55 @@ module Fields
     end
   end
 
-  # ChoiceField
+  class ChoiceField < Field
+    self.widget = Widgets::Select
+    self.default_error_messages = {
+        :invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.'
+      }
+
+    def initialize(choices=[], options={})
+      options[:required] = options.fetch(:required, true)
+      super(options)
+      self.choices = choices
+    end
+
+    def choices
+      @choices
+    end
+
+    def choices=(value)
+      @choices = @widget.choices = value.to_a
+    end
+
+    def clean(value)
+      value = super(value)
+      value = '' if empty_value?(value)
+      value = value.to_s
+
+      return value if value.empty?
+
+      raise ValidationError.new(format_string(@error_messages[:invalid_choice],
+                                              :value => value)) unless
+        valid_value?(value)
+
+      value
+    end
+
+    def valid_value?(value)
+      @choices.each do |k, v|
+          if v.is_a?(Array)
+            # This is an optgroup, so look inside the group for options
+            v.each do |k2, v2|
+              return true if value == k2.to_s
+            end
+          else
+            return true if value == k.to_s
+          end
+        end
+      false
+    end
+  end
+
   # TypedChoiceField
   # MultipleChoiceField
   # ComboField

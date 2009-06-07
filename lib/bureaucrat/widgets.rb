@@ -296,6 +296,8 @@ module Widgets
   end
 
   class Select < Widget
+    attr_accessor :choices
+
     def initialize(attrs=nil, choices=[])
       super(attrs)
       @choices = choices.collect
