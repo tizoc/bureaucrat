@@ -64,7 +64,7 @@ class TestForm < BureaucratTestCase
     class TwoForm < Forms::Form
       include Bureaucrat::Fields
 
-      field :name, CharField.new
+      field :name, CharField.new(:label => 'Name')
       field :color, CharField.new
     end
 
@@ -74,25 +74,25 @@ class TestForm < BureaucratTestCase
     end
 
     should 'should correctly render as table' do
-      expected = normalize_html("<tr><th/><td><input name='name' id='id_name' type='text' value='name'/></td></tr>\n<tr><th/><td><ul class='errorlist'><li>This field is required</li></ul><input name='color' id='id_color' type='text'/></td></tr>")
+      expected = normalize_html("<tr><th><label for='id_name'>Name:</label></th><td><input name='name' id='id_name' type='text' value='name'/></td></tr>\n<tr><th/><td><ul class='errorlist'><li>This field is required</li></ul><input name='color' id='id_color' type='text'/></td></tr>")
       rendered = normalize_html(@form.as_table)
       assert_equal(expected, rendered)
     end
 
     should 'should correctly render as ul' do
-      expected = normalize_html("<li> <input name='name' id='id_name' type='text' value='name'/></li>\n<li><ul class='errorlist'><li>This field is required</li></ul> <input name='color' id='id_color' type='text'/></li>")
+      expected = normalize_html("<li><label for='id_name'>Name:</label> <input name='name' id='id_name' type='text' value='name'/></li>\n<li><ul class='errorlist'><li>This field is required</li></ul> <input name='color' id='id_color' type='text'/></li>")
       rendered = normalize_html(@form.as_ul)
       assert_equal(expected, rendered)
     end
 
     should 'should correctly render as p' do
-      expected = normalize_html("<p> <input name='name' id='id_name' type='text' value='name'/></p>\nThis field is required\n<p> <input name='color' id='id_color' type='text'/></p>")
+      expected = normalize_html("<p><label for='id_name'>Name:</label> <input name='name' id='id_name' type='text' value='name'/></p>\nThis field is required\n<p> <input name='color' id='id_color' type='text'/></p>")
       rendered = normalize_html(@form.as_p)
       assert_equal(expected, rendered)
     end
 
     should 'correctly render as p when not bound' do
-      expected = normalize_html("<p> <input name='name' id='id_name' type='text'/></p>\n<p> <input name='color' id='id_color' type='text'/></p>")
+      expected = normalize_html("<p><label for='id_name'>Name:</label> <input name='name' id='id_name' type='text'/></p>\n<p> <input name='color' id='id_color' type='text'/></p>")
       rendered = normalize_html(@unbound_form.as_p)
       assert_equal(expected, rendered)
     end

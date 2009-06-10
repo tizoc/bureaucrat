@@ -71,7 +71,7 @@ module Bureaucrat; module Forms
 
       if id_
         attrs = attrs ? flattatt(attrs) : ''
-        contents = "<label for=\"#{widget.id_for_label(id_)}\"#{attrs}>#{contents}</label>"
+        contents = "<label for=\"#{Widgets::Widget.id_for_label(id_)}\"#{attrs}>#{contents}</label>"
       end
 
       mark_safe(contents)
@@ -105,7 +105,7 @@ module Bureaucrat; module Forms
 
     @base_fields = OrderedHash.new
 
-    attr_accessor :error_class, :auto_id, :initial, :data, :files
+    attr_accessor :error_class, :auto_id, :initial, :data, :files, :cleaned_data
 
     def bound? ; @is_bound; end
 
@@ -126,6 +126,10 @@ module Bureaucrat; module Forms
       @fields.each { |key, value| @fields[key] = value.dup }
     end
 
+    def to_s
+      as_table
+    end
+
     def [](name)
       field = @fields[name] or return nil
       BoundField.new(self, field, name)
@@ -141,7 +145,7 @@ module Bureaucrat; module Forms
     end
 
     def add_prefix(field_name)
-      @prefix ? "#{prefix}-#{field_name}" : field_name
+      @prefix ? :"#{@prefix}-#{field_name}" : field_name
     end
 
     def add_initial_prefix(field_name)
@@ -267,7 +271,7 @@ module Bureaucrat; module Forms
       output, hidden_fields = [], []
 
       add_fields_output(output, hidden_fields, normal_row, error_row,
-                        help_text_html, errors_on_separate_row)
+                        help_text_html, errors_on_separate_row, top_errors)
       output = [error_row % top_errors] + output unless top_errors.empty?
       add_hidden_fields_output(output, hidden_fields, row_ender)
 
@@ -275,7 +279,8 @@ module Bureaucrat; module Forms
     end
 
     def add_fields_output(output, hidden_fields, normal_row, error_row,
-                          help_text_html, errors_on_separate_row)
+                          help_text_html, errors_on_separate_row,
+                          top_errors)
       @fields.each do |name, field|
           bf = BoundField.new(self, field, name)
           bf_errors = @error_class.new(bf.errors.map {|e| conditional_escape(e)})
