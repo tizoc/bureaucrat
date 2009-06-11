@@ -3,6 +3,7 @@ require 'rubygems'
 require "contest"
 
 require File.join(File.dirname(__FILE__), '..', 'lib', 'bureaucrat')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'bureaucrat', 'formsets')
 
 # Used to compare rendered htmls
 require 'rexml/document'
