@@ -54,7 +54,8 @@ module Formsets
         raise ValidationError.new('ManagementForm data is missing or has been tampered with') unless
           form.valid?
       else
-        form = ManagementForm.new(:auto_id => @auto_id, :prefix => @prefix,
+        form = ManagementForm.new(nil, :auto_id => @auto_id,
+                                  :prefix => @prefix,
                                   :initial => {
                                     TOTAL_FORM_COUNT => total_form_count,
                                     INITIAL_FORM_COUNT => initial_form_count
