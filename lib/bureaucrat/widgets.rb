@@ -148,6 +148,10 @@ module Widgets
       initial_value != data_value
     end
 
+    def hidden?
+      self.class.is_hidden
+    end
+
     def media
       Media.new
     end
@@ -175,10 +179,6 @@ module Widgets
                                 :name => name.to_s)
       final_attrs[:value] = value.to_s unless value == ''
       mark_safe("<input#{flatatt(final_attrs)} />")
-    end
-
-    def hidden?
-      self.class.is_hidden
     end
   end
 
@@ -278,7 +278,7 @@ module Widgets
     end
 
     def render(name, value, attrs=nil)
-      final_attrs = build_attrs(attrs, :type => 'checkbox', :name => name)
+      final_attrs = build_attrs(attrs, :type => 'checkbox', :name => name.to_s)
       result = self.check_test(value) rescue false
       final_attrs[:checked] = 'checked' if result
       final_attrs[:value] = value.to_s unless
