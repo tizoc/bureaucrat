@@ -6,7 +6,7 @@ Form handling for Ruby inspired by Django forms.
 Usage
 -----
 
-    require 'lib/bureaucrat'
+    require 'bureaucrat'
 
     class MyForm < Bureaucrat::Forms::Form
       include Bureaucrat::Fields
