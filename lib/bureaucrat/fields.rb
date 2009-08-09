@@ -1,10 +1,67 @@
 require 'bureaucrat/utils'
+require 'bureaucrat/validation'
 require 'bureaucrat/widgets'
 
 module Bureaucrat
 module Fields
-  class Field
+
+  class ErrorList < Array
     include Utils
+
+    def to_s
+      as_ul
+    end
+
+    def as_ul
+      empty? ? '' : mark_safe('<ul class="errorlist">%s</ul>' % map do |e|
+                                '<li>%s</li>' % conditional_escape(e)
+                              end.join("\n"))
+    end
+
+    def as_text
+      empty? ? '' : map{|e| '* %s' % e}.join("\n")
+    end
+  end
+
+  class ErrorHash < Hash
+    include Utils
+
+    def to_s
+      as_ul
+    end
+
+    def as_ul
+      empty? ? '' : mark_safe('<ul class="errorlist">%s</ul>' % map do |k, v|
+                                '<li>%s%s</li>' % [k, v]
+                              end.join)
+    end
+
+    def as_text
+      map do |k, v|
+        '* %s\n%s' % [k, v.map{|i| '  * %s'}.join("\n")]
+      end.join("\n")
+    end
+  end
+
+  class FieldValidationError < Exception
+    attr_reader :messages
+
+    def initialize(message)
+      if message.is_a?(Array)
+        @messages = ErrorList.new(message)
+      else
+        @messages = ErrorList.new([message])
+      end
+    end
+
+    def to_s
+      @messages.inspect
+    end
+  end
+
+  class Field
+    include Validation::Validators
+    include Validation::Converters
 
     class << self
       attr_accessor :widget, :hidden_widget, :default_error_messages
@@ -44,9 +101,17 @@ module Fields
       @error_messages = messages
     end
 
+    def validating
+      yield
+    rescue Validation::ValidationError => error
+      msg = Utils.format_string(@error_messages[error.error_code], error.parameters)
+      raise FieldValidationError.new(msg)
+    end
+
     def clean(value)
-      raise ValidationError.new(@error_messages[:required]) if
-        @required && empty_value?(value)
+      validating do
+          is_present(value) if @required
+        end
 
       value
     end
@@ -69,9 +134,6 @@ module Fields
       messages.update(klass.default_error_messages) if has_messages
     end
 
-    def empty_value?(value)
-      value.nil? || value == ''
-    end
   end
 
   class CharField < Field
@@ -92,15 +154,10 @@ module Fields
       super(value)
       return '' if empty_value?(value)
 
-      raise ValidationError.new(format_string(@error_messages[:max_length],
-                                              { :length => value.length,
-                                                :max => @max_length })) if
-         @max_length && value.length > @max_length
-
-      raise ValidationError.new(format_string(@error_messages[:min_length],
-                                              { :length => value.length,
-                                                :min => @mix_length })) if
-        @min_length && value.length < @min_length
+      validating do
+          has_max_length(value, @max_length) if @max_length
+          has_min_length(value, @min_length) if @min_length
+        end
 
       value
     end
@@ -109,8 +166,8 @@ module Fields
   class IntegerField < Field
     self.default_error_messages = {
         :invalid => 'Enter a whole number.',
-        :max_value => 'Ensure this value is less than or equal to %s.',
-        :min_value => 'Ensure this value is greater than or equal to %s.'
+        :max_value => 'Ensure this value is less than or equal to %(max)s.',
+        :min_value => 'Ensure this value is greater than or equal to %(min)s.'
     }
 
     def initialize(options={})
@@ -123,17 +180,11 @@ module Fields
       super(value)
       return nil if empty_value?(value)
 
-      begin
-        value = Integer(value)
-      rescue ArgumentError
-        raise ValidationError.new(@error_messages[:invalid])
-      end
-
-      raise ValidationError.new(@error_messages[:max_value] % @max_value) if
-        @max_value && value > @max_value
-
-      raise ValidationError.new(@error_messages[:min_value] % @min_value) if
-        @min_value && value < @min_value
+      validating do
+          value = to_integer(value)
+          is_not_greater_than(value, @max_value) if @max_value
+          is_not_lesser_than(value, @min_value) if @min_value
+        end
 
       value
     end
@@ -142,8 +193,8 @@ module Fields
   class FloatField < Field
     self.default_error_messages = {
         :invalid => 'Enter a number.',
-        :max_value => 'Ensure this value is less than or equal to %s.',
-        :min_value => 'Ensure this value is greater than or equal to %s.'
+        :max_value => 'Ensure this value is less than or equal to %(max)s.',
+        :min_value => 'Ensure this value is greater than or equal to %(min)s.'
     }
 
     def initialize(options={})
@@ -156,17 +207,11 @@ module Fields
       super(value)
       return nil if empty_value?(value)
 
-      begin
-        value = make_float(value)
-      rescue ArgumentError
-        raise ValidationError.new(@error_messages[:invalid])
-      end
-
-      raise ValidationError.new(@error_messages[:max_value] % @max_value) if
-        @max_value && value > @max_value
-
-      raise ValidationError.new(@error_messages[:min_value] % @min_value) if
-        @min_value && value < @min_value
+      validating do
+          value = to_float(value)
+          is_not_greater_than(value, @max_value) if @max_value
+          is_not_lesser_than(value, @min_value) if @min_value
+        end
 
       value
     end
@@ -175,11 +220,11 @@ module Fields
   class BigDecimalField < Field
     self.default_error_messages = {
         :invalid => 'Enter a number.',
-        :max_value => 'Ensure this value is less than or equal to %s.',
-        :min_value => 'Ensure this value is greater than or equal to %s.',
-        :max_digits => 'Ensure that there are no more than %s digits in total.',
-        :max_decimal_places => 'Ensure that there are no more than %s decimal places.',
-        :max_whole_digits => 'Ensure that there are no more than %s digits before the decimal point.'
+        :max_value => 'Ensure this value is less than or equal to %(max)s.',
+        :min_value => 'Ensure this value is greater than or equal to %(min)s.',
+        :max_digits => 'Ensure that there are no more than %(max)s digits in total.',
+        :max_decimal_places => 'Ensure that there are no more than %(max)s decimal places.',
+        :max_whole_digits => 'Ensure that there are no more than %(max)s digits before the decimal point.'
       }
 
     def initialize(options={})
@@ -187,43 +232,22 @@ module Fields
       @min_value = options.delete(:min_value)
       @max_digits = options.delete(:max_digits)
       @max_decimal_places = options.delete(:max_decimal_places)
-      @whole_digits = @max_digits - @decimal_places if
-        @max_digits && @decimal_places
+      @whole_digits = @max_digits - @decimal_places if @max_digits && @decimal_places
       super(options)
     end
 
     def clean(value)
       super(value)
       return nil if !@required && empty_value?(value)
-      value = value.to_s.strip
 
-      begin
-        make_float(value)
-      rescue ArgumentError
-        raise ValidationError.new(@error_messages[:invalid])
-      end
-
-      value = BigDecimal.new(value)
-
-      sign, alldigits, _, whole_digits = value.split
-      decimals = alldigits.length - whole_digits
-
-      raise ValidationError.new(@error_messages[:max_value] % @max_value) if
-        @max_value && value > @max_value
-
-      raise ValidationError.new(@error_messages[:min_value] % @min_value) if
-        @min_value && value < @min_value
-
-      raise ValidationError.new(@error_messages[:max_digits] % @max_digits) if
-        @max_digits && digits > @max_digits
-
-      raise ValidationError.new(@error_messages[:max_decimal_places] %
-                                @decimal_places) if
-        @decimal_places && decimals > @decimal_places
-
-      raise ValidationError.new(@error_messages[:max_whole_digits] %
-                                @whole_digits) if
-        @whole_digits && whole_digits > @whole_digits
+      validating do
+          value = to_big_decimal(value.to_s.strip)
+          is_not_greater_than(value, @max_value) if @max_value
+          is_not_lesser_than(value, @min_value) if @min_value
+          has_max_digits(value, @max_digits) if @max_digits
+          has_max_decimal_places(value, @max_decimal_places) if @max_decimal_places
+          has_max_whole_digits(value, @max_whole_digits) if @max_whole_digits
+        end
 
       value
     end
@@ -247,7 +271,7 @@ module Fields
     def clean(value)
       value = super(value)
       return value if value.empty?
-      raise ValidationError.new(@error_messages[:invalid]) if @regex !~ value
+      validating { matches_regex(value, @regex) }
       value
     end
   end
@@ -293,24 +317,22 @@ module Fields
         return initial
       end
 
-      # UploadedFile objects should have name and size attributes.
-      begin
-        file_name = data.name
-        file_size = data.size
-      rescue NoMethodError
-        raise ValidationError.new(@error_messages[:invalid])
-      end
+      # TODO: file validators?
+      validating do
+          # UploadedFile objects should have name and size attributes.
+          begin
+            file_name = data.name
+            file_size = data.size
+          rescue NoMethodError
+            fail_with(:invalid)
+          end
 
-      if @max_length && file_name.length > @max_length
-        error_values = { :max => @max_length, :length => file_name.length }
-        raise ValidationError.new(format_string(@error_messages[:max_length],
-                                                error_values))
-      end
+          fail_with(:max_length, :max => @max_length, :length => file_name.length) if
+            @max_length && file_name.length > @max_length
 
-      raise ValidationError.new(@error_messages[:invalid]) unless file_name
-
-      raise ValidationError.new(@error_messages[:empty]) unless
-        file_size || file_size == 0
+          fail_with(:invalid) unless file_name
+          fail_with(:empty) unless file_size || file_size == 0
+        end
 
       data
     end
@@ -325,12 +347,9 @@ module Fields
     self.widget = Widgets::CheckboxInput
 
     def clean(value)
-      value = ['false', '0'].include?(value) ? false : make_bool(value)
-
+      value = to_bool(value)
       super(value)
-      raise ValidationError.new(@error_messages[:required]) if
-        !value && @required
-
+      validating { is_true(value) if @required }
       value
     end
   end
@@ -374,9 +393,9 @@ module Fields
 
       return value if value.empty?
 
-      raise ValidationError.new(format_string(@error_messages[:invalid_choice],
-                                              :value => value)) unless
-        valid_value?(value)
+      validating do
+          fail_with(:invalid_choice, :value => value) unless valid_value?(value)
+        end
 
       value
     end
@@ -412,9 +431,7 @@ module Fields
       begin
         @coerce.call(value)
       rescue
-        message = format_string(@error_messages[:invalid_choice],
-                                :value => value)
-        raise ValidationError.new(message)
+        validating { fail_with(:invalid_choice, :value => value) }
       end
     end
   end
@@ -429,21 +446,18 @@ module Fields
       }
 
     def clean(value)
-      raise ValidationError.new(@error_messages[:required]) if
-        @required && !value || value.empty?
-      return [] if ! @required && ! value || value.empty?
+      validating do
+          is_present(value) if @required
+          return [] if ! @required && ! value || value.empty?
+          is_array(value)
+          not_empty(value) if @required
 
-      raise ValidationError.new(@error_messages[:invalid_list]) if
-        ! value.kind_of?(Array)
-
-      new_value = value.map(&:to_s)
-      # Validate that each value in the value list is in self.choices.
-      new_value.each do |val|
-          message = format_string(@error_messages[:invalid_choice],
-                                  :value => val)
-          raise ValidationError.new(message) unless
-            valid_value?(val)
+          new_value = value.map(&:to_s)
+          new_value.each do |val|
+            fail_with(:invalid_choice, :value => val) unless valid_value?(val)
+          end
         end
+
       new_value
     end
   end

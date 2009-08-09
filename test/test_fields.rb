@@ -9,7 +9,7 @@ class TestFields < BureaucratTestCase
 
       should 'be required' do
         blank_value = ''
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean(blank_value)
         end
       end
@@ -91,7 +91,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values with length > 10' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('a' * 11)
         end
       end
@@ -109,7 +109,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values with length < 10' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('a' * 9)
         end
       end
@@ -153,7 +153,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values > 10' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('11')
         end
       end
@@ -171,7 +171,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values < 10' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('9')
         end
       end
@@ -205,7 +205,7 @@ class TestFields < BureaucratTestCase
                            '123.0', '123..4']
 
         invalid_formats.each do |invalid|
-          assert_raise(Utils::ValidationError) do
+          assert_raise(Fields::FieldValidationError) do
             @field.clean(invalid)
           end
         end
@@ -242,7 +242,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values > 10.5' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('10.55')
         end
       end
@@ -260,7 +260,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values < 10.5' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('10.49')
         end
       end
@@ -288,7 +288,7 @@ class TestFields < BureaucratTestCase
                            '123..', '123..4']
 
         invalid_formats.each do |invalid|
-          assert_raise(Utils::ValidationError) do
+          assert_raise(Fields::FieldValidationError) do
             @field.clean(invalid)
           end
         end
@@ -324,7 +324,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values > 10.5' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('10.55')
         end
       end
@@ -342,7 +342,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values < 10.5' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('10.49')
         end
       end
@@ -370,7 +370,7 @@ class TestFields < BureaucratTestCase
                            '123..', '123..4']
 
         invalid_formats.each do |invalid|
-          assert_raise(Utils::ValidationError) do
+          assert_raise(Fields::FieldValidationError) do
             @field.clean(invalid)
           end
         end
@@ -410,7 +410,7 @@ class TestFields < BureaucratTestCase
 
       should 'not validate non-matching values' do
         invalid_values = ['bana', 'spoon']
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           invalid_values.each do |invalid|
             @field.clean(invalid)
           end
@@ -445,7 +445,7 @@ class TestFields < BureaucratTestCase
         invalid_values = ['banana', 'spoon', 'invalid#bla@domain.com',
                           'invalid@@domain.com', 'invalid@domain',
                           'invalid@.com']
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           invalid_values.each do |invalid|
             @field.clean(invalid)
           end
@@ -485,7 +485,7 @@ class TestFields < BureaucratTestCase
 
       should 'not validate on false values when required' do
         @false_values.each do |false_value|
-          assert_raise(Utils::ValidationError) do
+          assert_raise(Fields::FieldValidationError) do
             @field.clean(false_value)
           end
         end
@@ -556,7 +556,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not validate a value not in choices list' do
-        assert_raise(Utils::ValidationError) do
+        assert_raise(Fields::FieldValidationError) do
           @field.clean('not_in_choices')
         end
       end

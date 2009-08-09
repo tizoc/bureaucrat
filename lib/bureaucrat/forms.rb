@@ -1,4 +1,5 @@
 require 'bureaucrat/utils'
+require 'bureaucrat/validation'
 require 'bureaucrat/widgets'
 require 'bureaucrat/fields'
 
@@ -89,6 +90,7 @@ module Bureaucrat; module Forms
 
   class Form
     include Utils
+    include Validation
 
     class << self
       attr_accessor :base_fields
@@ -116,7 +118,7 @@ module Bureaucrat; module Forms
       @auto_id = options.fetch(:auto_id, 'id_%s')
       @prefix = options[:prefix]
       @initial = options.fetch(:initial, {})
-      @error_class = options.fetch(:error_class, ErrorList)
+      @error_class = options.fetch(:error_class, Fields::ErrorList)
       @label_suffix = options.fetch(:label_suffix, ':')
       @empty_permitted = options.fetch(:empty_permitted, false)
       @errors = nil
@@ -177,7 +179,7 @@ module Bureaucrat; module Forms
     end
 
     def full_clean
-      @errors = ErrorHash.new
+      @errors = Fields::ErrorHash.new
 
       return unless bound?
 
@@ -199,7 +201,7 @@ module Bureaucrat; module Forms
 
             clean_method = 'clean_%s' % name
             @cleaned_data[name] = send(clean_method) if respond_to?(clean_method)
-          rescue ValidationError => e
+          rescue Fields::FieldValidationError => e
             @errors[name] = e.messages
             @cleaned_data.clear
           end
@@ -207,7 +209,7 @@ module Bureaucrat; module Forms
 
       begin
         @cleaned_data = clean
-      rescue ValidationError => e
+      rescue Fields::FieldValidationError => e
         @errors[:__NON_FIELD_ERRORS] = e.messages
       end
       @cleaned_data = nil if @errors && !@errors.empty?

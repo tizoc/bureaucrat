@@ -12,42 +12,6 @@ module Utils
     end
   end
 
-  class ErrorList < Array
-    include Bureaucrat::Utils
-
-    def to_s
-      as_ul
-    end
-
-    def as_ul
-      empty? ? '' : mark_safe('<ul class="errorlist">%s</ul>' % map do |e|
-                                '<li>%s</li>' % conditional_escape(e)
-                              end.join("\n"))
-    end
-
-    def as_text
-      empty? ? '' : map{|e| '* %s' % e}.join("\n")
-    end
-  end
-
-  class ErrorHash < Hash
-    def to_s
-      as_ul
-    end
-
-    def as_ul
-      empty? ? '' : Utils.mark_safe('<ul class="errorlist">%s</ul>' % map do |k, v|
-                                      '<li>%s%s</li>' % [k, v]
-                                    end.join)
-    end
-
-    def as_text
-      map do |k, v|
-        '* %s\n%s' % [k, v.map{|i| '  * %s'}.join("\n")]
-      end.join("\n")
-    end
-  end
-
   # Dumb implementation that is good enough for Forms
   class OrderedHash < Hash
     def initialize
@@ -69,22 +33,6 @@ module Utils
     def initialize_copy(original)
       super(original)
       @ordered_keys = original.instance_eval('@ordered_keys').dup
-    end
-  end
-
-  class ValidationError < Exception
-    attr_reader :messages
-
-    def initialize(message)
-      if message.is_a?(Array)
-        @messages = ErrorList.new(message)
-      else
-        @messages = ErrorList.new([message])
-      end
-    end
-
-    def to_s
-      @messages.inspect
     end
   end
 

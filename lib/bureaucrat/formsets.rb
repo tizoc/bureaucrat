@@ -1,4 +1,5 @@
 require 'bureaucrat/utils'
+require 'bureaucrat/validation'
 require 'bureaucrat/widgets'
 require 'bureaucrat/forms'
 
@@ -20,6 +21,7 @@ module Formsets
 
   class BaseFormSet
     include Utils
+    include Validation
     include Fields
     include Forms
 
