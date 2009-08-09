@@ -369,4 +369,35 @@ module Widgets
       make_bool(initial) != make_bool(data)
     end
   end
+
+  class SelectMultiple < Select
+    def render(name, value, attrs=nil, choices=[])
+      value = [] if value.nil?
+      final_attrs = build_attrs(attrs, :name => name)
+      output = ["<select multiple=\"multiple\"#{flatatt(final_attrs)}>"]
+      options = render_options(choices, value)
+      output << options if options && !options.empty?
+      output << '</select>'
+      mark_safe(output.join("\n"))
+    end
+
+    def value_from_datahash(data, files, name)
+      #if data.is_a?(MultiValueDict) || data.is_a?(MergeDict)
+      #  data.getlist(name)
+      #else
+      #  data[name]
+      #end
+      data[name]
+    end
+
+    def has_changed?(initial, data)
+      initial = [] if initial.nil?
+      data = [] if data.nil?
+      return true if initial.length != data.length
+      initial.zip(data).each do |value1, value2|
+          return true if value1.to_s != value2.to_s
+        end
+      false
+    end
+  end
 end; end

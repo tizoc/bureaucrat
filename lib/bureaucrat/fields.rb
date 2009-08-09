@@ -396,8 +396,58 @@ module Fields
     end
   end
 
-  # TypedChoiceField
-  # MultipleChoiceField
+  # TODO: tests
+  class TypedChoiceField < ChoiceField
+    def initialize(choices=[], options={})
+      @coerce = options.delete(:coerce) || lambda{|val| val}
+      @empty_value = options.fetch(:empty_value, '')
+      options.delete(:empty_value)
+      super(choices, options)
+    end
+
+    def clean(value)
+      value = super(value)
+      return @empty_value if value == empty_value || empty_value?(value)
+
+      begin
+        @coerce.call(value)
+      rescue
+        message = format_string(@error_messages[:invalid_choice],
+                                :value => value)
+        raise ValidationError.new(message)
+      end
+    end
+  end
+
+  # TODO: tests
+  class MultipleChoiceField < ChoiceField
+    self.hidden_widget = Widgets::MultipleHiddenInput
+    self.widget = Widgets::SelectMultiple
+    self.default_error_messages = {
+        :invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.',
+        :invalid_list =>'Enter a list of values.'
+      }
+
+    def clean(value)
+      raise ValidationError.new(@error_messages[:required]) if
+        @required && !value || value.empty?
+      return [] if ! @required && ! value || value.empty?
+
+      raise ValidationError.new(@error_messages[:invalid_list]) if
+        ! value.kind_of?(Array)
+
+      new_value = value.map(&:to_s)
+      # Validate that each value in the value list is in self.choices.
+      new_value.each do |val|
+          message = format_string(@error_messages[:invalid_choice],
+                                  :value => val)
+          raise ValidationError.new(message) unless
+            valid_value?(val)
+        end
+      new_value
+    end
+  end
+
   # ComboField
   # MultiValueField
   # FilePathField
