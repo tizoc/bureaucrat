@@ -426,7 +426,7 @@ module Fields
 
     def clean(value)
       value = super(value)
-      return @empty_value if value == empty_value || empty_value?(value)
+      return @empty_value if value == @empty_value || empty_value?(value)
 
       begin
         @coerce.call(value)
