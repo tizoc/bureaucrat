@@ -13,9 +13,9 @@ module Fields
     end
 
     def as_ul
-      empty? ? '' : mark_safe('<ul class="errorlist">%s</ul>' % map do |e|
-                                '<li>%s</li>' % conditional_escape(e)
-                              end.join("\n"))
+      ul = '<ul class="errorlist">%s</ul>'
+      li = '<li>%s</li>'
+      empty? ? '' : mark_safe(ul % map {|e| li % conditional_escape(e)}.join("\n"))
     end
 
     def as_text
@@ -31,9 +31,9 @@ module Fields
     end
 
     def as_ul
-      empty? ? '' : mark_safe('<ul class="errorlist">%s</ul>' % map do |k, v|
-                                '<li>%s%s</li>' % [k, v]
-                              end.join)
+      ul = '<ul class="errorlist">%s</ul>'
+      li = '<li>%s%s</li>'
+      empty? ? '' : mark_safe(ul % map {|k, v| li % [k, v]}.join)
     end
 
     def as_text
@@ -47,11 +47,8 @@ module Fields
     attr_reader :messages
 
     def initialize(message)
-      if message.is_a?(Array)
-        @messages = ErrorList.new(message)
-      else
-        @messages = ErrorList.new([message])
-      end
+      message = [message] unless message.is_a?(Array)
+      @messages = ErrorList.new(message)
     end
 
     def to_s
@@ -64,22 +61,36 @@ module Fields
     include Validation::Converters
 
     class << self
-      attr_accessor :widget, :hidden_widget, :default_error_messages
+      attr_reader :default_error_messages
 
-      # Copy data to the child class
+      def set_error(key, template)
+        @default_error_messages ||= {}
+        @default_error_messages[key] = template
+      end
+
+      def widget(widget=nil)
+        @widget = widget unless widget.nil?
+        @widget
+      end
+
+      def hidden_widget(hidden_widget=nil)
+        @hidden_widget = hidden_widget unless hidden_widget.nil?
+        @hidden_widget
+      end
+
+      # Copy field properties to the child class
       def inherited(c)
-        c.widget = widget
-        c.hidden_widget = hidden_widget
-        c.default_error_messages = default_error_messages.dup
+        c.widget        widget
+        c.hidden_widget hidden_widget
+        default_error_messages.each {|k, v| c.set_error k, v}
       end
     end
 
-    self.widget = Widgets::TextInput
-    self.hidden_widget = Widgets::HiddenInput
-    self.default_error_messages = {
-      :required => 'This field is required',
-      :invalid => 'Enter a valid value'
-    }
+    # Field properties
+    widget        Widgets::TextInput
+    hidden_widget Widgets::HiddenInput
+    set_error     :required, 'This field is required'
+    set_error     :invalid, 'Enter a valid value'
 
     attr_accessor :required, :label, :initial, :error_messages, :widget, :show_hidden_initial, :help_text
 
@@ -95,24 +106,20 @@ module Fields
       extra_attrs = widget_attrs(@widget)
       @widget.attrs.update(extra_attrs) if extra_attrs
 
-      messages = {}
-      set_class_error_messages(messages, self.class)
-      messages.update(options.fetch(:error_messages, {}))
-      @error_messages = messages
+      @error_messages = self.class.default_error_messages.
+        merge(options.fetch(:error_messages, {}))
     end
 
     def validating
       yield
     rescue Validation::ValidationError => error
-      msg = Utils.format_string(@error_messages[error.error_code], error.parameters)
+      tpl = error_messages.fetch(error.error_code, error.error_code.to_s)
+      msg = Utils.format_string(tpl, error.parameters)
       raise FieldValidationError.new(msg)
     end
 
     def clean(value)
-      validating do
-          is_present(value) if @required
-        end
-
+      validating { is_present(value) if @required }
       value
     end
 
@@ -127,20 +134,11 @@ module Fields
       @error_messages = original.error_messages.dup
     end
 
-  private
-    def set_class_error_messages(messages, klass)
-      set_class_error_messages(messages, klass.superclass) if klass.superclass
-      has_messages = klass.respond_to? :default_error_messages
-      messages.update(klass.default_error_messages) if has_messages
-    end
-
   end
 
   class CharField < Field
-    self.default_error_messages = {
-      :max_length => 'Ensure this value has at most %(max)s characters (it has %(length)s).',
-      :min_length => 'Ensure this value has at least %(min)s characters (it has %(length)s).'
-    }
+    set_error :max_length, 'Ensure this value has at most %(max)s characters (it has %(length)s).'
+    set_error :min_length, 'Ensure this value has at least %(min)s characters (it has %(length)s).'
 
     attr_accessor :max_length, :min_length
 
@@ -164,11 +162,9 @@ module Fields
   end
 
   class IntegerField < Field
-    self.default_error_messages = {
-        :invalid => 'Enter a whole number.',
-        :max_value => 'Ensure this value is less than or equal to %(max)s.',
-        :min_value => 'Ensure this value is greater than or equal to %(min)s.'
-    }
+    set_error :invalid, 'Enter a whole number.'
+    set_error :max_value, 'Ensure this value is less than or equal to %(max)s.'
+    set_error :min_value, 'Ensure this value is greater than or equal to %(min)s.'
 
     def initialize(options={})
       @max_value = options.delete(:max_value)
@@ -191,11 +187,9 @@ module Fields
   end
 
   class FloatField < Field
-    self.default_error_messages = {
-        :invalid => 'Enter a number.',
-        :max_value => 'Ensure this value is less than or equal to %(max)s.',
-        :min_value => 'Ensure this value is greater than or equal to %(min)s.'
-    }
+    set_error :invalid, 'Enter a number.'
+    set_error :max_value, 'Ensure this value is less than or equal to %(max)s.'
+    set_error :min_value, 'Ensure this value is greater than or equal to %(min)s.'
 
     def initialize(options={})
       @max_value = options.delete(:max_value)
@@ -218,14 +212,12 @@ module Fields
   end
 
   class BigDecimalField < Field
-    self.default_error_messages = {
-        :invalid => 'Enter a number.',
-        :max_value => 'Ensure this value is less than or equal to %(max)s.',
-        :min_value => 'Ensure this value is greater than or equal to %(min)s.',
-        :max_digits => 'Ensure that there are no more than %(max)s digits in total.',
-        :max_decimal_places => 'Ensure that there are no more than %(max)s decimal places.',
-        :max_whole_digits => 'Ensure that there are no more than %(max)s digits before the decimal point.'
-      }
+    set_error :invalid, 'Enter a number.'
+    set_error :max_value, 'Ensure this value is less than or equal to %(max)s.'
+    set_error :min_value, 'Ensure this value is greater than or equal to %(min)s.'
+    set_error :max_digits, 'Ensure that there are no more than %(max)s digits in total.'
+    set_error :max_decimal_places, 'Ensure that there are no more than %(max)s decimal places.'
+    set_error :max_whole_digits, 'Ensure that there are no more than %(max)s digits before the decimal point.'
 
     def initialize(options={})
       @max_value = options.delete(:max_value)
@@ -284,9 +276,7 @@ module Fields
     #    r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
     EMAIL_RE = /(^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*")@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/i
 
-    self.default_error_messages = {
-        :invalid => 'Enter a valid e-mail address.'
-      }
+    set_error :invalid, 'Enter a valid e-mail address.'
 
     def initialize(options={})
       super(EMAIL_RE, options)
@@ -295,13 +285,11 @@ module Fields
 
   # TODO: add tests
   class FileField < Field
-    self.widget = Widgets::FileInput
-    self.default_error_messages = {
-      :invalid =>"No file was submitted. Check the encoding type on the form.",
-      :missing =>"No file was submitted.",
-      :empty =>"The submitted file is empty.",
-      :max_length =>'Ensure this filename has at most %(max)d characters (it has %(length)d).'
-    }
+    widget    Widgets::FileInput
+    set_error :invalid, 'No file was submitted. Check the encoding type on the form.'
+    set_error :missing, 'No file was submitted.'
+    set_error :empty, 'The submitted file is empty.'
+    set_error :max_length, 'Ensure this filename has at most %(max)d characters (it has %(length)d).'
 
     def initialize(options)
       @max_length = options.delete(:max_length)
@@ -344,7 +332,7 @@ module Fields
   # URLField
 
   class BooleanField < Field
-    self.widget = Widgets::CheckboxInput
+    widget Widgets::CheckboxInput
 
     def clean(value)
       value = to_bool(value)
@@ -355,7 +343,7 @@ module Fields
   end
 
   class NullBooleanField < BooleanField
-    self.widget = Widgets::NullBooleanSelect
+    widget Widgets::NullBooleanSelect
 
     def clean(value)
       case value
@@ -367,10 +355,8 @@ module Fields
   end
 
   class ChoiceField < Field
-    self.widget = Widgets::Select
-    self.default_error_messages = {
-        :invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.'
-      }
+    widget    Widgets::Select
+    set_error :invalid_choice, 'Select a valid choice. %(value)s is not one of the available choices.'
 
     def initialize(choices=[], options={})
       options[:required] = options.fetch(:required, true)
@@ -438,12 +424,10 @@ module Fields
 
   # TODO: tests
   class MultipleChoiceField < ChoiceField
-    self.hidden_widget = Widgets::MultipleHiddenInput
-    self.widget = Widgets::SelectMultiple
-    self.default_error_messages = {
-        :invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.',
-        :invalid_list =>'Enter a list of values.'
-      }
+    widget        Widgets::SelectMultiple
+    hidden_widget Widgets::MultipleHiddenInput
+    set_error     :invalid_choice, 'Select a valid choice. %(value)s is not one of the available choices.'
+    set_error     :invalid_list, 'Enter a list of values.'
 
     def clean(value)
       validating do
