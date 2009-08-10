@@ -93,7 +93,12 @@ module Bureaucrat; module Forms
     include Validation
 
     class << self
-      attr_accessor :base_fields
+      attr_writer :base_fields
+
+      def base_fields
+        @base_fields ||= Utils::OrderedHash.new
+      end
+
       def field(name, field_obj)
         base_fields[name] = field_obj
       end
@@ -104,8 +109,6 @@ module Bureaucrat; module Forms
         c.base_fields = base_fields.dup
       end
     end
-
-    @base_fields = OrderedHash.new
 
     attr_accessor :error_class, :auto_id, :initial, :data, :files, :cleaned_data
 
