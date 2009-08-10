@@ -60,6 +60,37 @@ class TestForm < BureaucratTestCase
     end
   end
 
+  describe 'form with custom clean proc on field' do
+    class CustomCleanForm < Forms::Form
+      include Bureaucrat::Fields
+
+      field :name, CharField.new
+
+      def clean_name
+        value = cleaned_data[:name]
+        raise FieldValidationError.new("Invalid name") unless value == 'valid_name'
+        value.upcase
+      end
+    end
+
+    should 'not be valid if clean method fails' do
+      form = CustomCleanForm.new(:name => 'other')
+      assert_equal(false, form.valid?)
+    end
+
+    should 'be valid if clean method passes' do
+      form = CustomCleanForm.new(:name => 'valid_name')
+      assert_equal(true, form.valid?)
+    end
+
+    should 'set the value to the one returned by the custom clean method' do
+      form = CustomCleanForm.new(:name => 'valid_name')
+      form.valid?
+      assert_equal('VALID_NAME', form.cleaned_data[:name])
+    end
+
+  end
+
   describe 'inherited form with two charfields when rendered' do
     class TwoForm < Forms::Form
       include Bureaucrat::Fields
