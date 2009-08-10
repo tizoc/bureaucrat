@@ -124,7 +124,7 @@ module Fields
     end
 
     def widget_attrs(widget)
-      {}
+      # Override to add field specific attributes
     end
 
     def initialize_copy(original)
@@ -146,6 +146,12 @@ module Fields
       @max_length = options.delete(:max_length)
       @min_length = options.delete(:min_length)
       super(options)
+    end
+
+    def widget_attrs(widget)
+      return if @max_length.nil?
+      return {:maxlength => @max_length.to_s} if
+        widget.kind_of?(Widgets::TextInput) || widget.kind_of?(Widgets::PasswordInput)
     end
 
     def clean(value)
