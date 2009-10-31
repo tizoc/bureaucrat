@@ -75,9 +75,8 @@ Usage examples
     # <li> <input type="text" value="30" name="age" id="id_age" /></li>
     # <li> <input type="checkbox" name="newsletter" id="id_newsletter" /></li>
 
-
 Examples of different ways of defining forms
--------------------------------------------- 
+--------------
 
     require 'bureaucrat'
     require 'bureaucrat/quickfields'
