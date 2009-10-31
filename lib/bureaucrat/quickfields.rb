@@ -8,6 +8,10 @@ module Quickfields
     field name, CharField.new(options)
   end
 
+  def password(name, options={})
+    field name, CharField.new(options.merge(:widget => PasswordInput.new))
+  end
+
   def integer(name, options={})
     field name, IntegerField.new(options)
   end
@@ -16,8 +20,8 @@ module Quickfields
     field name, BigDecimalField.new(options)
   end
 
-  def regex(name, options={})
-    field name, RegexField.new(options)
+  def regex(name, regexp, options={})
+    field name, RegexField.new(regexp, options)
   end
 
   def email(name, options={})
