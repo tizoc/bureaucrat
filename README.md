@@ -95,7 +95,7 @@ Examples of different ways of defining forms
       extend Bureaucrat::Quickfields
 
       string  :nickname, :max_length => 50
-      string  :realname, :require => false
+      string  :realname, :required => false
       email   :email
       integer :age, :min_value => 0
       boolean :newsletter, :required => false
@@ -110,7 +110,7 @@ Examples of different ways of defining forms
 
     MyFormQuicker = quicker_form do |f|
       f.string  :nickname, :max_length => 50
-      f.string  :realname, :require => false
+      f.string  :realname, :required => false
       f.email   :email
       f.integer :age, :min_value => 0
       f.boolean :newsletter, :required => false
