@@ -9,14 +9,11 @@ module Quickfields
   end
 
   def autolabel(*names)
-    if names.length > 0
-      names.each do |name|
-          base_fields[name].label ||= name.to_s.gsub(/_/, ' ').capitalize if
-            base_fields[name]
-        end
-    else
-      autolabel(*base_fields.keys)
-    end
+    names = base_fields.keys if names.empty?
+    names.each do |name|
+        base_fields[name].label ||= name.to_s.gsub(/_/, ' ').capitalize if
+          base_fields[name]
+      end
   end
 
   def string(name, options={})
