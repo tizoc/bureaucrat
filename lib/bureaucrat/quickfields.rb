@@ -4,12 +4,27 @@ module Bureaucrat
 module Quickfields
   include Fields
 
+  def label_for(name, text)
+    base_fields[name].label = text
+  end
+
+  def autolabel(*names)
+    if names.length > 0
+      names.each do |name|
+          base_fields[name].label ||= name.to_s.gsub(/_/, ' ').capitalize if
+            base_fields[name]
+        end
+    else
+      autolabel(*base_fields.keys)
+    end
+  end
+
   def string(name, options={})
     field name, CharField.new(options)
   end
 
   def password(name, options={})
-    field name, CharField.new(options.merge(:widget => PasswordInput.new))
+    field name, CharField.new(options.merge(:widget => Widgets::PasswordInput.new))
   end
 
   def integer(name, options={})
