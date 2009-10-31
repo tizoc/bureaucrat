@@ -25,15 +25,16 @@ Usage examples
 --------------
 
     require 'bureaucrat'
+    require 'bureaucrat/quickfields'
 
-    class MyForm < Bureaucrat::Forms::Form
-      include Bureaucrat::Fields
+    class MyFormQuick < Bureaucrat::Forms::Form
+      extend Bureaucrat::Quickfields
 
-      field :nickname, CharField.new(:max_length => 50)
-      field :realname, CharField.new(:required => false)
-      field :email, EmailField.new
-      field :age, IntegerField.new(:min_value => 0)
-      field :newsletter, BooleanField.new(:required => false) 
+      string  :nickname, :max_length => 50
+      string  :realname, :require => false
+      email   :email
+      integer :age, :min_value => 0
+      boolean :newsletter, :required => false
     end
 
     # A Form initialized without parameters is an unbound Form.
@@ -73,6 +74,7 @@ Usage examples
     # <li> <input type="text" value="valid@email.com" name="email" id="id_email" /></li>
     # <li> <input type="text" value="30" name="age" id="id_age" /></li>
     # <li> <input type="checkbox" name="newsletter" id="id_newsletter" /></li>
+
 
 Examples of different ways of defining forms
 -------------------------------------------- 
