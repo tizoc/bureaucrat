@@ -46,16 +46,14 @@ module Widgets
 
     def render_js
       @js.map do |path|
-          '<script type="text/javascript" src="%s"></script>' %
-            absolute_path(path)
+          "<script type=\"text/javascript\" src=\"#{absolute_path(path)}\"></script>"
         end
     end
 
     def render_css
       fragments = @css.keys.sort.map do |medium|
           @css[medium].map do |path|
-            '<link href="%s" type="text/css" media="%s" rel="stylesheet" />' %
-              [absolute_path(path), medium]
+            "<link href=\"#{absolute_path(path)}\" type=\"text/css\" media=\"#{medium}\" rel=\"stylesheet\" />"
           end
         end
       fragments.empty? ? fragments : fragments.inject(&:+)
@@ -164,7 +162,6 @@ module Widgets
       # Copy data to the child class
       def inherited(c)
         super(c)
-        c.is_hidden = is_hidden
         c.input_type = input_type.dup if input_type
       end
     end
@@ -221,7 +218,7 @@ module Widgets
                                 :name => name)
       mark_safe(value.map do |v|
                   rattrs = {:value => v.to_s}.merge(final_attrs)
-                  '<input%s />' % flatatt(rattrs)
+                  "<input#{flatatt(rattrs)} />"
                 end.join("\n"))
     end
 
@@ -262,8 +259,7 @@ module Widgets
       def render(name, value, attrs=nil)
         value ||= ''
         final_attrs = build_attrs(attrs, :name => name)
-        mark_safe('<textarea%s>%s</textarea>' % [flatatt(final_attrs),
-                                                 conditional_escape(value.to_s)])
+        mark_safe("<textarea#{flatatt(final_attrs)}>#{conditional_escape(value.to_s)}</textarea>")
       end
   end
 
@@ -283,7 +279,7 @@ module Widgets
       final_attrs[:checked] = 'checked' if result
       final_attrs[:value] = value.to_s unless
         ['', true, false, nil].include?(value)
-      mark_safe('<input%s />' % flatatt(final_attrs))
+      mark_safe("<input#{flatatt(final_attrs)} />")
     end
 
     def value_from_datadict(data, files, name)
@@ -306,7 +302,7 @@ module Widgets
     def render(name, value, attrs=nil, choices=[])
       value = '' if value.nil?
       final_attrs = build_attrs(attrs, :name => name)
-      output = ['<select%s>' % flatatt(final_attrs)]
+      output = ["<select#{flatatt(final_attrs)}>"]
       options = render_options(choices, [value])
       output << options if options && !options.empty?
       output << '</select>'
@@ -335,9 +331,7 @@ module Widgets
     def render_option(option_value, option_label, selected_choices)
       option_value = option_value.to_s
       selected_html = selected_choices.include?(option_value) ? ' selected="selected"' : ''
-      '<option value="%s"%s>%s</option>' %
-        [escape(option_value), selected_html,
-         conditional_escape(option_label.to_s)]
+      "<option value=\"#{escape(option_value)}\"#{selected_html}>#{conditional_escape(option_label.to_s)}</option>"
     end
   end
 
