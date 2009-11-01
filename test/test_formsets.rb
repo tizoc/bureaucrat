@@ -24,7 +24,7 @@ class TestFormset < BureaucratTestCase
     end
 
     should 'correctly render when calling as_table' do
-      expected = normalize_html("<input name='form-TOTAL_FORMS' id='id_form-TOTAL_FORMS' type='hidden' value='2'/><input name='form-INITIAL_FORMS' id='id_form-INITIAL_FORMS' type='hidden' value='0'/>\n<tr><th/><td><input name='form-0-name' id='id_form-0-name' type='text'/></td></tr> <tr><th/><td><input name='form-1-name' id='id_form-1-name' type='text'/></td></tr>")
+      expected = normalize_html("<input name='form-TOTAL_FORMS' id='id_form-TOTAL_FORMS' type='hidden' value='2'/><input name='form-INITIAL_FORMS' id='id_form-INITIAL_FORMS' type='hidden' value='0'/>\n<tr><th><label for='id_form-0-name'>Name:</label></th><td><input name='form-0-name' id='id_form-0-name' type='text'/></td></tr> <tr><th><label for='id_form-1-name'>Name:</label></th><td><input name='form-1-name' id='id_form-1-name' type='text'/></td></tr>")
       rendered = normalize_html(@set.as_table)
       assert_equal(expected, rendered)
     end

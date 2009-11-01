@@ -70,7 +70,7 @@ module_function
   end
 
   def pretty_name(name)
-    name.to_s.capitalize.gsub!(/_/, ' ')
+    name.to_s.capitalize.gsub(/_/, ' ')
   end
 
   def make_float(value)

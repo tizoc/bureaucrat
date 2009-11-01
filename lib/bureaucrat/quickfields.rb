@@ -4,18 +4,6 @@ module Bureaucrat
 module Quickfields
   include Fields
 
-  def label_for(name, text)
-    base_fields[name].label = text
-  end
-
-  def autolabel(*names)
-    names = base_fields.keys if names.empty?
-    names.each do |name|
-        base_fields[name].label ||= name.to_s.gsub(/_/, ' ').capitalize if
-          base_fields[name]
-      end
-  end
-
   def string(name, options={})
     field name, CharField.new(options)
   end

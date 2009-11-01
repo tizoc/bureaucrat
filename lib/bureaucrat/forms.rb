@@ -46,7 +46,7 @@ module Bureaucrat; module Forms
 
       name = only_initial ? @html_initial_name : @html_name
 
-      widget.render(name, data, attrs)
+      widget.render(name.to_s, data, attrs)
     end
 
     def as_text(attrs=nil, only_initial=false)
