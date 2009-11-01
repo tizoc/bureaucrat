@@ -18,7 +18,7 @@ Structure
 - A Widget knows how to render itself.
 - A Field knows how to validate an input value and convert it from a string to the required type.
 - A Form knows how to render all its fields along with all the required error messages.
-- After validation, a valid Form responds to 'cleaned_data' by returning a hash of valitaded values.
+- After validation, a valid Form responds to 'cleaned_data' by returning a hash of validated values.
 - After validation an invalid Form responds to 'errors' by returning a hash of field_name => error_messages
 
 Usage examples
@@ -35,6 +35,12 @@ Usage examples
       email   :email
       integer :age, :min_value => 0
       boolean :newsletter, :required => false
+
+      def save
+        user = User.create!(cleaned_data)
+        Mailer.deliver_confirmation_mail(user)
+        user
+      end
     end
 
     # A Form initialized without parameters is an unbound Form.
@@ -73,6 +79,8 @@ Usage examples
     # <li><label for="id_email">Email:</label> <input type="text" value="valid@email.com" name="email" id="id_email" /></li>
     # <li><label for="id_age">Age:</label> <input type="text" value="30" name="age" id="id_age" /></li>
     # <li><label for="id_newsletter">Newsletter:</label> <input type="checkbox" name="newsletter" id="id_newsletter" /></li>
+
+    valid_bound_form.save # A new User is created and a confirmation mail is delivered
 
 Examples of different ways of defining forms
 --------------
