@@ -4,6 +4,10 @@ module Bureaucrat
 module Quickfields
   include Fields
 
+  def hide(name)
+    base_fields[name].widget = Widgets::HiddenInput.new
+  end
+
   def string(name, options={})
     field name, CharField.new(options)
   end

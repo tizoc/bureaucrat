@@ -321,7 +321,7 @@ module Bureaucrat; module Forms
 
         unless output.empty?
           last_row = output[-1]
-          unless last_row.endswith(row_ender)
+          if last_row !~ /#{row_ender}$/
             vars = {
               :errors => '', :label => '', :field => '', :help_text => ''
             }

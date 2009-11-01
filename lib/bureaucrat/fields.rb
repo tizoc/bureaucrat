@@ -92,7 +92,7 @@ module Fields
     set_error     :required, 'This field is required'
     set_error     :invalid, 'Enter a valid value'
 
-    attr_accessor :required, :label, :initial, :error_messages, :widget, :show_hidden_initial, :help_text
+    attr_accessor :required, :label, :initial, :error_messages, :widget, :hidden_widget, :show_hidden_initial, :help_text
 
     def initialize(options={})
       @required = options.fetch(:required, true)
