@@ -112,14 +112,16 @@ module Formsets
 
     # Maybe this should just go away?
     def cleaned_data
-      raise NoMethodError.new("'%s' object has no method 'cleaned_data'" %
-                              self.class.name) unless valid?
+      unless valid?
+        raise NoMethodError.new("'#{self.class.name}' object has no method 'cleaned_data'")
+      end
       @forms.collect(&:cleaned_data)
     end
 
     def deleted_forms
-      raise NoMethodError.new("'%s' object has no method 'deleted_forms'" %
-                              self.class.name) unless valid? && self.can_delete
+      unless valid? && self.can_delete
+        raise NoMethodError.new("'#{self.class.name}' object has no method 'deleted_forms'")
+      end
 
       if @deleted_form_indexes.nil?
         @deleted_form_indexes = (0...total_form_count).select do |i|
@@ -131,8 +133,10 @@ module Formsets
     end
 
     def ordered_forms
-      raise NoMethodError.new("'%s' object has no method 'ordered_forms'" %
-                              self.class.name) unless valid? && self.can_order
+      unless valid? && self.can_order
+        raise NoMethodError.new("'#{self.class.name}' object has no method 'ordered_forms'")
+      end
+
       if @ordering.nil?
         @ordering = (0...total_form_count).map do |i|
             form = @forms[i]
