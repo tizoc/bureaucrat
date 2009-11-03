@@ -6,7 +6,7 @@ Form handling for Ruby inspired by Django forms.
 Structure
 ---------
 
-                     Form ----> as_<render_mode>, valid?, errors/cleaned_date
+                     Form ----> as_<render_mode>, valid?, errors/cleaned_data
                 ______|________
               /       |         \
           Field     Field      Field  ----> clean

@@ -13,8 +13,8 @@ module Bureaucrat; module Forms
       @form = form
       @field = field
       @name = name
-      @html_name = form.add_prefix(name)
-      @html_initial_name = form.add_initial_prefix(name)
+      @html_name = form.add_prefix(name).to_sym
+      @html_initial_name = form.add_initial_prefix(name).to_sym
       @label = @field.label || pretty_name(name)
       @help_text = @field.help_text || ''
     end
@@ -116,7 +116,8 @@ module Bureaucrat; module Forms
 
     def initialize(data=nil, options={})
       @is_bound = !data.nil?
-      @data = data || {}
+      @data = data ? data.dup : {}
+      @data.each {|k, v| @data[k.to_sym] ||= v}
       @files = options.fetch(:files, {})
       @auto_id = options.fetch(:auto_id, 'id_%s')
       @prefix = options[:prefix]

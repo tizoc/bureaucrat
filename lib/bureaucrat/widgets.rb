@@ -282,7 +282,7 @@ module Widgets
       mark_safe("<input#{flatatt(final_attrs)} />")
     end
 
-    def value_from_datadict(data, files, name)
+    def value_from_datahash(data, files, name)
       data.include?(name) ? super(data, files, name) : false
     end
 
@@ -350,7 +350,7 @@ module Widgets
       super(name, value, attrs, choices)
     end
 
-    def value_from_datadict(data, files, name)
+    def value_from_datahash(data, files, name)
       value = data[name]
       case value
       when '2', true then true
