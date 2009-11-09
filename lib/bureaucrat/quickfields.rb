@@ -12,6 +12,10 @@ module Quickfields
     field name, CharField.new(options)
   end
 
+  def text(name, options={})
+    field name, CharField.new(options, :widget => Widgets::Textarea.new)
+  end
+
   def password(name, options={})
     field name, CharField.new(options.merge(:widget => Widgets::PasswordInput.new))
   end
