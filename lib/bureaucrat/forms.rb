@@ -34,7 +34,7 @@ module Bureaucrat; module Forms
       attrs[:id] ||= auto_id if auto_id && !widget.attrs.key?(:id)
 
       if !@form.bound?
-        data = @form.initial.fetch(@name, @field.initial)
+        data = @form.initial.fetch(@name.to_s, @field.initial)
         data = data.call if data.respond_to?(:call)
       else
         if @field.is_a?(Fields::FileField) && @data.nil?
