@@ -5,6 +5,7 @@ module Quickfields
   include Fields
 
   def hide(name)
+    base_fields[name] = base_fields[name].dup
     base_fields[name].widget = Widgets::HiddenInput.new
   end
 
