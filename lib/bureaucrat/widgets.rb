@@ -133,7 +133,7 @@ module Widgets
     end
 
     def value_from_datahash(data, files, name)
-      return data[name]
+      data[name]
     end
 
     def self.id_for_label(id_)
@@ -250,17 +250,17 @@ module Widgets
   end
 
   class Textarea < Widget
-      def initialize(attrs=nil)
-        # The 'rows' and 'cols' attributes are required for HTML correctness.
-        @attrs = {:cols => '40', :rows => '10'}
-        @attrs.merge!(attrs) if attrs
-      end
+    def initialize(attrs=nil)
+      # The 'rows' and 'cols' attributes are required for HTML correctness.
+      @attrs = {:cols => '40', :rows => '10'}
+      @attrs.merge!(attrs) if attrs
+    end
 
-      def render(name, value, attrs=nil)
-        value ||= ''
-        final_attrs = build_attrs(attrs, :name => name)
-        mark_safe("<textarea#{flatatt(final_attrs)}>#{conditional_escape(value.to_s)}</textarea>")
-      end
+    def render(name, value, attrs=nil)
+      value ||= ''
+      final_attrs = build_attrs(attrs, :name => name)
+      mark_safe("<textarea#{flatatt(final_attrs)}>#{conditional_escape(value.to_s)}</textarea>")
+    end
   end
 
   # DateInput
@@ -275,7 +275,7 @@ module Widgets
 
     def render(name, value, attrs=nil)
       final_attrs = build_attrs(attrs, :type => 'checkbox', :name => name.to_s)
-      result = self.check_test(value) rescue false
+      result = @check_test.call(value) rescue false
       final_attrs[:checked] = 'checked' if result
       final_attrs[:value] = value.to_s unless
         ['', true, false, nil].include?(value)

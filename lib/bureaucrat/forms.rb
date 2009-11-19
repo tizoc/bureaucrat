@@ -116,8 +116,8 @@ module Bureaucrat; module Forms
 
     def initialize(data=nil, options={})
       @is_bound = !data.nil?
-      @data = data ? data.dup : {}
-      @data.each {|k, v| @data[k.to_sym] ||= v}
+      @data = {}
+      data.each {|k, v| @data[k.to_sym] = @data[k] = v} if data
       @files = options.fetch(:files, {})
       @auto_id = options.fetch(:auto_id, 'id_%s')
       @prefix = options[:prefix]

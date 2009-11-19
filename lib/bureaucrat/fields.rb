@@ -353,7 +353,7 @@ module Fields
 
     def clean(value)
       case value
-      when true, 'true', '1' then true
+      when true, 'true', '1', 'on' then true
       when false, 'false', '0' then false
       else nil
       end
