@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'bureaucrat'
-  s.version = '0.0.2'
+  s.version = '0.0.3'
   s.summary = %{Form handling for Ruby inspired by Django forms.}
   s.date = %q{2009-11-03}
   s.author = "Bruno Deferrari"
