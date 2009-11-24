@@ -71,7 +71,7 @@ module Bureaucrat; module Forms
       id_ = widget.attrs[:id] || self.auto_id
 
       if id_
-        attrs = attrs ? flattatt(attrs) : ''
+        attrs = attrs ? flatatt(attrs) : ''
         contents = "<label for=\"#{Widgets::Widget.id_for_label(id_)}\"#{attrs}>#{contents}</label>"
       end
 
@@ -270,6 +270,10 @@ module Bureaucrat; module Forms
       @fields.select {|f| !f.hidden?}
     end
 
+    def label_attributes(name, field)
+      {}
+    end
+
   private
     def html_output(normal_row, error_row, row_ender, help_text_html,
                     errors_on_separate_row)
@@ -303,7 +307,7 @@ module Bureaucrat; module Forms
             unless bf.label.nil? || bf.label.empty?
               label = conditional_escape(bf.label)
               label += @label_suffix if @label_suffix && label[-1,1] !~ /[:?.!]/
-              label = bf.label_tag(label)
+              label = bf.label_tag(label, label_attributes(name, field))
             end
 
             help_text = field.help_text.empty? ? '' : help_text_html % field.help_text
