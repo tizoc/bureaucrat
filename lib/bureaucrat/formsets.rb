@@ -198,12 +198,12 @@ module Formsets
     end
 
     def add_fields(form, index)
-      if self.can_order
+      if can_order
         attrs = {:label => 'Order', :required => false}
         attrs[:initial] = index + 1 if index < initial_form_count
         form.fields[ORDERING_FIELD_NAME] = IntegerField.new(attrs)
       end
-      if self.can_delete
+      if can_delete
         field = BooleanField.new(:label => 'Delete', :required => false)
         form.fields[DELETION_FIELD_NAME] = field
       end

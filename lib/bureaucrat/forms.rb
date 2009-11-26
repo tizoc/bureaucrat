@@ -109,7 +109,7 @@ module Bureaucrat; module Forms
       end
     end
 
-    attr_accessor :error_class, :auto_id, :initial, :data, :files, :cleaned_data
+    attr_accessor :error_class, :auto_id, :initial, :data, :files, :cleaned_data, :fields
 
     def bound? ; @is_bound; end
 
