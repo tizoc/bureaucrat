@@ -186,6 +186,14 @@ class TestWidgets < BureaucratTestCase
       rendered = normalize_html(input.render('test', "hello"))
       assert_equal(excepted, rendered)
     end
+
+    should 'correctly render multiline' do
+      input = Widgets::Textarea.new(:cols => '50', :rows => '15')
+      excepted = normalize_html("<textarea name='test' rows='15' cols='50'>hello\n\ntest</textarea>")
+      rendered = normalize_html(input.render('test', "hello\n\ntest"))
+      p rendered
+      assert_equal(excepted, rendered)
+    end
   end
 
   describe 'CheckboxInput widget' do
