@@ -34,7 +34,7 @@ module Bureaucrat; module Forms
       attrs[:id] ||= auto_id if auto_id && !widget.attrs.key?(:id)
 
       if !@form.bound?
-        data = @form.initial.fetch(@name.to_s, @field.initial)
+        data = @form.initial.fetch(@name.to_sym, @field.initial)
         data = data.call if data.respond_to?(:call)
       else
         if @field.is_a?(Fields::FileField) && @data.nil?
@@ -45,7 +45,6 @@ module Bureaucrat; module Forms
       end
 
       name = only_initial ? @html_initial_name : @html_name
-
       widget.render(name.to_s, data, attrs)
     end
 
@@ -121,7 +120,8 @@ module Bureaucrat; module Forms
       @files = options.fetch(:files, {})
       @auto_id = options.fetch(:auto_id, 'id_%s')
       @prefix = options[:prefix]
-      @initial = options.fetch(:initial, {})
+      @initial = {}
+      options.fetch(:initial, {}).each {|k, v| @initial[k.to_sym] = @initial[k] = v}
       @error_class = options.fetch(:error_class, Fields::ErrorList)
       @label_suffix = options.fetch(:label_suffix, ':')
       @empty_permitted = options.fetch(:empty_permitted, false)
@@ -197,7 +197,7 @@ module Bureaucrat; module Forms
 
           begin
             if field.is_a?(Fields::FileField)
-              initial = @initial.fetch(name, field.initial)
+              initial = @initial.fetch(name.to_sym, field.initial)
               @cleaned_data[name] = field.clean(value, initial)
             else
               @cleaned_data[name] = field.clean(value)
@@ -236,7 +236,7 @@ module Bureaucrat; module Forms
             data_value = field.widget.value_from_datahash(@data, @files,
                                                           prefixed_name)
             if !field.show_hidden_initial
-              initial_value = @initial.fetch(name, field.initial)
+              initial_value = @initial.fetch(name.to_sym, field.initial)
             else
               initial_prefixed_name = add_initial_prefix(name)
               hidden_widget = field.hidden_widget.new

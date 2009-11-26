@@ -29,7 +29,7 @@ module Formsets
       'form'
     end
 
-    attr_accessor :form, :extra, :can_order, :can_delete, :max_num
+    attr_accessor :forms, :extra, :can_order, :can_delete, :max_num
 
     def initialize(data=nil, options={})
       @is_bound = !data.nil?

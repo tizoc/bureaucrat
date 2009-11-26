@@ -191,21 +191,21 @@ class TestWidgets < BureaucratTestCase
   describe 'CheckboxInput widget' do
     should 'correctly render with a false value' do
       input = Widgets::CheckboxInput.new
-      excepted = normalize_html("<input name='test' type='checkbox' value='false'/>")
-      rendered = normalize_html(input.render('test', 'false'))
+      excepted = normalize_html("<input name='test' type='checkbox'/>")
+      rendered = normalize_html(input.render('test', false))
       assert_equal(excepted, rendered)
     end
 
     should 'correctly render with a true value' do
       input = Widgets::CheckboxInput.new
-      excepted = normalize_html("<input name='test' type='checkbox' value='true'/>")
-      rendered = normalize_html(input.render('test', 'true'))
+      excepted ="<input checked='checked' name='test' type='checkbox'/>"
+      rendered = normalize_html(input.render('test', true))
       assert_equal(excepted, rendered)
     end
 
     should 'correctly render with a non boolean value' do
       input = Widgets::CheckboxInput.new
-      excepted = normalize_html("<input name='test' type='checkbox' value='anything'/>")
+      excepted = "<input checked='checked' name='test' type='checkbox' value='anything'/>"
       rendered = normalize_html(input.render('test', 'anything'))
       assert_equal(excepted, rendered)
     end
