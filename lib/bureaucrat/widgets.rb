@@ -394,4 +394,99 @@ module Widgets
       false
     end
   end
+
+  class RadioInput
+    include Utils
+
+    def initialize(name, value, attrs, choice, index)
+      @name = name
+      @value = value
+      @attrs = attrs
+      @choice_value = choice[0].to_s
+      @choice_label = choice[1].to_s
+      @index = index
+    end
+
+    def to_s
+      label_for = @attrs.include?(:id) ? " for=\"#{@attrs[:id]}_#{@index}\"" : ''
+      choice_label = conditional_escape(@choice_label.to_s)
+      mark_safe("<label#{label_for}>#{tag} #{choice_label}</label>")
+    end
+
+    def checked?
+      @value == @choice_value
+    end
+
+    def tag
+      @attrs[:id] = "#{@attrs['id']}_#{@index}"
+      final_attrs = @attrs.merge(:type => 'radio', :name => @name,
+                                 :value => @choice_value)
+      final_attrs[:checked] = 'checked' if checked?
+      mark_safe("<input#{flatatt(final_attrs)} />")
+    end
+  end
+
+  class RadioFieldRenderer
+    include Utils
+
+    def initialize(name, value, attrs, choices)
+      @name = name
+      @value = value
+      @attrs = attrs
+      @choices = choices
+    end
+
+    def each
+      @choices.each_with_index do |choice, i|
+              yield RadioInput.new(@name, @value, @attrs.dup, choice, i)
+            end
+    end
+
+    def [](idx)
+      choice = @choices[idx]
+      RadioInput.new(@name, @value, @attrs.dup, choice, idx)
+    end
+
+    def to_s
+      render
+    end
+
+    def render
+      lis = []
+      each {|radio| lis << "<li>#{radio}</li>"}
+      mark_safe("<ul>\n#{lis.join("\n")}\n</ul>")
+    end
+  end
+
+  class RadioSelect < Select
+    class << self
+      attr_accessor :renderer
+    end
+    self.renderer = RadioFieldRenderer
+
+    def initialize(*args)
+      options = args.last.is_a?(Hash) ? args.last : {}
+      @renderer = options.fetch(:renderer, self.class.renderer)
+      super
+    end
+
+    def get_renderer(name, value, attrs=nil, choices=[])
+      value ||= ''
+      str_value = value.to_s
+      final_attrs = build_attrs(attrs)
+      choices = @choices + choices
+      @renderer.new(name, str_value, final_attrs, choices)
+    end
+
+    def render(name, value, attrs=nil, choices=[])
+      get_renderer(name, value, attrs, choices).render
+    end
+
+    def self.id_for_label(id_)
+      id_ && id + '_0'
+    end
+  end
+
+  # TODO: CheckboxSelectMultiple < SelectMultiple
+
 end; end

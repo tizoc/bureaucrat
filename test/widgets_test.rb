@@ -191,7 +191,6 @@ class TestWidgets < BureaucratTestCase
       input = Widgets::Textarea.new(:cols => '50', :rows => '15')
       excepted = normalize_html("<textarea name='test' rows='15' cols='50'>hello\n\ntest</textarea>")
       rendered = normalize_html(input.render('test', "hello\n\ntest"))
-      p rendered
       assert_equal(excepted, rendered)
     end
   end
@@ -331,6 +330,22 @@ class TestWidgets < BureaucratTestCase
         rendered = normalize_html(input.render('test', ['banana', 'spoon']))
         assert_equal(excepted, rendered)
       end
+    end
+  end
+
+  describe "RadioSelect widget" do
+    should 'correctly render (none selected)' do
+      input = Widgets::RadioSelect.new(nil, [['1', 'One'], ['2', 'Two']])
+      expected = normalize_html("<ul>\n<li><label><input name='radio' id='_0' type='radio' value='1'/> One</label></li>\n<li><label><input name='radio' id='_1' type='radio' value='2'/> Two</label></li>\n</ul>")
+      rendered = normalize_html(input.render('radio', ''))
+      assert_equal(expected, rendered)
+    end
+
+    should 'correctly render (with selected)' do
+      input = Widgets::RadioSelect.new(nil, [['1', 'One'], ['2', 'Two']])
+      expected = normalize_html("<ul>\n<li><label><input checked='checked' name='radio' id='_0' type='radio' value='1'/> One</label></li>\n<li><label><input name='radio' id='_1' type='radio' value='2'/> Two</label></li>\n</ul>")
+      rendered = normalize_html(input.render('radio', '1'))
+      assert_equal(expected, rendered)
     end
   end
 end
