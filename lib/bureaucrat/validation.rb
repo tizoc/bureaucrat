@@ -70,7 +70,7 @@ module Validation
     end
 
     def is_array(value)
-      fail_with(:invalid_list) unless value.kind_of(Array)
+      fail_with(:invalid_list) unless value.kind_of?(Array)
     end
 
     def has_min_length(value, min_length)
