@@ -90,6 +90,13 @@ module Bureaucrat
 
     # Base class for forms. Forms are a collection of fields with data that
     # knows how to render and validate itself.
+    #
+    # === Bound vs Unbound forms
+    # A form is 'bound' if it was initialized with a set of data for its fields,
+    # otherwise it is 'unbound'. Only bound forms can be validated. Unbound
+    # forms always respond with false to +valid?+ and return an empty
+    # list of errors.
+
     class Form
       include Utils
       include Validation
