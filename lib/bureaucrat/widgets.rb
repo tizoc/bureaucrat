@@ -95,6 +95,7 @@ module Bureaucrat
       end
     end
 
+    # Base class for widgets
     class Widget
       include Utils
 
@@ -132,7 +133,7 @@ module Bureaucrat
         attrs
       end
 
-      def value_from_datahash(data, files, name)
+      def value_from_formdata(data, files, name)
         data[name]
       end
 
@@ -155,6 +156,7 @@ module Bureaucrat
       end
     end
 
+    # Base class for input widgets
     class Input < Widget
       class << self
         attr_accessor :input_type
@@ -179,10 +181,12 @@ module Bureaucrat
       end
     end
 
+    # Class for text inputs
     class TextInput < Input
       self.input_type = 'text'
     end
 
+    # Class for password inputs
     class PasswordInput < Input
       self.input_type = 'password'
 
@@ -197,6 +201,7 @@ module Bureaucrat
       end
     end
 
+    # Class for hidden inputs
     class HiddenInput < Input
       self.input_type = 'hidden'
       self.is_hidden = true
@@ -222,7 +227,7 @@ module Bureaucrat
                   end.join("\n"))
       end
 
-      def value_from_datahash(data, files, name)
+      def value_from_formdata(data, files, name)
         #if data.is_a?(MultiValueDict) || data.is_a?(MergeDict)
         #  data.getlist(name)
         #else
@@ -240,7 +245,7 @@ module Bureaucrat
         super(name, nil, attrs)
       end
 
-      def value_from_datahash(data, files, name)
+      def value_from_formdata(data, files, name)
         files.fetch(name, nil)
       end
 
@@ -282,7 +287,7 @@ module Bureaucrat
         mark_safe("<input#{flatatt(final_attrs)} />")
       end
 
-      def value_from_datahash(data, files, name)
+      def value_from_formdata(data, files, name)
         data.include?(name) ? super(data, files, name) : false
       end
 
@@ -350,7 +355,7 @@ module Bureaucrat
         super(name, value, attrs, choices)
       end
 
-      def value_from_datahash(data, files, name)
+      def value_from_formdata(data, files, name)
         value = data[name]
         case value
         when '2', true then true
@@ -375,7 +380,7 @@ module Bureaucrat
         mark_safe(output.join("\n"))
       end
 
-      def value_from_datahash(data, files, name)
+      def value_from_formdata(data, files, name)
         #if data.is_a?(MultiValueDict) || data.is_a?(MergeDict)
         #  data.getlist(name)
         #else
