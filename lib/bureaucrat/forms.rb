@@ -87,17 +87,23 @@ module Bureaucrat; module Forms
     end
   end
 
+  # Base class for forms. Forms are a collection of fields with data that
+  # knows how to render and validate itself.
   class Form
     include Utils
     include Validation
 
     class << self
-      attr_writer :base_fields
+      # Fields associated to the form class (an instance may add or remove
+      # fields from itself)
+      attr_accessor :base_fields
 
+      # Fields associated to the form class
       def base_fields
         @base_fields ||= Utils::OrderedHash.new
       end
 
+      # Declares a named field to be used on this form.
       def field(name, field_obj)
         base_fields[name] = field_obj
       end
@@ -109,9 +115,40 @@ module Bureaucrat; module Forms
       end
     end
 
-    attr_accessor :error_class, :auto_id, :initial, :data, :files, :cleaned_data, :fields
+    # Error class for this form
+    attr_accessor :error_class
+    # Format string for field id generator
+    attr_accessor :auto_id
+    # Hash of {field_name => initial_value}
+    attr_accessor :initial
+    # Data associated to this form {field_name => value}
+    attr_accessor :data
+    # TODO: complete implementation
+    attr_accessor :files
+    # Validated and cleaned data
+    attr_accessor :cleaned_data
+    # Fields belonging to this form
+    attr_accessor :fields
 
+    # Checks if this form was initialized with data.
     def bound? ; @is_bound; end
+
+    # Instantiates a new form bound to the passed data (or unbound if data is nil)
+    #
+    # +data+ is a hash of {field_name => value} for this form to be bound
+    # (will be unbound if nil)
+    #
+    # Possible options are:
+    #   :prefix          prefix that will be used for fields when rendered
+    #   :auto_id         format string that will be used when generating
+    #                    field ids (default: 'id_%s')
+    #   :initial         hash of {field_name => default_value}
+    #                    (doesn't make a form bound)
+    #   :error_class     class used to represent errors (default: ErrorList)
+    #   :label_suffix    suffix string that will be appended to labels' text
+    #                    (default: ':')
+    #   :empty_permited  boolean value that specifies if this form is valid
+    #                    when empty
 
     def initialize(data=nil, options={})
       @is_bound = !data.nil?
@@ -132,56 +169,70 @@ module Bureaucrat; module Forms
       @fields.each { |key, value| @fields[key] = value.dup }
     end
 
+    # Renders the form +as_table+
     def to_s
       as_table
     end
 
+    # Access a named field
     def [](name)
       field = @fields[name] or return nil
       BoundField.new(self, field, name)
     end
 
+    # Errors for this forms (runs validations)
     def errors
       full_clean if @errors.nil?
       @errors
     end
 
+    # Perform validation and returns true if there are no errors
     def valid?
       @is_bound && (errors.nil? || errors.empty?)
     end
 
+    # Generates a prefix for field named +field_name+
     def add_prefix(field_name)
       @prefix ? :"#{@prefix}-#{field_name}" : field_name
     end
 
+    # Generates an initial-prefix for field named +field_name+
     def add_initial_prefix(field_name)
       "initial-#{add_prefix(field_name)}"
     end
 
+    # true if the form is valid when empty
     def empty_permitted?
       @empty_permitted
     end
 
+    # Renders this form's fields as rows to be used on a table
     def as_table
       html_output('<tr><th>%(label)s</th><td>%(errors)s%(field)s%(help_text)s</td></tr>',
                   '<tr><td colspan="2">%s</td></tr>', '</td></tr>',
                   '<br />%s', false)
     end
 
+    # Renders this form's fields as li tags to be used on a list
     def as_ul
       html_output('<li>%(errors)s%(label)s %(field)s%(help_text)s</li>',
                   '<li>%s</li>', '</li>', ' %s', false)
     end
 
+    # Renders this form's fields as paragraph tags
     def as_p
       html_output('<p>%(label)s %(field)s%(help_text)s</p>',
                   '%s', '</p>', ' %s', true)
     end
 
+    # Returns the list of errors that aren't associated to a specific field
     def non_field_errors
       errors.fetch(:__NON_FIELD_ERRORS, @error_class.new)
     end
 
+    # Runs all the validations for this form. If the form is invalid
+    # the list of errors is populated, if it is valid, cleaned_data is
+    # populated
     def full_clean
       @errors = Fields::ErrorHash.new
 
@@ -219,14 +270,18 @@ module Bureaucrat; module Forms
       @cleaned_data = nil if @errors && !@errors.empty?
     end
 
+    # Performs the last step of validations on the form, override in subclasses
+    # to customize behaviour.
     def clean
       @cleaned_data
     end
 
+    # true if the form has data that isn't equal to its initial data
     def changed?
       changed_data && !changed_data.empty?
     end
 
+    # List names for fields that have changed data
     def changed_data
       if @changed_data.nil?
         @changed_data = []
@@ -252,29 +307,40 @@ module Bureaucrat; module Forms
       @changed_data
     end
 
+    # List of media associated to this form
     def media
       @fields.values.inject(Widgets::Media.new) do |media, field|
           media + field.widget.media
         end
     end
 
+    # true if this form contains fields that require the form to be
+    # multipart
     def multipart?
       @fields.any? {|f| f.widgetneeds_multipart_form?}
     end
 
+    # List of hidden fields.
     def hidden_fields
       @fields.select {|f| f.hidden?}
     end
 
+    # List of visible fields
     def visible_fields
       @fields.select {|f| !f.hidden?}
     end
 
+    # Attributes for labels, override in subclasses to customize behaviour
     def label_attributes(name, field)
       {}
     end
 
   private
+    # Helper method to render all the form fields. This is called by
+    # +as_table+, +as_p+, and +as_ul+ and you probably want to call it
+    # when writting custom renderers.
+    #
+    # TODO: document parameters
     def html_output(normal_row, error_row, row_ender, help_text_html,
                     errors_on_separate_row)
       top_errors = non_field_errors
@@ -290,7 +356,7 @@ module Bureaucrat; module Forms
 
     def add_fields_output(output, hidden_fields, normal_row, error_row,
                           help_text_html, errors_on_separate_row,
-                          top_errors)
+                          top_errors) # :nodoc:
       @fields.each do |name, field|
           bf = BoundField.new(self, field, name)
           bf_errors = @error_class.new(bf.errors.map {|e| conditional_escape(e)})
@@ -320,7 +386,7 @@ module Bureaucrat; module Forms
         end
     end
 
-    def add_hidden_fields_output(output, hidden_fields, row_ender)
+    def add_hidden_fields_output(output, hidden_fields, row_ender) # :nodoc:
       unless hidden_fields.empty?
         str_hidden = hidden_fields.join('')
 
@@ -340,6 +406,8 @@ module Bureaucrat; module Forms
       end
     end
 
+    # Returns the value for the field name +field_name+ from the associated
+    # data
     def raw_value(fieldname)
       field = @fields.fetch(fieldname)
       prefix = add_prefix(fieldname)
