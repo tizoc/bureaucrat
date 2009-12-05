@@ -418,7 +418,7 @@ module Widgets
     end
 
     def tag
-      @attrs[:id] = "#{@attrs[:id]}_#{@index}"
+      @attrs[:id] = "#{@attrs[:id]}_#{@index}" if @attrs.include?(:id)
       final_attrs = @attrs.merge(:type => 'radio', :name => @name,
                                  :value => @choice_value)
       final_attrs[:checked] = 'checked' if checked?
