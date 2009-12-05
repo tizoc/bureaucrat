@@ -155,7 +155,7 @@ module Bureaucrat
       #   :error_class     class used to represent errors (default: ErrorList)
       #   :label_suffix    suffix string that will be appended to labels' text
       #                    (default: ':')
-      #   :empty_permited  boolean value that specifies if this form is valid
+      #   :empty_permitted boolean value that specifies if this form is valid
       #                    when empty
 
       def initialize(data=nil, options={})
