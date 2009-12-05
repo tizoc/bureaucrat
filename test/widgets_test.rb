@@ -348,4 +348,37 @@ class TestWidgets < BureaucratTestCase
       assert_equal(expected, rendered)
     end
   end
+
+  describe 'CheckboxSelectMultiple widget' do
+    def setup
+      @choices = [['1', 'One'], ['2', 'Two'], ['3', 'Three']]
+    end
+
+    describe 'with empty choices' do
+      should 'render an empty ul' do
+        input = Widgets::CheckboxSelectMultiple.new
+        expected = normalize_html("<ul>\n</ul>")
+        rendered = normalize_html(input.render('test', 'hello', :id => 'id_checkboxes'))
+        assert_equal(expected, rendered)
+      end
+    end
+
+    describe 'with choices' do
+      should 'correctly render (none selected)' do
+        input = Widgets::CheckboxSelectMultiple.new(nil, @choices)
+        expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input name='test' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input name='test' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
+        rendered = normalize_html(input.render('test', 'hello', :id => 'id_checkboxes'))
+        assert_equal(expected, rendered)
+      end
+
+      should 'correctly render (with selected)' do
+        input = Widgets::CheckboxSelectMultiple.new(nil, @choices)
+        expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input checked='checked' name='test' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input checked='checked' name='test' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
+        rendered = normalize_html(input.render('test', ['1', '2'],
+                                               :id => 'id_checkboxes'))
+        assert_equal(expected, rendered)
+      end
+    end
+  end
+
 end
