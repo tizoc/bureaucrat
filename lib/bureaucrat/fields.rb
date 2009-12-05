@@ -407,7 +407,6 @@ module Fields
     end
   end
 
-  # TODO: tests
   class TypedChoiceField < ChoiceField
     def initialize(choices=[], options={})
       @coerce = options.delete(:coerce) || lambda{|val| val}

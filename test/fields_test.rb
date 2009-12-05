@@ -574,4 +574,47 @@ class TestFields < BureaucratTestCase
       end
     end
   end
+
+  describe 'TypedChoiceField' do
+    setup do
+      @choices = [[1, 'One'], [2, 'Two'], ['3', 'Three']]
+      to_int = lambda{|val| Integer(val)}
+      @field = Fields::TypedChoiceField.new(@choices,
+                                            :coerce => to_int)
+    end
+
+    describe 'on clean' do
+      should 'validate all values in choices list' do
+        assert_nothing_raised do
+          @choices.collect(&:first).each do |valid|
+            @field.clean(valid)
+          end
+        end
+      end
+
+      should 'not validate a value not in choices list' do
+        assert_raise(Fields::FieldValidationError) do
+          @field.clean('four')
+        end
+      end
+
+      should 'return the original value if valid' do
+        value = 1
+        result = @field.clean(value)
+        assert_equal(value, result)
+      end
+
+      should 'return a coerced version of the original value if valid but of different type' do
+        value = 2
+        result = @field.clean(value.to_s)
+        assert_equal(value, result)
+      end
+
+      should 'return an empty string if value is empty and not required' do
+        @field.required = false
+        result = @field.clean('')
+        assert_equal('', result)
+      end
+    end
+  end
 end
