@@ -418,7 +418,7 @@ module Widgets
     end
 
     def tag
-      @attrs[:id] = "#{@attrs['id']}_#{@index}"
+      @attrs[:id] = "#{@attrs[:id]}_#{@index}"
       final_attrs = @attrs.merge(:type => 'radio', :name => @name,
                                  :value => @choice_value)
       final_attrs[:checked] = 'checked' if checked?
@@ -483,7 +483,7 @@ module Widgets
     end
 
     def self.id_for_label(id_)
-      id_ && id + '_0'
+      id_.empty? ? id_ : id_ + '_0'
     end
   end
 

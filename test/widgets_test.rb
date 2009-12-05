@@ -336,15 +336,15 @@ class TestWidgets < BureaucratTestCase
   describe "RadioSelect widget" do
     should 'correctly render (none selected)' do
       input = Widgets::RadioSelect.new(nil, [['1', 'One'], ['2', 'Two']])
-      expected = normalize_html("<ul>\n<li><label><input name='radio' id='_0' type='radio' value='1'/> One</label></li>\n<li><label><input name='radio' id='_1' type='radio' value='2'/> Two</label></li>\n</ul>")
-      rendered = normalize_html(input.render('radio', ''))
+      expected = normalize_html("<ul>\n<li><label for='id_radio_0'><input name='radio' id='id_radio_0' type='radio' value='1'/> One</label></li>\n<li><label for='id_radio_1'><input name='radio' id='id_radio_1' type='radio' value='2'/> Two</label></li>\n</ul>")
+      rendered = normalize_html(input.render('radio', '', :id => 'id_radio'))
       assert_equal(expected, rendered)
     end
 
     should 'correctly render (with selected)' do
       input = Widgets::RadioSelect.new(nil, [['1', 'One'], ['2', 'Two']])
-      expected = normalize_html("<ul>\n<li><label><input checked='checked' name='radio' id='_0' type='radio' value='1'/> One</label></li>\n<li><label><input name='radio' id='_1' type='radio' value='2'/> Two</label></li>\n</ul>")
-      rendered = normalize_html(input.render('radio', '1'))
+      expected = normalize_html("<ul>\n<li><label for='id_radio_0'><input checked='checked' name='radio' id='id_radio_0' type='radio' value='1'/> One</label></li>\n<li><label for='id_radio_1'><input name='radio' id='id_radio_1' type='radio' value='2'/> Two</label></li>\n</ul>")
+      rendered = normalize_html(input.render('radio', '1', :id => 'id_radio'))
       assert_equal(expected, rendered)
     end
   end
