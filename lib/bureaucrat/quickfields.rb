@@ -76,5 +76,14 @@ module Bureaucrat
       field name, MultipleChoiceField.new(choices, options)
     end
 
+    # Declare a +ChoiceField+ using the +RadioSelect+ widget
+    def radio_choice(name, choices=[], options={})
+      field name, ChoiceField.new(choices, options.merge(:widget => Widgets::RadioSelect.new))
+    end
+
+    # Declare a +MultipleChoiceField+ with the +CheckboxSelectMultiple+ widget
+    def checkbox_multiple_choice(name, choices=[], options={})
+      field name, MultipleChoiceField.new(choices, options.merge(:widget => Widgets::CheckboxSelectMultiple.new))
+    end
   end
 end
