@@ -427,7 +427,6 @@ module Fields
     end
   end
 
-  # TODO: tests
   class MultipleChoiceField < ChoiceField
     widget        Widgets::SelectMultiple
     hidden_widget Widgets::MultipleHiddenInput
@@ -445,9 +444,8 @@ module Fields
           new_value.each do |val|
             fail_with(:invalid_choice, :value => val) unless valid_value?(val)
           end
+          new_value
         end
-
-      new_value
     end
   end
 

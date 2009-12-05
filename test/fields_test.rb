@@ -617,4 +617,47 @@ class TestFields < BureaucratTestCase
       end
     end
   end
+
+  describe 'MultipleChoiceField' do
+    setup do
+      @choices = [['tea', 'Tea'], ['milk', 'Milk'], ['coffee', 'Coffee']]
+      @field = Fields::MultipleChoiceField.new(@choices)
+    end
+
+    describe 'on clean' do
+      should 'validate all single values in choices list' do
+        assert_nothing_raised do
+          @choices.collect(&:first).each do |valid|
+            @field.clean([valid])
+          end
+        end
+      end
+
+      should 'validate multiple values' do
+        values = ['tea', 'coffee']
+        assert_nothing_raised do
+          @field.clean(values)
+        end
+      end
+
+      should 'not validate a value not in choices list' do
+        assert_raise(Fields::FieldValidationError) do
+          @field.clean(['tea', 'not_in_choices'])
+        end
+      end
+
+      should 'return the original value if valid' do
+        value = 'tea'
+        result = @field.clean([value])
+        assert_equal([value], result)
+      end
+
+      should 'return an empty list if value is empty and not required' do
+        @field.required = false
+        result = @field.clean([])
+        assert_equal([], result)
+      end
+    end
+  end
+
 end
