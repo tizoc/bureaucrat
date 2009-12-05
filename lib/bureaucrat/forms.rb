@@ -5,11 +5,17 @@ require 'bureaucrat/fields'
 
 module Bureaucrat
   module Forms
+
+    # Instances of +BoundField+ represent a fields with associated data.
+    # +BoundField+s are used internally by the +Form+ class.
     class BoundField
       include Utils
 
+      # Field label text
       attr_accessor :label
 
+      # Instantiates a new +BoundField+ associated to +form+'s field +field+
+      # named +name+.
       def initialize(form, field, name)
         @form = form
         @field = field
@@ -20,14 +26,18 @@ module Bureaucrat
         @help_text = @field.help_text || ''
       end
 
+      # Renders the field.
       def to_s
         @field.show_hidden_initial ? as_widget + as_hidden(nil, true) : as_widget
       end
 
+      # Errors for this field.
       def errors
         @form.errors.fetch(@name, @form.error_class.new)
       end
 
+      # Renders this field with the option of using alternate widgets
+      # and attributes.
       def as_widget(widget=nil, attrs=nil, only_initial=false)
         widget ||= @field.widget
         attrs ||= {}
@@ -49,22 +59,27 @@ module Bureaucrat
         widget.render(name.to_s, data, attrs)
       end
 
+      # Renders this field as a text input.
       def as_text(attrs=nil, only_initial=false)
         as_widget(Widgets::TextInput.new, attrs, only_initial)
       end
 
+      # Renders this field as a text area.
       def as_textarea(attrs=nil, only_initial=false)
         as_widget(Widgets::Textarea.new, attrs, only_initial)
       end
 
+      # Renders this field as hidden.
       def as_hidden(attrs=nil, only_initial=false)
         as_widget(@field.hidden_widget, attrs, only_initial)
       end
 
+      # The data associated to this field.
       def data
         @field.widget.value_from_datahash(@form.data, @form.files, @html_name)
       end
 
+      # Renders the label tag for this field.
       def label_tag(contents=nil, attrs=nil)
         contents ||= conditional_escape(@label)
         widget = @field.widget
@@ -78,10 +93,12 @@ module Bureaucrat
         mark_safe(contents)
       end
 
+      # true if the widget for this field is of the hidden kind.
       def hidden?
         @field.widget.hidden?
       end
 
+      # Generates the id for this field.
       def auto_id
         fauto_id = @form.auto_id
         fauto_id ? fauto_id % @html_name : ''
