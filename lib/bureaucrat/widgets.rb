@@ -521,4 +521,8 @@ module Widgets
     end
   end
 
+  # TODO: MultiWidget < Widget
+  # TODO: SplitDateTimeWidget < MultiWidget
+  # TODO: SplitHiddenDateTimeWidget < SplitDateTimeWidget
+
 end; end
