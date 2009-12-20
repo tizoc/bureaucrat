@@ -283,6 +283,7 @@ module Bureaucrat
               @cleaned_data[name] = send(clean_method) if respond_to?(clean_method)
             rescue Fields::FieldValidationError => e
               @errors[name] = e.messages
+              @cleaned_data.delete(name)
             end
           end
 
