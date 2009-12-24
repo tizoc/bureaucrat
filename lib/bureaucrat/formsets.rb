@@ -21,7 +21,6 @@ module Bureaucrat
 
     class BaseFormSet
       include Utils
-      include Validation
       include Fields
       include Forms
 
@@ -53,7 +52,7 @@ module Bureaucrat
         if @data || @files
           form = ManagementForm.new(@data, :auto_id => @auto_id,
                                     :prefix => @prefix)
-          raise ValidationError.new('ManagementForm data is missing or has been tampered with') unless
+          raise FieldValidationError.new('ManagementForm data is missing or has been tampered with') unless
             form.valid?
         else
           form = ManagementForm.new(nil, :auto_id => @auto_id,
