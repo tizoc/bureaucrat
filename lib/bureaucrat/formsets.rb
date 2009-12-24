@@ -186,7 +186,7 @@ module Bureaucrat
 
           begin
             self.clean
-          rescue ValidationError => e
+          rescue FieldValidationError => e
             @non_form_errors = e.messages
           end
         else
