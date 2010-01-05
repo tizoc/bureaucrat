@@ -28,9 +28,10 @@ module Bureaucrat
         'form'
       end
 
-      attr_accessor :forms, :extra, :can_order, :can_delete, :max_num
+      attr_accessor :forms, :form, :extra, :can_order, :can_delete, :max_num
 
       def initialize(data=nil, options={})
+        set_defaults
         @is_bound = !data.nil?
         @prefix = options.fetch(:prefix, self.class.default_prefix)
         @auto_id = options.fetch(:auto_id, 'id_%s')
@@ -230,18 +231,17 @@ module Bureaucrat
 
     def make_formset_class(form, options={})
       formset = options.fetch(:formset, BaseFormSet)
-      attrs = {
-          :form => form,
-          :extra => options.fetch(:extra, 1),
-          :can_order => options.fetch(:can_order, false),
-          :can_delete => options.fetch(:can_delete, false),
-          :max_num => options.fetch(:max_num, 0)
-        }
+
       Class.new(formset) do
-          attrs.each do |name, value|
-            define_method(name) { value }
-          end
+        define_method :set_defaults do
+          @form = form
+          @extra = options.fetch(:extra, 1)
+          @can_order = options.fetch(:can_order, false)
+          @can_delete = options.fetch(:can_delete, false)
+          @max_num = options.fetch(:max_num, 0)
         end
+        private :set_defaults
+      end
     end
 
     def all_valid?(formsets)
