@@ -199,6 +199,13 @@ module Bureaucrat
         as_table
       end
 
+      # Iterates over the fields
+      def each
+        @fields.each do |name, field|
+          yield BoundField.new(self, field, name)
+        end
+      end
+
       # Access a named field
       def [](name)
         field = @fields[name] or return nil
