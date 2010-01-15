@@ -381,7 +381,7 @@ module Bureaucrat
         add_fields_output(output, hidden_fields, normal_row, error_row,
                           help_text_html, errors_on_separate_row, top_errors)
         output = [error_row % top_errors] + output unless top_errors.empty?
-        add_hidden_fields_output(output, hidden_fields, row_ender)
+        add_hidden_fields_output(output, hidden_fields, normal_row, row_ender)
 
         mark_safe(output.join("\n"))
       end
@@ -418,7 +418,7 @@ module Bureaucrat
           end
       end
 
-      def add_hidden_fields_output(output, hidden_fields, row_ender) # :nodoc:
+      def add_hidden_fields_output(output, hidden_fields, normal_row, row_ender) # :nodoc:
         unless hidden_fields.empty?
           str_hidden = hidden_fields.join('')
 
