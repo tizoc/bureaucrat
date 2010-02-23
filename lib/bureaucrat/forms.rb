@@ -12,7 +12,7 @@ module Bureaucrat
       include Utils
 
       # Field label text
-      attr_accessor :label
+      attr_accessor :label, :form, :field, :name, :html_name, :html_initial_name, :help_text
 
       # Instantiates a new +BoundField+ associated to +form+'s field +field+
       # named +name+.
