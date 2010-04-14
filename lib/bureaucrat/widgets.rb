@@ -326,6 +326,9 @@ module Bureaucrat
                 output << render_option(val, label, selected_choices)
               end
               output << '</optgroup>'
+            elsif option_value.is_a?(Array)
+              output << render_option(option_value[0], option_label,
+                                      selected_choices, option_value[1])
             else
               output << render_option(option_value, option_label,
                                       selected_choices)
@@ -334,10 +337,14 @@ module Bureaucrat
         output.join("\n")
       end
 
-      def render_option(option_value, option_label, selected_choices)
+      def render_option(option_value, option_label, selected_choices, option_attributes = {})
         option_value = option_value.to_s
-        selected_html = selected_choices.include?(option_value) ? ' selected="selected"' : ''
-        "<option value=\"#{escape(option_value)}\"#{selected_html}>#{conditional_escape(option_label.to_s)}</option>"
+        attribute_html = ""
+        option_attributes.each do |attr_name, attr_value|
+          attribute_html << " #{attr_name.to_s}=\"#{escape(attr_value.to_s)}\""
+        end
+        attribute_html << ' selected="selected"' if selected_choices.include?(option_value)
+        "<option value=\"#{escape(option_value)}\"#{attribute_html}>#{conditional_escape(option_label.to_s)}</option>"
       end
     end
 
