@@ -1,3 +1,4 @@
+require 'resolv'
 require 'bureaucrat/utils'
 
 module Bureaucrat
@@ -123,6 +124,10 @@ module Bureaucrat
 
       def is_email(value)
         matches_regex(value, EMAIL_RE)
+      end
+
+      def domain_has_mx(value)
+        fail_with(:no_mx, :domain => value) if Resolv::DNS.new.getresources(value, Resolv::DNS::Resource::IN::MX).empty?
       end
     end
 

@@ -285,9 +285,20 @@ module Bureaucrat
       EMAIL_RE = /(^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*")@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/i
 
       set_error :invalid, 'Enter a valid e-mail address.'
+      set_error :no_mx, '%(domain)s is not a valid e-mail domain.'
 
       def initialize(options={})
         super(EMAIL_RE, options)
+        @check_mx = options[:check_mx] || false
+      end
+
+      def clean(value)
+        value = super(value)
+        return value if value.empty?
+        return value unless @check_mx
+        domain = /@(.*)$/.match(value)[1]
+        validating { domain_has_mx(domain) }
+        value
       end
     end
 
