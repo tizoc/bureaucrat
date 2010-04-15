@@ -40,7 +40,7 @@ module Bureaucrat
 
       def as_text
         map do |k, v|
-          '* %s\n%s' % [k, v.map{|i| '  * %s'}.join("\n")]
+          "* %s\n%s" % [k, v.map{|i| '  * %s'}.join("\n")]
         end.join("\n")
       end
     end
