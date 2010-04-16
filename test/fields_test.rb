@@ -445,8 +445,9 @@ class TestFields < BureaucratTestCase
         invalid_values = ['banana', 'spoon', 'invalid#bla@domain.com',
                           'invalid@@domain.com', 'invalid@domain',
                           'invalid@.com']
-        assert_raise(Fields::FieldValidationError) do
-          invalid_values.each do |invalid|
+        invalid_values.each do |invalid|
+          assert_raise(Fields::FieldValidationError) do
+            STDERR.puts "========== #{invalid}"
             @field.clean(invalid)
           end
         end
