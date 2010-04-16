@@ -43,7 +43,11 @@ module Bureaucrat
 
     # Declare an +EmailField+
     def email(name, options={})
-      field name, EmailField.new(options)
+      if !options.delete(:check_mx) then
+        field name, EmailField.new(options)
+      else
+        field name, DeliverableEmailField.new(options)
+      end
     end
 
     # Declare a +FileField+
