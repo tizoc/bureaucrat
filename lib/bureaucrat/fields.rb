@@ -401,6 +401,9 @@ module Bureaucrat
               v.each do |k2, v2|
                 return true if value == k2.to_s
               end
+            elsif k.is_a?(Hash)
+              # this is a hash valued choice list
+              return true if value == k[:value].to_s
             else
               return true if value == k.to_s
             end
