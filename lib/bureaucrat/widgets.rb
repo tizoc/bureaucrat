@@ -336,11 +336,11 @@ module Bureaucrat
 
       def render_option(option_attributes, option_label, selected_choices)
         option_attributes = { :value => option_attributes.to_s } unless option_attributes.is_a?(Hash)
+        option_attributes[:selected] = "selected" if selected_choices.include?(option_attributes[:value])
         attributes = []
         option_attributes.each_pair do |attr_name, attr_value|
           attributes << %Q[#{attr_name.to_s}="#{escape(attr_value.to_s)}"]
         end
-        attributes << 'selected="selected"' if selected_choices.include?(option_attributes[:value])
         "<option #{attributes.join(' ')}>#{conditional_escape(option_label.to_s)}</option>"
       end
     end
