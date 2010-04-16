@@ -454,6 +454,32 @@ class TestFields < BureaucratTestCase
     end
   end
 
+  describe 'DeliverableEmailField' do
+    setup do
+      @field = Fields::DeliverableEmailField.new
+    end
+
+    describe 'on clean' do
+      should 'validate email values with working MX' do
+        valid_values = ['email@gmail.com', 'test@hotmail.co.uk']
+        valid_values.each do |valid|
+          assert_nothing_raised do
+            @field.clean(valid)
+          end
+        end
+      end
+
+      should 'not validate values that look OK but have no MX' do
+        invalid_values = ['email@this-domain-should-not-exist.com', 'email@nor-should-this-one.co.jp']
+        invalid_values.each do |invalid|
+          assert_raise(Fields::FieldValidationError) do
+            @field.clean(invalid)
+          end
+        end
+      end
+    end
+  end
+
   describe 'BooleanField' do
     setup do
       @true_values = [1, true, 'true', '1']
