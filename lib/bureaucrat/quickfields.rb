@@ -11,6 +11,11 @@ module Bureaucrat
       base_fields[name].widget = Widgets::HiddenInput.new
     end
 
+    # Delete field named +name+
+    def delete(name)
+      base_fields.delete name
+    end
+
     # Declare a +CharField+ with text input widget
     def string(name, options={})
       field name, CharField.new(options)

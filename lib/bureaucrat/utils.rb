@@ -24,6 +24,11 @@ module Bureaucrat
         @ordered_keys << key unless @ordered_keys.include?(key)
       end
 
+      def delete key
+        super key
+        @ordered_keys.delete key
+      end
+
       def each
         @ordered_keys.each do |key|
             yield key, self[key]
