@@ -318,6 +318,7 @@ module Bureaucrat
         selected_choices = selected_choices.map(&:to_s).uniq
         output = []
         (@choices + choices).each do |option_value, option_label|
+            option_label ||= option_value
             if option_label.is_a?(Array)
               output << '<optgroup label="%s">' % escape(option_value.to_s)
               option_label.each do |option|
@@ -333,10 +334,14 @@ module Bureaucrat
         output.join("\n")
       end
 
-      def render_option(option_value, option_label, selected_choices)
-        option_value = option_value.to_s
-        selected_html = selected_choices.include?(option_value) ? ' selected="selected"' : ''
-        "<option value=\"#{escape(option_value)}\"#{selected_html}>#{conditional_escape(option_label.to_s)}</option>"
+      def render_option(option_attributes, option_label, selected_choices)
+        option_attributes = { :value => option_attributes.to_s } unless option_attributes.is_a?(Hash)
+        option_attributes[:selected] = "selected" if selected_choices.include?(option_attributes[:value])
+        attributes = []
+        option_attributes.each_pair do |attr_name, attr_value|
+          attributes << %Q[#{attr_name.to_s}="#{escape(attr_value.to_s)}"]
+        end
+        "<option #{attributes.join(' ')}>#{conditional_escape(option_label.to_s)}</option>"
       end
     end
 

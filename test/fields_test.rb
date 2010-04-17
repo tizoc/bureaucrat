@@ -543,7 +543,9 @@ class TestFields < BureaucratTestCase
   describe 'ChoiceField' do
     setup do
       @choices = [['tea', 'Tea'], ['milk', 'Milk']]
+      @choices_hash = [[{ :value => "able" }, "able"], [{ :value => "baker" }, "Baker"]]
       @field = Fields::ChoiceField.new(@choices)
+      @field_hash = Fields::ChoiceField.new(@choices_hash)
     end
 
     describe 'on clean' do
@@ -555,9 +557,23 @@ class TestFields < BureaucratTestCase
         end
       end
 
+      should 'validate all values in a hash choices list' do
+        assert_nothing_raised do
+          @choices_hash.collect(&:first).each do |valid|
+            @field_hash.clean(valid[:value])
+          end
+        end
+      end
+
       should 'not validate a value not in choices list' do
         assert_raise(Fields::FieldValidationError) do
           @field.clean('not_in_choices')
+        end
+      end
+
+      should 'not validate a value not in a hash choices list' do
+        assert_raise(Fields::FieldValidationError) do
+          @field_hash.clean('not_in_choices')
         end
       end
 
@@ -567,9 +583,21 @@ class TestFields < BureaucratTestCase
         assert_equal(value, result)
       end
 
+      should 'return the original value if valid from a hash choices list' do
+        value = 'baker'
+        result = @field_hash.clean(value)
+        assert_equal(value, result)
+      end
+
       should 'return an empty string if value is empty and not required' do
         @field.required = false
         result = @field.clean('')
+        assert_equal('', result)
+      end
+
+      should 'return an empty string if value is empty and not required from a hash choices list' do
+        @field_hash.required = false
+        result = @field_hash.clean('')
         assert_equal('', result)
       end
     end

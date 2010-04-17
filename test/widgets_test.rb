@@ -224,6 +224,11 @@ class TestWidgets < BureaucratTestCase
       @choices = [['1', 'One'], ['2', 'Two']]
       @groupchoices = [['numbers', ['1', 'One'], ['2', 'Two']],
                        ['words', [['spoon', 'Spoon'], ['banana', 'Banana']]]]
+      @simplechoices = [ "able", "baker", "charlie" ]
+      @optionchoices = [[{ :value => "foo", :disabled => "disabled", :onSelect => "doSomething();" }, "Foo"],
+                        [{ :value => "bar" }, "Bar"]]
+      @optionchoicesselected = [[{ :value => "foo", :disabled => "disabled" }, "Foo"],
+                                [{ :value => "bar", :selected => "selected" }, "Bar"]]
     end
 
     describe 'with empty choices' do
@@ -263,6 +268,45 @@ class TestWidgets < BureaucratTestCase
         input = Widgets::Select.new(nil, @groupchoices)
         expected = normalize_html("<select name='test'>\n<optgroup label='numbers'>\n<option value='1'/>\n<option value='One'/>\n</optgroup>\n<optgroup label='words'>\n<option value='spoon'>Spoon</option>\n<option value='banana' selected='selected'>Banana</option>\n</optgroup>\n</select>")
         rendered = normalize_html(input.render('test', 'banana'))
+        assert_equal(expected, rendered)
+      end
+    end
+
+    describe 'with simple choices' do
+      should 'correctly render (none selected)' do
+        input = Widgets::Select.new(nil, @simplechoices)
+        expected = normalize_html("<select name='test'>\n<option value='able'>able</option>\n<option value='baker'>baker</option>\n<option value='charlie'>charlie</option>\n</select>")
+        rendered = normalize_html(input.render('test', 'hello'))
+        assert_equal(expected, rendered)
+      end
+
+      should 'correctly render (with selected)' do
+        input = Widgets::Select.new(nil, @simplechoices)
+        expected = normalize_html("<select name='test'>\n<option value='able'>able</option>\n<option value='baker' selected='selected'>baker</option>\n<option value='charlie'>charlie</option>\n</select>")
+        rendered = normalize_html(input.render('test', 'baker'))
+        assert_equal(expected, rendered)
+      end
+    end
+
+    describe 'with option choices' do
+      should 'correctly render (none selected)' do
+        input = Widgets::Select.new(nil, @optionchoices)
+        expected = normalize_html("<select name='test'>\n<option value='foo' disabled='disabled' onSelect='doSomething();'>Foo</option>\n<option value='bar'>Bar</option>\n</select>")
+        rendered = normalize_html(input.render('test', 'hello'))
+        assert_equal(expected, rendered)
+      end
+
+      should 'correctly render (traditional selected)' do
+        input = Widgets::Select.new(nil, @optionchoices)
+        expected = normalize_html("<select name='test'>\n<option value='foo' disabled='disabled' onSelect='doSomething();'>Foo</option>\n<option value='bar' selected='selected'>Bar</option>\n</select>")
+        rendered = normalize_html(input.render('test', 'bar'))
+        assert_equal(expected, rendered)
+      end
+
+      should 'correctly render (option selected)' do
+        input = Widgets::Select.new(nil, @optionchoicesselected)
+        expected = normalize_html("<select name='test'>\n<option value='foo' disabled='disabled'>Foo</option>\n<option value='bar' selected='selected'>Bar</option>\n</select>")
+        rendered = normalize_html(input.render('test', 'hello'))
         assert_equal(expected, rendered)
       end
     end
