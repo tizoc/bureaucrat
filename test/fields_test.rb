@@ -442,7 +442,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not validate non-email-matching values' do
-        invalid_values = ['banana', 'spoon', 'invalid#bla@domain.com',
+        invalid_values = ['banana', 'spoon', 'invalid@dom#ain.com',
                           'invalid@@domain.com', 'invalid@domain',
                           'invalid@.com']
         invalid_values.each do |invalid|
