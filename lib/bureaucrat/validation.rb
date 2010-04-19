@@ -1,3 +1,4 @@
+require 'resolv'
 require 'bureaucrat/utils'
 
 module Bureaucrat
@@ -123,6 +124,13 @@ module Bureaucrat
 
       def is_email(value)
         matches_regex(value, EMAIL_RE)
+      end
+
+      def domain_mail_is_deliverable(value)
+        # we should cache successfully validated domains for a while, perhaps with api_cache?
+        # but that means also pulling in moneta &c., and configuring the store...
+        # should we accept domains with no MX but a valid A? it's deprecated but notionally valid...
+        fail_with(:no_mx, :domain => value) if Resolv::DNS.new.getresources(value, Resolv::DNS::Resource::IN::MX).empty?
       end
     end
 

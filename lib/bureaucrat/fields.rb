@@ -291,6 +291,18 @@ module Bureaucrat
       end
     end
 
+    class DeliverableEmailField < EmailField
+      set_error :no_mx, '%(domain)s is not a valid e-mail domain.'
+
+      def clean(value)
+        value = super(value)
+        return value if value.empty?
+        domain = /@(.*)$/.match(value)[1]
+        validating { domain_mail_is_deliverable(domain) }
+        value
+      end
+    end
+
     # TODO: add tests
     class FileField < Field
       widget    Widgets::FileInput
