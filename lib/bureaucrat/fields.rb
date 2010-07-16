@@ -131,8 +131,9 @@ module Bureaucrat
 
       def initialize_copy(original)
         super(original)
-        @initial = original.initial ? original.initial.dup : original.initial
-        @label = original.label ? original.label.dup : original.label
+        @initial = original.initial && original.initial.dup
+        @label = original.label && original.label.dup
+        @widget = original.widget && original.widget.dup
         @error_messages = original.error_messages.dup
       end
 
