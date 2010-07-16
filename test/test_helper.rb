@@ -14,7 +14,7 @@ end
 
 def normalize_html(html)
   begin
-    node = REXML::Document.new("<DUMMYROOT>#{html}</DUMMYROOT>")
+    node = REXML::Document.new("<DUMMYROOT>#{html.strip}</DUMMYROOT>")
     node.to_s.gsub!(/<\/?DUMMYROOT>/, '')
   rescue Exception => e
     html
