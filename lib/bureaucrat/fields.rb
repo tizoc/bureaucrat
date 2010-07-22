@@ -129,6 +129,15 @@ module Bureaucrat
         # Override to add field specific attributes
       end
 
+      # Populates object.name if posible
+      def populate_object(object, name, value)
+        setter = :"#{name}="
+
+        if object.respond_to?(setter)
+          object.send(setter, value)
+        end
+      end
+
       def initialize_copy(original)
         super(original)
         @initial = original.initial && original.initial.dup

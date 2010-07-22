@@ -367,6 +367,13 @@ module Bureaucrat
         {}
       end
 
+      # Populates the passed object's attributes with data from the fields
+      def populate_object(object)
+        @fields.each do |name, field|
+          field.populate_object(object, name, @cleaned_data[name.to_sym])
+        end
+      end
+
     private
       # Helper method to render all the form fields. This is called by
       # +as_table+, +as_p+, and +as_ul+ and you probably want to call it

@@ -128,4 +128,65 @@ class TestForm < BureaucratTestCase
       assert_equal(expected, rendered)
     end
   end
+
+  describe 'populating objects' do
+    class PopulatorForm < Forms::Form
+      include Bureaucrat::Fields
+
+      field :name, CharField.new(:required => false)
+      field :color, CharField.new(:required => false)
+      field :number, IntegerField.new(:required => false)
+    end
+
+    should 'correctly populate an object with all fields' do
+      obj = Struct.new(:name, :color, :number).new
+      name_value = 'The Name'
+      color_value = 'Black'
+      number_value = 10
+
+      form = PopulatorForm.new(:name => name_value,
+                               :color => color_value,
+                               :number => number_value.to_s)
+
+      assert form.valid?
+
+      form.populate_object(obj)
+
+      assert_equal(name_value, obj.name)
+      assert_equal(color_value, obj.color)
+      assert_equal(number_value, obj.number)
+    end
+
+    should 'correctly populate an object without all fields' do
+      obj = Struct.new(:name, :number).new
+      name_value = 'The Name'
+      color_value = 'Black'
+      number_value = 10
+
+      form = PopulatorForm.new(:name => name_value,
+                               :color => color_value,
+                               :number => number_value.to_s)
+
+      assert form.valid?
+
+      form.populate_object(obj)
+
+      assert_equal(name_value, obj.name)
+      assert_equal(number_value, obj.number)
+    end
+
+    should 'correctly populate an object with all fields with some missing values' do
+      obj = Struct.new(:name, :color, :number).new('a', 'b', 2)
+
+      form = PopulatorForm.new({})
+
+      assert form.valid?
+
+      form.populate_object(obj)
+
+      assert_equal('', obj.name)
+      assert_equal('', obj.color)
+      assert_equal(nil, obj.number)
+    end
+  end
 end
