@@ -399,7 +399,7 @@ module Bureaucrat
       end
 
       def choices=(value)
-        @choices = @widget.choices = value.to_a
+        @choices = @widget.choices = value
       end
 
       def clean(value)

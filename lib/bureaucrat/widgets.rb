@@ -317,7 +317,7 @@ module Bureaucrat
       def render_options(choices, selected_choices)
         selected_choices = selected_choices.map(&:to_s).uniq
         output = []
-        (@choices + choices).each do |option_value, option_label|
+        (@choices.to_a + choices.to_a).each do |option_value, option_label|
             option_label ||= option_value
             if option_label.is_a?(Array)
               output << '<optgroup label="%s">' % escape(option_value.to_s)
