@@ -99,7 +99,7 @@ module Bureaucrat
         fail_with(:max_digits, :max => max_digits) if alldigits > max_digits
       end
 
-      def has_max_decimal_places(values, decimal_places)
+      def has_max_decimal_places(value, decimal_places)
         sign, alldigits, _, whole_digits = value.split
         decimals = alldigits.length - whole_digits
         fail_with(:max_decimal_places, :max => decimal_places) if
