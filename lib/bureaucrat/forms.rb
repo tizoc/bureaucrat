@@ -240,24 +240,24 @@ module Bureaucrat
         return if empty_permitted? && !changed?
 
         @fields.each do |name, field|
-            value = field.widget.value_from_formdata(@data, @files,
-                                                     add_prefix(name))
+          value = field.widget.value_from_formdata(@data, @files,
+                                                   add_prefix(name))
 
-            begin
-              if field.is_a?(Fields::FileField)
-                initial = @initial.fetch(name.to_sym, field.initial)
-                @cleaned_data[name] = field.clean(value, initial)
-              else
-                @cleaned_data[name] = field.clean(value)
-              end
-
-              clean_method = 'clean_%s' % name
-              @cleaned_data[name] = send(clean_method) if respond_to?(clean_method)
-            rescue Fields::FieldValidationError => e
-              @errors[name] = e.messages
-              @cleaned_data.delete(name)
+          begin
+            if field.is_a?(Fields::FileField)
+              initial = @initial.fetch(name.to_sym, field.initial)
+              @cleaned_data[name] = field.clean(value, initial)
+            else
+              @cleaned_data[name] = field.clean(value)
             end
+
+            clean_method = 'clean_%s' % name
+            @cleaned_data[name] = send(clean_method) if respond_to?(clean_method)
+          rescue Fields::FieldValidationError => e
+            @errors[name] = e.messages
+            @cleaned_data.delete(name)
           end
+        end
 
         begin
           @cleaned_data = clean
@@ -284,21 +284,21 @@ module Bureaucrat
           @changed_data = []
 
           @fields.each do |name, field|
-              prefixed_name = add_prefix(name)
-              data_value = field.widget.value_from_formdata(@data, @files,
-                                                            prefixed_name)
-              if !field.show_hidden_initial
-                initial_value = @initial.fetch(name.to_sym, field.initial)
-              else
-                initial_prefixed_name = add_initial_prefix(name)
-                hidden_widget = field.hidden_widget.new
-                initial_value = hidden_widget.value_from_formdata(@data, @files,
-                                                                  initial_prefixed_name)
-              end
-
-              @changed_data << name if
-                field.widget.has_changed?(initial_value, data_value)
+            prefixed_name = add_prefix(name)
+            data_value = field.widget.value_from_formdata(@data, @files,
+                                                          prefixed_name)
+            if !field.show_hidden_initial
+              initial_value = @initial.fetch(name.to_sym, field.initial)
+            else
+              initial_prefixed_name = add_initial_prefix(name)
+              hidden_widget = field.hidden_widget.new
+              initial_value = hidden_widget.value_from_formdata(@data, @files,
+                                                                initial_prefixed_name)
             end
+
+            @changed_data << name if
+              field.widget.has_changed?(initial_value, data_value)
+          end
         end
 
         @changed_data
@@ -333,6 +333,7 @@ module Bureaucrat
       end
 
     private
+
       # Returns the value for the field name +field_name+ from the associated
       # data
       def raw_value(fieldname)

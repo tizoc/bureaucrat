@@ -13,7 +13,7 @@ module Bureaucrat
     end
 
     module Validates
-      module_function
+    module_function
       def fail_with(error_code, parameters=nil)
         raise ValidationError.new(error_code, parameters)
       end
@@ -22,7 +22,7 @@ module Bureaucrat
     module Converters
       include Validates
 
-      module_function
+    module_function
 
       def to_integer(string)
         Integer(string)
@@ -51,7 +51,7 @@ module Bureaucrat
     module Validators
       include Validates
 
-      module_function
+    module_function
 
       def empty_value?(value)
         value.nil? || value == ''

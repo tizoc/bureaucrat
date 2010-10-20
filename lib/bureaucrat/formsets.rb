@@ -119,9 +119,9 @@ module Bureaucrat
 
         if @deleted_form_indexes.nil?
           @deleted_form_indexes = (0...total_form_count).select do |i|
-              form = @forms[i]
-              (i < initial_form_count || form.changed?) && form.cleaned_data[DELETION_FIELD_NAME]
-            end
+            form = @forms[i]
+            (i < initial_form_count || form.changed?) && form.cleaned_data[DELETION_FIELD_NAME]
+          end
         end
         @deleted_form_indexes.map {|i| @forms[i]}
       end
@@ -133,17 +133,17 @@ module Bureaucrat
 
         if @ordering.nil?
           @ordering = (0...total_form_count).map do |i|
-              form = @forms[i]
-              next if i >= initial_form_count && !form.changed?
-              next if self.can_delete && form.cleaned_data[DELETION_FIELD_NAME]
-              [i, form.cleaned_data[ORDERING_FIELD_NAME]]
-            end.compact
+            form = @forms[i]
+            next if i >= initial_form_count && !form.changed?
+            next if self.can_delete && form.cleaned_data[DELETION_FIELD_NAME]
+            [i, form.cleaned_data[ORDERING_FIELD_NAME]]
+          end.compact
           @ordering.sort! do |a, b|
-              if x[1].nil? then 1
-              elsif y[1].nil? then -1
-              else x[1] - y[1]
-              end
+            if x[1].nil? then 1
+            elsif y[1].nil? then -1
+            else x[1] - y[1]
             end
+          end
         end
 
         @ordering.map {|i| @forms[i.first]}
@@ -162,15 +162,15 @@ module Bureaucrat
         return false unless @is_bound
         forms_valid = true
         (0...total_form_count).each do |i|
-            form = @forms[i]
-            if self.can_delete
-              field = form.fields[DELETION_FIELD_NAME]
-              raw_value = form.send(:raw_value, DELETION_FIELD_NAME)
-              should_delete = field.clean(raw_value)
-              next if should_delete
-            end
-            forms_valid = false unless errors[i].empty?
+          form = @forms[i]
+          if self.can_delete
+            field = form.fields[DELETION_FIELD_NAME]
+            raw_value = form.send(:raw_value, DELETION_FIELD_NAME)
+            should_delete = field.clean(raw_value)
+            next if should_delete
           end
+          forms_valid = false unless errors[i].empty?
+        end
         forms_valid && non_form_errors.empty?
       end
 
@@ -212,7 +212,7 @@ module Bureaucrat
       end
     end
 
-    module_function
+  module_function
 
     def make_formset_class(form, options={})
       formset = options.fetch(:formset, BaseFormSet)
@@ -232,8 +232,8 @@ module Bureaucrat
     def all_valid?(formsets)
       valid = true
       formsets.each do |formset|
-          valid = false unless formset.valid?
-        end
+        valid = false unless formset.valid?
+      end
       valid
     end
 

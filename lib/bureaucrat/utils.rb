@@ -31,8 +31,8 @@ module Bureaucrat
 
       def each
         @ordered_keys.each do |key|
-            yield key, self[key]
-          end
+          yield key, self[key]
+        end
       end
 
       def initialize_copy(original)
@@ -69,8 +69,8 @@ module Bureaucrat
     def format_string(string, values)
       output = string.dup
       values.each_pair do |variable, value|
-          output.gsub!(/%\(#{variable}\)s/, value.to_s)
-        end
+        output.gsub!(/%\(#{variable}\)s/, value.to_s)
+      end
       output
     end
 
