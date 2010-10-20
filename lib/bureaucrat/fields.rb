@@ -81,6 +81,7 @@ module Bureaucrat
           merge(options.fetch(:error_messages, {}))
       end
 
+      # Default error messages for this kind of field. Override on subclasses to add or replace messages
       def default_error_messages
         {
           :required => 'This field is required',
@@ -88,10 +89,12 @@ module Bureaucrat
         }
       end
 
+      # Default widget for this kind of field. Override on subclasses to customize.
       def default_widget
         Widgets::TextInput
       end
 
+      # Default hidden widget for this kind of field. Override on subclasses to customize.
       def default_hidden_widget
         Widgets::HiddenInput
       end
@@ -109,8 +112,8 @@ module Bureaucrat
         value
       end
 
+      # List of attributes to add on the widget. Override to add field specific attributes
       def widget_attrs(widget)
-        # Override to add field specific attributes
       end
 
       # Populates object.name if posible
