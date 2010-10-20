@@ -318,7 +318,7 @@ module Bureaucrat
       # true if this form contains fields that require the form to be
       # multipart
       def multipart?
-        @fields.any? {|f| f.widget.needs_multipart_form?}
+        @fields.any? {|f| f.widget.multipart_form?}
       end
 
       # List of hidden fields.

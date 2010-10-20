@@ -6,19 +6,6 @@ module Bureaucrat
     class Widget
       include Utils
 
-      class << self
-        attr_accessor :needs_multipart_form, :is_hidden
-      end
-
-      @needs_multipart_form = false
-      @is_hidden = false
-
-      def self.inherited(c)
-        super(c)
-        c.is_hidden = is_hidden
-        c.needs_multipart_form = needs_multipart_form
-      end
-
       attr_reader :attrs
 
       def initialize(attrs=nil)
@@ -54,47 +41,47 @@ module Bureaucrat
         initial_value != data_value
       end
 
+      def needs_multipart?
+        false
+      end
+
       def hidden?
-        self.class.is_hidden
+        false
       end
     end
 
     # Base class for input widgets
     class Input < Widget
-      class << self
-        attr_accessor :input_type
-      end
-
-      def self.inherited(c)
-        super(c)
-        c.input_type = input_type.dup if input_type
-      end
-
-      @is_hidden = false
-      @input_type = nil
-
       def render(name, value, attrs=nil)
         value ||= ''
         final_attrs = build_attrs(attrs,
-                                  :type => self.class.input_type.to_s,
+                                  :type => input_type.to_s,
                                   :name => name.to_s)
         final_attrs[:value] = value.to_s unless value == ''
         mark_safe("<input#{flatatt(final_attrs)} />")
+      end
+
+      def input_type
+        nil
       end
     end
 
     # Class for text inputs
     class TextInput < Input
-      @input_type = 'text'
+      def input_type
+        'text'
+      end
     end
 
     # Class for password inputs
     class PasswordInput < Input
-      @input_type = 'password'
-
       def initialize(attrs=nil, render_value=true)
         super(attrs)
         @render_value = render_value
+      end
+
+      def input_type
+        'password'
       end
 
       def render(name, value, attrs=nil)
@@ -105,8 +92,13 @@ module Bureaucrat
 
     # Class for hidden inputs
     class HiddenInput < Input
-      @input_type = 'hidden'
-      @is_hidden = true
+      def input_type
+        'hidden'
+      end
+
+      def hidden?
+        true
+      end
     end
 
     class MultipleHiddenInput < HiddenInput
@@ -121,7 +113,7 @@ module Bureaucrat
 
       def render(name, value, attrs=nil, choices=[])
         value ||= []
-        final_attrs = build_attrs(attrs, :type => self.class.input_type,
+        final_attrs = build_attrs(attrs, :type => input_type.to_s,
                                   :name => name)
         mark_safe(value.map do |v|
                     rattrs = {:value => v.to_s}.merge(final_attrs)
@@ -140,9 +132,6 @@ module Bureaucrat
     end
 
     class FileInput < Input
-      @input_type = 'file'
-      @needs_multipart_form = true
-
       def render(name, value, attrs=nil)
         super(name, nil, attrs)
       end
@@ -153,6 +142,14 @@ module Bureaucrat
 
       def has_changed?(initial, data)
         data.nil?
+      end
+
+      def input_type
+        'file'
+      end
+
+      def needs_multipart?
+        true
       end
     end
 
@@ -371,15 +368,17 @@ module Bureaucrat
     end
 
     class RadioSelect < Select
-      class << self
-        attr_accessor :renderer
+      def self.id_for_label(id_)
+        id_.empty? ? id_ : id_ + '_0'
       end
 
-      @renderer = RadioFieldRenderer
+      def renderer
+        RadioFieldRenderer
+      end
 
       def initialize(*args)
         options = args.last.is_a?(Hash) ? args.last : {}
-        @renderer = options.fetch(:renderer, self.class.renderer)
+        @renderer = options.fetch(:renderer, renderer)
         super
       end
 
@@ -394,13 +393,13 @@ module Bureaucrat
       def render(name, value, attrs=nil, choices=[])
         get_renderer(name, value, attrs, choices).render
       end
-
-      def self.id_for_label(id_)
-        id_.empty? ? id_ : id_ + '_0'
-      end
     end
 
     class CheckboxSelectMultiple < SelectMultiple
+      def self.id_for_label(id_)
+        id_.empty? ? id_ : id_ + '_0'
+      end
+
       def render(name, values, attrs=nil, choices=[])
         values ||= []
         has_id = attrs && attrs.include?(:id)
@@ -427,10 +426,6 @@ module Bureaucrat
           end
         output << '</ul>'
         mark_safe(output.join("\n"))
-      end
-
-      def self.id_for_label(id_)
-        id_.empty? ? id_ : id_ + '_0'
       end
     end
 
