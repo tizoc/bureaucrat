@@ -320,13 +320,6 @@ module Bureaucrat
         @changed_data
       end
 
-      # List of media associated to this form
-      def media
-        @fields.values.inject(Widgets::Media.new) do |media, field|
-            media + field.widget.media
-          end
-      end
-
       # true if this form contains fields that require the form to be
       # multipart
       def multipart?

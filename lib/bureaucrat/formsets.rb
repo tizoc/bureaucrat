@@ -216,11 +216,6 @@ module Bureaucrat
       def multipart?
         @forms && @forms.first.multipart?
       end
-
-      def media
-        @forms ? @forms.first.media : Media.new
-      end
-
     end
 
     module_function

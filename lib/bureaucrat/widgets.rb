@@ -4,97 +4,6 @@ require 'bureaucrat/utils'
 
 module Bureaucrat
   module Widgets
-    class Media
-      include Utils
-
-      MEDIA_TYPES = [:css, :js]
-      DEFAULT_MEDIA_PATH = 'http://localhost'
-
-      attr_accessor :media_path
-
-      def initialize(media_attrs={})
-        self.media_path = media_attrs.delete(:media_path) || DEFAULT_MEDIA_PATH
-        media_attrs = media_attrs.to_hash if media_attrs.is_a?(Media)
-        @css = {}
-        @js = []
-
-        MEDIA_TYPES.each do |name|
-            data = media_attrs[name]
-            add_type(name, data) if data
-          end
-      end
-
-      def to_s
-        render
-      end
-
-      def to_hash
-        hash = {}
-        MEDIA_TYPES.each {|name| hash[name] = instance_variable_get("@#{name}")}
-        hash
-      end
-
-      def render
-        mark_safe(MEDIA_TYPES.map do |name|
-                    render_type(name)
-                  end.inject(&:+).join("\n"))
-      end
-
-      def render_type(type)
-        send("render_#{type}")
-      end
-
-      def render_js
-        @js.map do |path|
-            "<script type=\"text/javascript\" src=\"#{absolute_path(path)}\"></script>"
-          end
-      end
-
-      def render_css
-        fragments = @css.keys.sort.map do |medium|
-            @css[medium].map do |path|
-              "<link href=\"#{absolute_path(path)}\" type=\"text/css\" media=\"#{medium}\" rel=\"stylesheet\" />"
-            end
-          end
-        fragments.empty? ? fragments : fragments.inject(&:+)
-      end
-
-      def absolute_path(path)
-        path =~ /^(\/|https?:\/\/)/ ? path : URI.join(media_path, path)
-      end
-
-      def [](name)
-        raise IndexError("Unknown media type '#{name}'") unless
-          MEDIA_TYPES.include?(name)
-        Media.new(name => instance_variable_get("@{name}"))
-      end
-
-      def add_type(type, data)
-        send("add_#{type}", data)
-      end
-
-      def add_js(data)
-        @js += data.select {|path| !@js.include?(path)}
-      end
-
-      def add_css(data)
-        data.each do |medium, paths|
-            @css[medium] ||= []
-            css = @css[medium]
-            css.concat(paths.select {|path| !css.include?(path)})
-          end
-      end
-
-      def +(other)
-        combined = Media.new
-        MEDIA_TYPES.each do |name|
-            combined.add_type(name, instance_variable_get("@#{name}"))
-            combined.add_type(name, other.instance_variable_get("@#{name}"))
-          end
-        combined
-      end
-    end
-
     # Base class for widgets
     class Widget
       include Utils
@@ -149,10 +58,6 @@ module Bureaucrat
 
       def hidden?
         self.class.is_hidden
-      end
-
-      def media
-        Media.new
       end
     end
 

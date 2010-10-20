@@ -8,11 +8,6 @@ class TestForm < BureaucratTestCase
       field :name, CharField.new
     end
 
-    should 'return an instance of Media when calling #media' do
-      form = OneForm.new
-      assert_kind_of(Widgets::Media, form.media)
-    end
-
     should 'have a BoundField in [:name]' do
       form = OneForm.new
       assert_kind_of(Forms::BoundField, form[:name])
