@@ -238,25 +238,6 @@ module Bureaucrat
         @empty_permitted
       end
 
-      # Renders this form's fields as rows to be used on a table
-      def as_table
-        html_output('<tr><th>%(label)s</th><td>%(errors)s%(field)s%(help_text)s</td></tr>',
-                    '<tr><td colspan="2">%s</td></tr>', '</td></tr>',
-                    '<br />%s', false)
-      end
-
-      # Renders this form's fields as li tags to be used on a list
-      def as_ul
-        html_output('<li>%(errors)s%(label)s %(field)s%(help_text)s</li>',
-                    '<li>%s</li>', '</li>', ' %s', false)
-      end
-
-      # Renders this form's fields as paragraph tags
-      def as_p
-        html_output('<p>%(label)s %(field)s%(help_text)s</p>',
-                    '%s', '</p>', ' %s', true)
-      end
-
       # Returns the list of errors that aren't associated to a specific field
       def non_field_errors
         errors.fetch(:__NON_FIELD_ERRORS, @error_class.new)
@@ -375,76 +356,6 @@ module Bureaucrat
       end
 
     private
-      # Helper method to render all the form fields. This is called by
-      # +as_table+, +as_p+, and +as_ul+ and you probably want to call it
-      # when writting custom renderers.
-      #
-      # TODO: document parameters
-      def html_output(normal_row, error_row, row_ender, help_text_html,
-                      errors_on_separate_row)
-        top_errors = non_field_errors
-        output, hidden_fields = [], []
-
-        add_fields_output(output, hidden_fields, normal_row, error_row,
-                          help_text_html, errors_on_separate_row, top_errors)
-        output = [error_row % top_errors] + output unless top_errors.empty?
-        add_hidden_fields_output(output, hidden_fields, normal_row, row_ender)
-
-        mark_safe(output.join("\n"))
-      end
-
-      def add_fields_output(output, hidden_fields, normal_row, error_row,
-                            help_text_html, errors_on_separate_row,
-                            top_errors) # :nodoc:
-        @fields.each do |name, field|
-            bf = BoundField.new(self, field, name)
-            bf_errors = @error_class.new(bf.errors.map {|e| conditional_escape(e)})
-            if bf.hidden?
-              top_errors += bf_errors.map do |e|
-                "(Hidden field #{name}) #{e.to_s}"
-              end unless bf_errors.empty?
-              hidden_fields << bf.to_s
-            else
-              output << error_row % bf_errors if
-                errors_on_separate_row && !bf_errors.empty?
-
-              label = ''
-              unless bf.label.nil? || bf.label.empty?
-                label = conditional_escape(bf.label)
-                label += @label_suffix if @label_suffix && label[-1,1] !~ /[:?.!]/
-                label = bf.label_tag(label, label_attributes(name, field))
-              end
-
-              help_text = field.help_text.empty? ? '' : help_text_html % field.help_text
-              vars = {
-                :errors => bf_errors, :label => label,
-                :field => bf, :help_text => help_text
-              }
-              output << format_string(normal_row, vars)
-            end
-          end
-      end
-
-      def add_hidden_fields_output(output, hidden_fields, normal_row, row_ender) # :nodoc:
-        unless hidden_fields.empty?
-          str_hidden = hidden_fields.join('')
-
-          unless output.empty?
-            last_row = output[-1]
-            if last_row !~ /#{row_ender}$/
-              vars = {
-                :errors => '', :label => '', :field => '', :help_text => ''
-              }
-              last_row = format_string(normal_row, vars)
-              output << last_row
-            end
-            output[-1] = last_row[0...-row_ender.length] + str_hidden + row_ender
-          else
-            output << str_hidden
-          end
-        end
-      end
-
       # Returns the value for the field name +field_name+ from the associated
       # data
       def raw_value(fieldname)
@@ -454,6 +365,5 @@ module Bureaucrat
       end
 
     end
-
   end
 end

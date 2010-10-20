@@ -221,10 +221,6 @@ module Bureaucrat
         @forms ? @forms.first.media : Media.new
       end
 
-      def as_table
-        forms = @forms.map(&:as_table).join(' ')
-        mark_safe([management_form.to_s, forms].join("\n"))
-      end
     end
 
     module_function

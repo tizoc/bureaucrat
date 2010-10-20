@@ -91,44 +91,6 @@ class TestForm < BureaucratTestCase
 
   end
 
-  describe 'inherited form with two charfields when rendered' do
-    class TwoForm < Forms::Form
-      include Bureaucrat::Fields
-
-      field :name, CharField.new(:label => 'Name')
-      field :color, CharField.new
-    end
-
-    def setup
-      @form = TwoForm.new(:name => 'name')
-      @unbound_form = TwoForm.new
-    end
-
-    should 'should correctly render as table' do
-      expected = normalize_html("<tr><th><label for='id_name'>Name:</label></th><td><input name='name' id='id_name' type='text' value='name'/></td></tr>\n<tr><th><label for='id_color'>Color:</label></th><td><ul class='errorlist'><li>This field is required</li></ul><input name='color' id='id_color' type='text'/></td></tr>")
-      rendered = normalize_html(@form.as_table)
-      assert_equal(expected, rendered)
-    end
-
-    should 'should correctly render as ul' do
-      expected = normalize_html("<li><label for='id_name'>Name:</label> <input name='name' id='id_name' type='text' value='name'/></li>\n<li><ul class='errorlist'><li>This field is required</li></ul><label for='id_color'>Color:</label> <input name='color' id='id_color' type='text'/></li>")
-      rendered = normalize_html(@form.as_ul)
-      assert_equal(expected, rendered)
-    end
-
-    should 'should correctly render as p' do
-      expected = normalize_html("<p><label for='id_name'>Name:</label> <input name='name' id='id_name' type='text' value='name'/></p>\nThis field is required\n<p><label for='id_color'>Color:</label> <input name='color' id='id_color' type='text'/></p>")
-      rendered = normalize_html(@form.as_p)
-      assert_equal(expected, rendered)
-    end
-
-    should 'correctly render as p when not bound' do
-      expected = normalize_html("<p><label for='id_name'>Name:</label> <input name='name' id='id_name' type='text'/></p>\n<p><label for='id_color'>Color:</label> <input name='color' id='id_color' type='text'/></p>")
-      rendered = normalize_html(@unbound_form.as_p)
-      assert_equal(expected, rendered)
-    end
-  end
-
   describe 'populating objects' do
     class PopulatorForm < Forms::Form
       include Bureaucrat::Fields
