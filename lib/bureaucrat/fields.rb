@@ -11,9 +11,14 @@ module Bureaucrat
       def as_ul
         ul = '<ul class="errorlist">%s</ul>'
         li = '<li>%s</li>'
-        empty? ? '' : mark_safe(ul % map do |e|
-                                  li % conditional_escape(e)
-                                end.join("\n"))
+
+        if empty?
+          ''
+        else
+          mark_safe(ul % map do |e|
+                      li % conditional_escape(e)
+                    end.join("\n"))
+        end
       end
 
       def as_text
@@ -58,38 +63,6 @@ module Bureaucrat
       include Validation::Validators
       include Validation::Converters
 
-      class << self
-        attr_reader :default_error_messages
-
-        def set_error(key, template)
-          @default_error_messages ||= {}
-          @default_error_messages[key] = template
-        end
-
-        def widget(widget=nil)
-          @widget = widget unless widget.nil?
-          @widget
-        end
-
-        def hidden_widget(hidden_widget=nil)
-          @hidden_widget = hidden_widget unless hidden_widget.nil?
-          @hidden_widget
-        end
-
-        # Copy field properties to the child class
-        def inherited(c)
-          c.widget        widget
-          c.hidden_widget hidden_widget
-          default_error_messages.each {|k, v| c.set_error k, v}
-        end
-      end
-
-      # Field properties
-      widget        Widgets::TextInput
-      hidden_widget Widgets::HiddenInput
-      set_error     :required, 'This field is required'
-      set_error     :invalid, 'Enter a valid value'
-
       attr_accessor :required, :label, :initial, :error_messages, :widget, :hidden_widget, :show_hidden_initial, :help_text
 
       def initialize(options={})
@@ -98,14 +71,29 @@ module Bureaucrat
         @label = options[:label]
         @initial = options[:initial]
         @help_text = options.fetch(:help_text, '')
-        @widget = options.fetch(:widget, self.class.widget)
+        @widget = options.fetch(:widget, default_widget)
 
         @widget = @widget.new if @widget.is_a?(Class)
         extra_attrs = widget_attrs(@widget)
         @widget.attrs.update(extra_attrs) if extra_attrs
 
-        @error_messages = self.class.default_error_messages.
+        @error_messages = default_error_messages.
           merge(options.fetch(:error_messages, {}))
+      end
+
+      def default_error_messages
+        {
+          :required => 'This field is required',
+          :invalid => 'Enter a valid value'
+        }
+      end
+
+      def default_widget
+        Widgets::TextInput
+      end
+
+      def default_hidden_widget
+        Widgets::HiddenInput
       end
 
       def validating
@@ -145,15 +133,17 @@ module Bureaucrat
     end
 
     class CharField < Field
-      set_error :max_length, 'Ensure this value has at most %(max)s characters (it has %(length)s).'
-      set_error :min_length, 'Ensure this value has at least %(min)s characters (it has %(length)s).'
-
       attr_accessor :max_length, :min_length
 
       def initialize(options={})
         @max_length = options.delete(:max_length)
         @min_length = options.delete(:min_length)
         super(options)
+      end
+
+      def default_error_messages
+        super.merge(:max_length => 'Ensure this value has at most %(max)s characters (it has %(length)s).',
+                    :min_length => 'Ensure this value has at least %(min)s characters (it has %(length)s).')
       end
 
       def widget_attrs(widget)
@@ -167,23 +157,25 @@ module Bureaucrat
         return '' if empty_value?(value)
 
         validating do
-            has_max_length(value, @max_length) if @max_length
-            has_min_length(value, @min_length) if @min_length
-          end
+          has_max_length(value, @max_length) if @max_length
+          has_min_length(value, @min_length) if @min_length
+        end
 
         value
       end
     end
 
     class IntegerField < Field
-      set_error :invalid, 'Enter a whole number.'
-      set_error :max_value, 'Ensure this value is less than or equal to %(max)s.'
-      set_error :min_value, 'Ensure this value is greater than or equal to %(min)s.'
-
       def initialize(options={})
         @max_value = options.delete(:max_value)
         @min_value = options.delete(:min_value)
         super(options)
+      end
+
+      def default_error_messages
+        super.merge(:invalid => 'Enter a whole number.',
+                    :max_value => 'Ensure this value is less than or equal to %(max)s.',
+                    :min_value => 'Ensure this value is greater than or equal to %(min)s.')
       end
 
       def clean(value)
@@ -191,24 +183,26 @@ module Bureaucrat
         return nil if empty_value?(value)
 
         validating do
-            value = to_integer(value)
-            is_not_greater_than(value, @max_value) if @max_value
-            is_not_lesser_than(value, @min_value) if @min_value
-          end
+          value = to_integer(value)
+          is_not_greater_than(value, @max_value) if @max_value
+          is_not_lesser_than(value, @min_value) if @min_value
+        end
 
         value
       end
     end
 
     class FloatField < Field
-      set_error :invalid, 'Enter a number.'
-      set_error :max_value, 'Ensure this value is less than or equal to %(max)s.'
-      set_error :min_value, 'Ensure this value is greater than or equal to %(min)s.'
-
       def initialize(options={})
         @max_value = options.delete(:max_value)
         @min_value = options.delete(:min_value)
         super(options)
+      end
+
+      def default_error_messages
+        super.merge(:invalid => 'Enter a number.',
+                    :max_value => 'Ensure this value is less than or equal to %(max)s.',
+                    :min_value => 'Ensure this value is greater than or equal to %(min)s.')
       end
 
       def clean(value)
@@ -216,23 +210,16 @@ module Bureaucrat
         return nil if empty_value?(value)
 
         validating do
-            value = to_float(value)
-            is_not_greater_than(value, @max_value) if @max_value
-            is_not_lesser_than(value, @min_value) if @min_value
-          end
+          value = to_float(value)
+          is_not_greater_than(value, @max_value) if @max_value
+          is_not_lesser_than(value, @min_value) if @min_value
+        end
 
         value
       end
     end
 
     class BigDecimalField < Field
-      set_error :invalid, 'Enter a number.'
-      set_error :max_value, 'Ensure this value is less than or equal to %(max)s.'
-      set_error :min_value, 'Ensure this value is greater than or equal to %(min)s.'
-      set_error :max_digits, 'Ensure that there are no more than %(max)s digits in total.'
-      set_error :max_decimal_places, 'Ensure that there are no more than %(max)s decimal places.'
-      set_error :max_whole_digits, 'Ensure that there are no more than %(max)s digits before the decimal point.'
-
       def initialize(options={})
         @max_value = options.delete(:max_value)
         @min_value = options.delete(:min_value)
@@ -242,18 +229,27 @@ module Bureaucrat
         super(options)
       end
 
+      def default_error_messages
+        super.merge(:invalid => 'Enter a number.',
+                    :max_value => 'Ensure this value is less than or equal to %(max)s.',
+                    :min_value => 'Ensure this value is greater than or equal to %(min)s.',
+                    :max_digits => 'Ensure that there are no more than %(max)s digits in total.',
+                    :max_decimal_places => 'Ensure that there are no more than %(max)s decimal places.',
+                    :max_whole_digits => 'Ensure that there are no more than %(max)s digits before the decimal point.')
+      end
+
       def clean(value)
         super(value)
         return nil if !@required && empty_value?(value)
 
         validating do
-            value = to_big_decimal(value.to_s.strip)
-            is_not_greater_than(value, @max_value) if @max_value
-            is_not_lesser_than(value, @min_value) if @min_value
-            has_max_digits(value, @max_digits) if @max_digits
-            has_max_decimal_places(value, @max_decimal_places) if @max_decimal_places
-            has_max_whole_digits(value, @max_whole_digits) if @max_whole_digits
-          end
+          value = to_big_decimal(value.to_s.strip)
+          is_not_greater_than(value, @max_value) if @max_value
+          is_not_lesser_than(value, @min_value) if @min_value
+          has_max_digits(value, @max_digits) if @max_digits
+          has_max_decimal_places(value, @max_decimal_places) if @max_decimal_places
+          has_max_whole_digits(value, @max_whole_digits) if @max_whole_digits
+        end
 
         value
       end
@@ -290,15 +286,19 @@ module Bureaucrat
       #    r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
       EMAIL_RE = /(^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*")@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/i
 
-      set_error :invalid, 'Enter a valid e-mail address.'
-
       def initialize(options={})
         super(EMAIL_RE, options)
+      end
+
+      def default_error_messages
+        super.merge(:invalid => 'Enter a valid e-mail address.')
       end
     end
 
     class DeliverableEmailField < EmailField
-      set_error :no_mx, '%(domain)s is not a valid e-mail domain.'
+      def default_error_messages
+        super.merge(:no_mx => '%(domain)s is not a valid e-mail domain.')
+      end
 
       def clean(value)
         value = super(value)
@@ -311,15 +311,20 @@ module Bureaucrat
 
     # TODO: add tests
     class FileField < Field
-      widget    Widgets::FileInput
-      set_error :invalid, 'No file was submitted. Check the encoding type on the form.'
-      set_error :missing, 'No file was submitted.'
-      set_error :empty, 'The submitted file is empty.'
-      set_error :max_length, 'Ensure this filename has at most %(max)d characters (it has %(length)d).'
-
       def initialize(options)
         @max_length = options.delete(:max_length)
         super(options)
+      end
+
+      def default_error_messages
+        super.merge(:invalid => 'No file was submitted. Check the encoding type on the form.',
+                    :missing => 'No file was submitted.',
+                    :empty => 'The submitted file is empty.',
+                    :max_length => 'Ensure this filename has at most %(max)d characters (it has %(length)d).')
+      end
+
+      def default_widget
+        Widgets::FileInput
       end
 
       def clean(data, initial=nil)
@@ -333,20 +338,20 @@ module Bureaucrat
 
         # TODO: file validators?
         validating do
-            # UploadedFile objects should have name and size attributes.
-            begin
-              file_name = data.name
-              file_size = data.size
-            rescue NoMethodError
-              fail_with(:invalid)
-            end
-
-            fail_with(:max_length, :max => @max_length, :length => file_name.length) if
-              @max_length && file_name.length > @max_length
-
-            fail_with(:invalid) unless file_name
-            fail_with(:empty) unless file_size || file_size == 0
+          # UploadedFile objects should have name and size attributes.
+          begin
+            file_name = data.name
+            file_size = data.size
+          rescue NoMethodError
+            fail_with(:invalid)
           end
+
+          fail_with(:max_length, :max => @max_length, :length => file_name.length) if
+            @max_length && file_name.length > @max_length
+
+          fail_with(:invalid) unless file_name
+          fail_with(:empty) unless file_size || file_size == 0
+        end
 
         data
       end
@@ -358,7 +363,9 @@ module Bureaucrat
     # URLField
 
     class BooleanField < Field
-      widget Widgets::CheckboxInput
+      def default_widget
+        Widgets::CheckboxInput
+      end
 
       def clean(value)
         value = to_bool(value)
@@ -369,7 +376,9 @@ module Bureaucrat
     end
 
     class NullBooleanField < BooleanField
-      widget Widgets::NullBooleanSelect
+      def default_widget
+        Widgets::NullBooleanSelect
+      end
 
       def clean(value)
         case value
@@ -381,13 +390,18 @@ module Bureaucrat
     end
 
     class ChoiceField < Field
-      widget    Widgets::Select
-      set_error :invalid_choice, 'Select a valid choice. %(value)s is not one of the available choices.'
-
       def initialize(choices=[], options={})
         options[:required] = options.fetch(:required, true)
         super(options)
         self.choices = choices
+      end
+
+      def default_error_messages
+        super.merge(:invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.')
+      end
+
+      def default_widget
+        Widgets::Select
       end
 
       def choices
@@ -406,26 +420,26 @@ module Bureaucrat
         return value if value.empty?
 
         validating do
-            fail_with(:invalid_choice, :value => value) unless valid_value?(value)
-          end
+          fail_with(:invalid_choice, :value => value) unless valid_value?(value)
+        end
 
         value
       end
 
       def valid_value?(value)
         @choices.each do |k, v|
-            if v.is_a?(Array)
-              # This is an optgroup, so look inside the group for options
-              v.each do |k2, v2|
-                return true if value == k2.to_s
-              end
-            elsif k.is_a?(Hash)
-              # this is a hash valued choice list
-              return true if value == k[:value].to_s
-            else
-              return true if value == k.to_s
+          if v.is_a?(Array)
+            # This is an optgroup, so look inside the group for options
+            v.each do |k2, v2|
+              return true if value == k2.to_s
             end
+          elsif k.is_a?(Hash)
+            # this is a hash valued choice list
+            return true if value == k[:value].to_s
+          else
+            return true if value == k.to_s
           end
+        end
         false
       end
     end
@@ -451,24 +465,32 @@ module Bureaucrat
     end
 
     class MultipleChoiceField < ChoiceField
-      widget        Widgets::SelectMultiple
-      hidden_widget Widgets::MultipleHiddenInput
-      set_error     :invalid_choice, 'Select a valid choice. %(value)s is not one of the available choices.'
-      set_error     :invalid_list, 'Enter a list of values.'
+      def default_error_messages
+        super.merge(:invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.',
+                    :invalid_list => 'Enter a list of values.')
+      end
+
+      def default_widget
+        Widgets::SelectMultiple
+      end
+
+      def default_hidden_widget
+        Widgets::MultipleHiddenInput
+      end
 
       def clean(value)
         validating do
-            is_present(value) if @required
-            return [] if ! @required && ! value || value.empty?
-            is_array(value)
-            not_empty(value) if @required
+          is_present(value) if @required
+          return [] if ! @required && ! value || value.empty?
+          is_array(value)
+          not_empty(value) if @required
 
-            new_value = value.map(&:to_s)
-            new_value.each do |val|
-              fail_with(:invalid_choice, :value => val) unless valid_value?(val)
-            end
-            new_value
+          new_value = value.map(&:to_s)
+          new_value.each do |val|
+            fail_with(:invalid_choice, :value => val) unless valid_value?(val)
           end
+          new_value
+        end
       end
     end
 
