@@ -189,11 +189,6 @@ module Bureaucrat
         @fields.each { |key, value| @fields[key] = value.dup }
       end
 
-      # Renders the form +as_table+
-      def to_s
-        as_table
-      end
-
       # Iterates over the fields
       def each
         @fields.each do |name, field|
