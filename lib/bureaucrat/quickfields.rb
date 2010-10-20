@@ -1,5 +1,3 @@
-require 'bureaucrat/fields'
-
 module Bureaucrat
   # Shortcuts for declaring form fields
   module Quickfields

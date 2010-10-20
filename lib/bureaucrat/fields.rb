@@ -1,7 +1,3 @@
-require 'bureaucrat/utils'
-require 'bureaucrat/validation'
-require 'bureaucrat/widgets'
-
 module Bureaucrat
   module Fields
 

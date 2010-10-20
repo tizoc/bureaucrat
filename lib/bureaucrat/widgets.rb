@@ -1,7 +1,5 @@
 require 'uri'
 
-require 'bureaucrat/utils'
-
 module Bureaucrat
   module Widgets
     # Base class for widgets

@@ -1,8 +1,3 @@
-require 'bureaucrat/utils'
-require 'bureaucrat/validation'
-require 'bureaucrat/widgets'
-require 'bureaucrat/fields'
-
 module Bureaucrat
   module Forms
 

@@ -1,5 +1,4 @@
 require 'resolv'
-require 'bureaucrat/utils'
 
 module Bureaucrat
   module Validation

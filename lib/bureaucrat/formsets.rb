@@ -1,9 +1,3 @@
-require 'bureaucrat/utils'
-require 'bureaucrat/validation'
-require 'bureaucrat/widgets'
-require 'bureaucrat/forms'
-
-# TODO: needs more testing
 module Bureaucrat
   module Formsets
     TOTAL_FORM_COUNT = :'TOTAL_FORMS'

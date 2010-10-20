@@ -5,7 +5,6 @@ require "contest"
 $:.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
 
 require 'bureaucrat'
-require 'bureaucrat/formsets'
 
 # Used to compare rendered htmls
 require 'rexml/document'
