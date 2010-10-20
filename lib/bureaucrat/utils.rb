@@ -15,7 +15,7 @@ module Bureaucrat
     # Dumb implementation that is good enough for Forms
     class OrderedHash < Hash
       def initialize
-        super()
+        super
         @ordered_keys = []
       end
 
@@ -24,9 +24,9 @@ module Bureaucrat
         @ordered_keys << key unless @ordered_keys.include?(key)
       end
 
-      def delete key
-        super key
-        @ordered_keys.delete key
+      def delete(key)
+        super(key)
+        @ordered_keys.delete(key)
       end
 
       def each
