@@ -8,16 +8,16 @@ module Bureaucrat
 
       class << self
         attr_accessor :needs_multipart_form, :is_hidden
-
-        def inherited(c)
-          super(c)
-          c.is_hidden = is_hidden
-          c.needs_multipart_form = needs_multipart_form
-        end
       end
 
-      self.needs_multipart_form = false
-      self.is_hidden = false
+      @needs_multipart_form = false
+      @is_hidden = false
+
+      def self.inherited(c)
+        super(c)
+        c.is_hidden = is_hidden
+        c.needs_multipart_form = needs_multipart_form
+      end
 
       attr_reader :attrs
 
@@ -63,16 +63,15 @@ module Bureaucrat
     class Input < Widget
       class << self
         attr_accessor :input_type
-
-        # Copy data to the child class
-        def inherited(c)
-          super(c)
-          c.input_type = input_type.dup if input_type
-        end
       end
 
-      self.is_hidden = false
-      self.input_type = nil
+      def self.inherited(c)
+        super(c)
+        c.input_type = input_type.dup if input_type
+      end
+
+      @is_hidden = false
+      @input_type = nil
 
       def render(name, value, attrs=nil)
         value ||= ''
@@ -86,12 +85,12 @@ module Bureaucrat
 
     # Class for text inputs
     class TextInput < Input
-      self.input_type = 'text'
+      @input_type = 'text'
     end
 
     # Class for password inputs
     class PasswordInput < Input
-      self.input_type = 'password'
+      @input_type = 'password'
 
       def initialize(attrs=nil, render_value=true)
         super(attrs)
@@ -106,8 +105,8 @@ module Bureaucrat
 
     # Class for hidden inputs
     class HiddenInput < Input
-      self.input_type = 'hidden'
-      self.is_hidden = true
+      @input_type = 'hidden'
+      @is_hidden = true
     end
 
     class MultipleHiddenInput < HiddenInput
@@ -141,8 +140,8 @@ module Bureaucrat
     end
 
     class FileInput < Input
-      self.input_type = 'file'
-      self.needs_multipart_form = true
+      @input_type = 'file'
+      @needs_multipart_form = true
 
       def render(name, value, attrs=nil)
         super(name, nil, attrs)
@@ -375,7 +374,8 @@ module Bureaucrat
       class << self
         attr_accessor :renderer
       end
-      self.renderer = RadioFieldRenderer
+
+      @renderer = RadioFieldRenderer
 
       def initialize(*args)
         options = args.last.is_a?(Hash) ? args.last : {}

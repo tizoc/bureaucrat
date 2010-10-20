@@ -117,22 +117,22 @@ module Bureaucrat
         # Fields associated to the form class (an instance may add or remove
         # fields from itself)
         attr_accessor :base_fields
+      end
 
-        # Fields associated to the form class
-        def base_fields
-          @base_fields ||= Utils::OrderedHash.new
-        end
+      # Fields associated to the form class
+      def self.base_fields
+        @base_fields ||= Utils::OrderedHash.new
+      end
 
-        # Declares a named field to be used on this form.
-        def field(name, field_obj)
-          base_fields[name] = field_obj
-        end
+      # Declares a named field to be used on this form.
+      def self.field(name, field_obj)
+        base_fields[name] = field_obj
+      end
 
-        # Copy data to the child class
-        def inherited(c)
-          super(c)
-          c.base_fields = base_fields.dup
-        end
+      # Copy data to the child class
+      def self.inherited(c)
+        super(c)
+        c.base_fields = base_fields.dup
       end
 
       # Error class for this form
