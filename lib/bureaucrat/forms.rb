@@ -113,12 +113,6 @@ module Bureaucrat
       include Utils
       include Validation
 
-      class << self
-        # Fields associated to the form class (an instance may add or remove
-        # fields from itself)
-        attr_accessor :base_fields
-      end
-
       # Fields associated to the form class
       def self.base_fields
         @base_fields ||= Utils::OrderedHash.new
@@ -132,7 +126,7 @@ module Bureaucrat
       # Copy data to the child class
       def self.inherited(c)
         super(c)
-        c.base_fields = base_fields.dup
+        c.instance_variable_set(:@base_fields, base_fields.dup)
       end
 
       # Error class for this form
