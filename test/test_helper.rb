@@ -2,8 +2,10 @@ require 'bigdecimal'
 require 'rubygems'
 require "contest"
 
-require File.join(File.dirname(__FILE__), '..', 'lib', 'bureaucrat')
-require File.join(File.dirname(__FILE__), '..', 'lib', 'bureaucrat', 'formsets')
+$:.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
+
+require 'bureaucrat'
+require 'bureaucrat/formsets'
 
 # Used to compare rendered htmls
 require 'rexml/document'

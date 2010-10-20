@@ -1,10 +1,7 @@
-libdir = File.dirname(__FILE__)
-$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
-
 module Bureaucrat
-  VERSION = '0.0.1'
-end
+  VERSION = '0.8.1'
 
-require 'bureaucrat/widgets'
-require 'bureaucrat/fields'
-require 'bureaucrat/forms'
+  autoload :Fields,  'bureaucrat/fields'
+  autoload :Widgets, 'bureaucrat/widgets'
+  autoload :Forms,   'bureaucrat/forms'
+end
