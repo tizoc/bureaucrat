@@ -9,15 +9,14 @@ module Bureaucrat
       end
 
       def as_ul
-        ul = '<ul class="errorlist">%s</ul>'
-        li = '<li>%s</li>'
-
         if empty?
           ''
         else
-          mark_safe(ul % map do |e|
-                      li % conditional_escape(e)
-                    end.join("\n"))
+          ul = '<ul class="errorlist">%s</ul>'
+          li = '<li>%s</li>'
+
+          result = ul % map{|e| li % conditional_escape(e)}.join("\n")
+          mark_safe(result)
         end
       end
 

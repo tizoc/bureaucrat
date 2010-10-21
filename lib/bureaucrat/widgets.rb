@@ -347,8 +347,8 @@ module Bureaucrat
 
       def each
         @choices.each_with_index do |choice, i|
-                yield RadioInput.new(@name, @value, @attrs.dup, choice, i)
-              end
+          yield RadioInput.new(@name, @value, @attrs.dup, choice, i)
+        end
       end
 
       def [](idx)
@@ -361,9 +361,9 @@ module Bureaucrat
       end
 
       def render
-        lis = []
-        each {|radio| lis << "<li>#{radio}</li>"}
-        mark_safe("<ul>\n#{lis.join("\n")}\n</ul>")
+        list = []
+        each {|radio| list << "<li>#{radio}</li>"}
+        mark_safe("<ul>\n#{list.join("\n")}\n</ul>")
       end
     end
 
