@@ -266,7 +266,7 @@ module Bureaucrat
         error_message = options.delete(:error_message)
         if error_message
           options[:error_messages] ||= {}
-          options[:error_messages][:invalid] = error_messages
+          options[:error_messages][:invalid] = error_message
         end
         super(options)
         @regex = regex
