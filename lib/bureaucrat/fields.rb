@@ -140,7 +140,8 @@ module Bureaucrat
 
       def initialize_copy(original)
         super(original)
-        @initial = original.initial && original.initial.dup
+        @initial = original.initial
+        @initial = @initial.dup unless [true, false, nil].include? @original
         @label = original.label && original.label.dup
         @widget = original.widget && original.widget.dup
         @error_messages = original.error_messages.dup
