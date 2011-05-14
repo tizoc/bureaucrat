@@ -76,6 +76,9 @@ module Bureaucrat
         extra_attrs = widget_attrs(@widget)
         @widget.attrs.update(extra_attrs) if extra_attrs
 
+        @hidden_widget = options.fetch(:hidden_widget, self.class.hidden_widget)
+        @hidden_widget = @hidden_widget.new if @hidden_widget.is_a?(Class)
+
         @error_messages = default_error_messages.
           merge(options.fetch(:error_messages, {}))
       end
@@ -126,7 +129,8 @@ module Bureaucrat
 
       def initialize_copy(original)
         super(original)
-        @initial = original.initial && original.initial.dup
+        @initial = original.initial
+        @initial = @initial.dup unless [true, false, nil].include? @original
         @label = original.label && original.label.dup
         @widget = original.widget && original.widget.dup
         @error_messages = original.error_messages.dup

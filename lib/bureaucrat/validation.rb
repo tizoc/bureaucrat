@@ -66,7 +66,9 @@ module Bureaucrat
       end
 
       def is_true(value)
-        fail_with(:required) unless value
+        if !value || ['false', '0', ''].include?(value)
+          fail_with(:required)
+        end
       end
 
       def is_array(value)
