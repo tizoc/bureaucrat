@@ -108,6 +108,9 @@ module Bureaucrat
         extra_attrs = widget_attrs(@widget)
         @widget.attrs.update(extra_attrs) if extra_attrs
 
+        @hidden_widget = options.fetch(:hidden_widget, self.class.hidden_widget)
+        @hidden_widget = @hidden_widget.new if @hidden_widget.is_a?(Class)
+
         @error_messages = self.class.default_error_messages.
           merge(options.fetch(:error_messages, {}))
       end
