@@ -6,9 +6,10 @@ module Bureaucrat
     class Widget
       include Utils
 
+      attr_accessor :is_required
       attr_reader :attrs
 
-      def initialize(attrs=nil)
+      def initialize(attrs = nil)
         @attrs = attrs.nil? ? {} : attrs.dup
       end
 
@@ -17,11 +18,11 @@ module Bureaucrat
         @attrs = original.attrs.dup
       end
 
-      def render(name, value, attrs=nil)
+      def render(name, value, attrs = nil)
         raise NotImplementedError
       end
 
-      def build_attrs(extra_attrs=nil, options={})
+      def build_attrs(extra_attrs = nil, options = {})
         attrs = @attrs.merge(options)
         attrs.update(extra_attrs) if extra_attrs
         attrs
@@ -75,7 +76,7 @@ module Bureaucrat
 
     # Class for password inputs
     class PasswordInput < Input
-      def initialize(attrs=nil, render_value=true)
+      def initialize(attrs = nil, render_value = false)
         super(attrs)
         @render_value = render_value
       end
@@ -115,10 +116,22 @@ module Bureaucrat
         value ||= []
         final_attrs = build_attrs(attrs, :type => input_type.to_s,
                                   :name => name)
-        mark_safe(value.map do |v|
-                    rattrs = {:value => v.to_s}.merge(final_attrs)
-                    "<input#{flatatt(rattrs)} />"
-                  end.join("\n"))
+
+
+        id = final_attrs[:id]
+        inputs = []
+
+        value.each.with_index do |v, i|
+          input_attrs = final_attrs.merge(:value => v.to_s)
+
+          if id
+            input_attrs[:id] = "#{id}_#{i}"
+          end
+
+          inputs << "<input#{flatatt(input_attrs)} />"
+        end
+
+        mark_safe(inputs.join("\n"))
       end
 
       def value_from_formdata(data, files, name)
@@ -137,7 +150,7 @@ module Bureaucrat
       end
 
       def value_from_formdata(data, files, name)
-        files.fetch(name, nil)
+        files[name]
       end
 
       def has_changed?(initial, data)
@@ -156,8 +169,10 @@ module Bureaucrat
     class Textarea < Widget
       def initialize(attrs=nil)
         # The 'rows' and 'cols' attributes are required for HTML correctness.
-        @attrs = {:cols => '40', :rows => '10'}
-        @attrs.merge!(attrs) if attrs
+        default_attrs = {:cols => '40', :rows => '10'}
+        default_attrs.merge!(attrs) if attrs
+
+        super(default_attrs)
       end
 
       def render(name, value, attrs=nil)
@@ -179,15 +194,37 @@ module Bureaucrat
 
       def render(name, value, attrs=nil)
         final_attrs = build_attrs(attrs, :type => 'checkbox', :name => name.to_s)
+
+        # FIXME: this is horrible, shouldn't just rescue everything
         result = @check_test.call(value) rescue false
-        final_attrs[:checked] = 'checked' if result
-        final_attrs[:value] = value.to_s unless
-          ['', true, false, nil].include?(value)
+
+        if result
+          final_attrs[:checked] = 'checked'
+        end
+
+        unless ['', true, false, nil].include?(value)
+          final_attrs[:value] = value.to_s
+        end
+
         mark_safe("<input#{flatatt(final_attrs)} />")
       end
 
       def value_from_formdata(data, files, name)
-        data.include?(name) ? super(data, files, name) : false
+        if data.include?(name)
+          value = data[name]
+
+          if value.is_a?(String)
+            case value.downcase
+            when 'true' then true
+            when 'false' then false
+            else value
+            end
+          else
+            value
+          end
+        else
+          false
+        end
       end
 
       def has_changed(initial, data)
@@ -234,12 +271,20 @@ module Bureaucrat
       end
 
       def render_option(option_attributes, option_label, selected_choices)
-        option_attributes = { :value => option_attributes.to_s } unless option_attributes.is_a?(Hash)
-        option_attributes[:selected] = "selected" if selected_choices.include?(option_attributes[:value])
+        unless option_attributes.is_a?(Hash)
+          option_attributes = { :value => option_attributes.to_s }
+        end
+
+        if selected_choices.include?(option_attributes[:value])
+          option_attributes[:selected] = "selected"
+        end
+
         attributes = []
+
         option_attributes.each_pair do |attr_name, attr_value|
           attributes << %Q[#{attr_name.to_s}="#{escape(attr_value.to_s)}"]
         end
+
         "<option #{attributes.join(' ')}>#{conditional_escape(option_label.to_s)}</option>"
       end
     end
@@ -260,16 +305,23 @@ module Bureaucrat
       end
 
       def value_from_formdata(data, files, name)
-        value = data[name]
-        case value
-        when '2', true then true
-        when '3', false then false
+        case data[name]
+        when '2', true, 'true' then true
+        when '3', false, 'false' then false
         else nil
         end
       end
 
       def has_changed?(initial, data)
-        make_bool(initial) != make_bool(data)
+        unless initial.nil?
+          initial = make_bool(initial)
+        end
+
+        unless data.nil?
+          data = make_bool(data)
+        end
+
+        initial != data
       end
     end
 
@@ -296,11 +348,12 @@ module Bureaucrat
       def has_changed?(initial, data)
         initial = [] if initial.nil?
         data = [] if data.nil?
-        return true if initial.length != data.length
-        initial.zip(data).each do |value1, value2|
-            return true if value1.to_s != value2.to_s
-          end
-        false
+
+        if initial.length != data.length
+          return true
+        end
+
+        Set.new(initial.map(&:to_s)) != Set.new(data.map(&:to_s))
       end
     end
 

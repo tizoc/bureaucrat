@@ -1,3 +1,5 @@
+require 'set'
+
 module Bureaucrat
   module Fields
 
@@ -72,6 +74,7 @@ module Bureaucrat
         @widget = @widget.new if @widget.is_a?(Class)
         extra_attrs = widget_attrs(@widget)
         @widget.attrs.update(extra_attrs) if extra_attrs
+        @widget.is_required = @required
 
         @hidden_widget = options.fetch(:hidden_widget, default_hidden_widget)
         @hidden_widget = @hidden_widget.new if @hidden_widget.is_a?(Class)
@@ -393,6 +396,7 @@ module Bureaucrat
     class FileField < Field
       def initialize(options)
         @max_length = options.delete(:max_length)
+        @allow_empty_file = options.delete(:allow_empty_file)
         super(options)
       end
 
@@ -559,7 +563,7 @@ module Bureaucrat
 
         begin
           @coerce.call(value)
-        rescue # TODO: be specific
+        rescue TypeError, ValidationError
           msg = Utils.format_string(error_messages[:invalid_choice],
                                     :value => value)
           raise ValidationError.new(msg)

@@ -42,7 +42,7 @@ class TestWidgets < BureaucratTestCase
   describe 'PasswordInput widget' do
     describe 'with render_value=true' do
       should 'render correctly including value' do
-        input = Widgets::PasswordInput.new
+        input = Widgets::PasswordInput.new(nil, true)
         expected = normalize_html("<input name='test' type='password' value='secret'/>")
         rendered = normalize_html(input.render('test', 'secret'))
         assert_equal(expected, rendered)

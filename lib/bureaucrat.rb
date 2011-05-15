@@ -15,7 +15,7 @@ module Bureaucrat
     end
 
     def to_s
-      @messages.inspect
+      "ValidationError(#{@messages.inspect})"
     end
   end
 
