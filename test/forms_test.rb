@@ -63,7 +63,9 @@ class TestForm < BureaucratTestCase
 
       def clean_name
         value = cleaned_data[:name]
-        raise FieldValidationError.new("Invalid name") unless value == 'valid_name'
+        unless value == 'valid_name'
+          raise Bureaucrat::ValidationError.new("Invalid name")
+        end
         value.upcase
       end
     end

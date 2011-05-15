@@ -11,7 +11,7 @@ SimpleFormFormSet =
 
 class CustomFormSet < Bureaucrat::Formsets::BaseFormSet
   def clean
-    raise FieldValidationError.new('This is wrong!')
+    raise Bureaucrat::ValidationError.new('This is wrong!')
   end
 end
 
@@ -54,7 +54,7 @@ class TestFormset < BureaucratTestCase
     end
   end
 
-  describe "Formset with clean method raising a FieldValidationError exception" do
+  describe "Formset with clean method raising a ValidationError exception" do
     setup do
       management_form_data = {
         :'form-TOTAL_FORMS' => '2',

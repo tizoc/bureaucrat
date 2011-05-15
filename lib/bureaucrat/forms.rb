@@ -111,7 +111,6 @@ module Bureaucrat
 
     class Form
       include Utils
-      include Validation
 
       # Fields associated to the form class
       def self.base_fields
@@ -253,7 +252,7 @@ module Bureaucrat
 
             clean_method = 'clean_%s' % name
             @cleaned_data[name] = send(clean_method) if respond_to?(clean_method)
-          rescue Fields::FieldValidationError => e
+          rescue ValidationError => e
             @errors[name] = e.messages
             @cleaned_data.delete(name)
           end
@@ -261,7 +260,7 @@ module Bureaucrat
 
         begin
           @cleaned_data = clean
-        rescue Fields::FieldValidationError => e
+        rescue ValidationError => e
           @errors[:__NON_FIELD_ERRORS] = e.messages
         end
         @cleaned_data = nil if @errors && !@errors.empty?

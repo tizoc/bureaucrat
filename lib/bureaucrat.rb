@@ -1,10 +1,28 @@
 module Bureaucrat
-  VERSION = '0.8.1'
+  VERSION = '0.10.0'
+
+  class ValidationError < Exception
+    attr_reader :code, :params, :messages
+
+    def initialize(message, code = nil, params = nil)
+      if message.is_a? Array
+        @messages = message
+      else
+        @code = code
+        @params = params
+        @messages = [message]
+      end
+    end
+
+    def to_s
+      @messages.inspect
+    end
+  end
 
   autoload :Fields,      'bureaucrat/fields'
   autoload :Forms,       'bureaucrat/forms'
   autoload :Utils,       'bureaucrat/utils'
-  autoload :Validation,  'bureaucrat/validation'
+  autoload :Validators,  'bureaucrat/validators'
   autoload :Widgets,     'bureaucrat/widgets'
 
   # Extra

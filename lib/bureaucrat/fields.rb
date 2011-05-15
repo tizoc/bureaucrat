@@ -59,10 +59,7 @@ module Bureaucrat
     end
 
     class Field
-      include Validation::Validators
-      include Validation::Converters
-
-      attr_accessor :required, :label, :initial, :error_messages, :widget, :hidden_widget, :show_hidden_initial, :help_text
+      attr_accessor :required, :label, :initial, :error_messages, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators
 
       def initialize(options={})
         @required = options.fetch(:required, true)
@@ -76,11 +73,13 @@ module Bureaucrat
         extra_attrs = widget_attrs(@widget)
         @widget.attrs.update(extra_attrs) if extra_attrs
 
-        @hidden_widget = options.fetch(:hidden_widget, self.class.hidden_widget)
+        @hidden_widget = options.fetch(:hidden_widget, default_hidden_widget)
         @hidden_widget = @hidden_widget.new if @hidden_widget.is_a?(Class)
 
         @error_messages = default_error_messages.
           merge(options.fetch(:error_messages, {}))
+
+        @validators = default_validators + options.fetch(:validators, [])
       end
 
       # Default error messages for this kind of field. Override on subclasses to add or replace messages
@@ -89,6 +88,11 @@ module Bureaucrat
           :required => 'This field is required',
           :invalid => 'Enter a valid value'
         }
+      end
+
+      # Default validators for this kind of field.
+      def default_validators
+        []
       end
 
       # Default widget for this kind of field. Override on subclasses to customize.
@@ -101,17 +105,56 @@ module Bureaucrat
         Widgets::HiddenInput
       end
 
-      def validating
-        yield
-      rescue Validation::ValidationError => error
-        tpl = error_messages.fetch(error.error_code, error.error_code.to_s)
-        msg = Utils.format_string(tpl, error.parameters)
-        raise FieldValidationError.new(msg)
+      def to_object(value)
+        value
+      end
+
+      def validate(value)
+        if required && Validators.empty_value?(value)
+          raise ValidationError.new(error_messages[:required])
+        end
+      end
+
+      def run_validators(value)
+        if Validators.empty_value?(value)
+          return
+        end
+
+        errors = []
+
+        validators.each do |v|
+          begin
+            v.call(value)
+          rescue ValidationError => e
+            if e.code && error_messages.has_key?(e.code)
+              message = error_messages[e.code]
+
+              if e.params
+                message = Utils.format_string(message, e.params)
+              end
+
+              errors << message
+            else
+              errors += e.messages
+            end
+          end
+        end
+
+        unless errors.empty?
+          raise ValidationError.new(errors)
+        end
       end
 
       def clean(value)
-        validating { is_present(value) if @required }
+        value = to_object(value)
+        validate(value)
+        run_validators(value)
         value
+      end
+
+      # The data to be displayed when rendering for a bound form
+      def bound_data(data, initial)
+        data
       end
 
       # List of attributes to add on the widget. Override to add field specific attributes
@@ -130,7 +173,11 @@ module Bureaucrat
       def initialize_copy(original)
         super(original)
         @initial = original.initial
-        @initial = @initial.dup unless [true, false, nil].include? @original
+        begin
+          @initial = @initial.dup
+        rescue TypeError
+          # non-clonable
+        end
         @label = original.label && original.label.dup
         @widget = original.widget && original.widget.dup
         @error_messages = original.error_messages.dup
@@ -141,33 +188,33 @@ module Bureaucrat
     class CharField < Field
       attr_accessor :max_length, :min_length
 
-      def initialize(options={})
+      def initialize(options = {})
         @max_length = options.delete(:max_length)
         @min_length = options.delete(:min_length)
         super(options)
+
+        if @min_length
+          validators << Validators::MinLengthValidator.new(@min_length)
+        end
+
+        if @max_length
+          validators << Validators::MaxLengthValidator.new(@max_length)
+        end
       end
 
-      def default_error_messages
-        super.merge(:max_length => 'Ensure this value has at most %(max)s characters (it has %(length)s).',
-                    :min_length => 'Ensure this value has at least %(min)s characters (it has %(length)s).')
+      def to_object(value)
+        if Validators.empty_value?(value)
+          ''
+        else
+          value
+        end
       end
 
       def widget_attrs(widget)
-        return if @max_length.nil?
-        return {:maxlength => @max_length.to_s} if
-          widget.kind_of?(Widgets::TextInput) || widget.kind_of?(Widgets::PasswordInput)
-      end
-
-      def clean(value)
-        super(value)
-        return '' if empty_value?(value)
-
-        validating do
-          has_max_length(value, @max_length) if @max_length
-          has_min_length(value, @min_length) if @min_length
+        if @max_length && (widget.kind_of?(Widgets::TextInput) ||
+                           widget.kind_of?(Widgets::PasswordInput))
+          { :maxlength => @max_length.to_s }
         end
-
-        value
       end
     end
 
@@ -176,6 +223,14 @@ module Bureaucrat
         @max_value = options.delete(:max_value)
         @min_value = options.delete(:min_value)
         super(options)
+
+        if @min_value
+          validators << Validators::MinValueValidator.new(@min_value)
+        end
+
+        if @max_value
+          validators << Validators::MaxValueValidator.new(@max_value)
+        end
       end
 
       def default_error_messages
@@ -184,44 +239,36 @@ module Bureaucrat
                     :min_value => 'Ensure this value is greater than or equal to %(min)s.')
       end
 
-      def clean(value)
-        super(value)
-        return nil if empty_value?(value)
+      def to_object(value)
+        value = super(value)
 
-        validating do
-          value = to_integer(value)
-          is_not_greater_than(value, @max_value) if @max_value
-          is_not_lesser_than(value, @min_value) if @min_value
+        if Validators.empty_value?(value)
+          return nil
         end
 
-        value
+        begin
+          Integer(value.to_s)
+        rescue ArgumentError
+          raise ValidationError.new(error_messages[:invalid])
+        end
       end
     end
 
-    class FloatField < Field
-      def initialize(options={})
-        @max_value = options.delete(:max_value)
-        @min_value = options.delete(:min_value)
-        super(options)
-      end
-
+    class FloatField < IntegerField
       def default_error_messages
-        super.merge(:invalid => 'Enter a number.',
-                    :max_value => 'Ensure this value is less than or equal to %(max)s.',
-                    :min_value => 'Ensure this value is greater than or equal to %(min)s.')
+        super.merge(:invalid => 'Enter a number.')
       end
 
-      def clean(value)
-        super(value)
-        return nil if empty_value?(value)
-
-        validating do
-          value = to_float(value)
-          is_not_greater_than(value, @max_value) if @max_value
-          is_not_lesser_than(value, @min_value) if @min_value
+      def to_object(value)
+        if Validators.empty_value?(value)
+          return nil
         end
 
-        value
+        begin
+          Utils.make_float(value.to_s)
+        rescue ArgumentError
+          raise ValidationError.new(error_messages[:invalid])
+        end
       end
     end
 
@@ -231,8 +278,20 @@ module Bureaucrat
         @min_value = options.delete(:min_value)
         @max_digits = options.delete(:max_digits)
         @max_decimal_places = options.delete(:max_decimal_places)
-        @whole_digits = @max_digits - @decimal_places if @max_digits && @decimal_places
+
+        if @max_digits && @max_decimal_places
+          @max_whole_digits = @max_digits - @decimal_places
+        end
+
         super(options)
+
+        if @min_value
+          validators << Validators::MinValueValidator.new(@min_value)
+        end
+
+        if @max_value
+          validators << Validators::MaxValueValidator.new(@max_value)
+        end
       end
 
       def default_error_messages
@@ -244,17 +303,50 @@ module Bureaucrat
                     :max_whole_digits => 'Ensure that there are no more than %(max)s digits before the decimal point.')
       end
 
-      def clean(value)
-        super(value)
-        return nil if !@required && empty_value?(value)
+      def to_object(value)
+        if Validators.empty_value?(value)
+          return nil
+        end
 
-        validating do
-          value = to_big_decimal(value.to_s.strip)
-          is_not_greater_than(value, @max_value) if @max_value
-          is_not_lesser_than(value, @min_value) if @min_value
-          has_max_digits(value, @max_digits) if @max_digits
-          has_max_decimal_places(value, @max_decimal_places) if @max_decimal_places
-          has_max_whole_digits(value, @max_whole_digits) if @max_whole_digits
+        begin
+          Utils.make_float(value)
+          BigDecimal.new(value)
+        rescue ArgumentError
+          raise ValidationError.new(error_messages[:invalid])
+        end
+      end
+
+      def validate(value)
+        super(value)
+
+        if Validators.empty_value?(value)
+          return nil
+        end
+
+        if value.nan? || value.infinite?
+          raise ValidationError.new(error_messages[:invalid])
+        end
+
+        sign, alldigits, _, whole_digits = value.split
+
+        if @max_digits && alldigits.length > @max_digits
+          msg = Utils.format_string(error_messages[:max_digits],
+                                    :max => @max_digits)
+          raise ValidationError.new(msg)
+        end
+
+        decimals = alldigits.length - whole_digits
+
+        if @max_decimal_places && decimals > @max_decimal_places
+          msg = Utils.format_string(error_messages[:max_decimal_places],
+                                    :max => @max_decimal_places)
+          raise ValidationError.new(msg)
+        end
+
+        if @max_whole_digits && whole_digits > @max_whole_digits
+          msg = Utils.format_string(error_messages[:max_whole_digits],
+                                    :max => @max_whole_digits)
+          raise ValidationError.new(msg)
         end
 
         value
@@ -268,54 +360,36 @@ module Bureaucrat
     class RegexField < CharField
       def initialize(regex, options={})
         error_message = options.delete(:error_message)
+
         if error_message
           options[:error_messages] ||= {}
           options[:error_messages][:invalid] = error_message
         end
-        super(options)
-        @regex = regex
-      end
 
-      def clean(value)
-        value = super(value)
-        return value if value.empty?
-        validating { matches_regex(value, @regex) }
-        value
+        super(options)
+
+        @regex = regex
+
+        validators << Validators::RegexValidator.new(:regex => regex)
       end
     end
 
-    class EmailField < RegexField
-      # Original from Django's EmailField:
-      # email_re = re.compile(
-      #    r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
-      #    r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
-      #    r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
-      EMAIL_RE = /(^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*")@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/i
-
-      def initialize(options={})
-        super(EMAIL_RE, options)
-      end
-
+    class EmailField < CharField
       def default_error_messages
         super.merge(:invalid => 'Enter a valid e-mail address.')
       end
-    end
 
-    class DeliverableEmailField < EmailField
-      def default_error_messages
-        super.merge(:no_mx => '%(domain)s is not a valid e-mail domain.')
+      def default_validators
+        [Validators.validate_email]
       end
 
       def clean(value)
-        value = super(value)
-        return value if value.empty?
-        domain = /@(.*)$/.match(value)[1]
-        validating { domain_mail_is_deliverable(domain) }
-        value
+        value = to_object(value).strip
+        super(value)
       end
     end
 
-    # TODO: add tests
+    # TODO: rewrite
     class FileField < Field
       def initialize(options)
         @max_length = options.delete(:max_length)
@@ -336,7 +410,7 @@ module Bureaucrat
       def clean(data, initial=nil)
         super(initial || data)
 
-        if !required && empty_value?(data)
+        if !required && Validators.empty_value?(data)
           return nil
         elsif !data && initial
           return initial
@@ -373,10 +447,19 @@ module Bureaucrat
         Widgets::CheckboxInput
       end
 
-      def clean(value)
-        value = to_bool(value)
-        super(value)
-        validating { is_true(value) if @required }
+      def to_object(value)
+        if value.kind_of?(String) && ['false', '0'].include?(value.downcase)
+          value = false
+        else
+          value = Utils.make_bool(value)
+        end
+
+        value = super(value)
+
+        if !value && required
+          raise ValidationError.new(error_messages[:required])
+        end
+
         value
       end
     end
@@ -386,12 +469,15 @@ module Bureaucrat
         Widgets::NullBooleanSelect
       end
 
-      def clean(value)
+      def to_object(value)
         case value
         when true, 'true', '1', 'on' then true
         when false, 'false', '0' then false
         else nil
         end
+      end
+
+      def validate(value)
       end
     end
 
@@ -418,18 +504,22 @@ module Bureaucrat
         @choices = @widget.choices = value
       end
 
-      def clean(value)
-        value = super(value)
-        value = '' if empty_value?(value)
-        value = value.to_s
-
-        return value if value.empty?
-
-        validating do
-          fail_with(:invalid_choice, :value => value) unless valid_value?(value)
+      def to_object(value)
+        if Validators.empty_value?(value)
+          ''
+        else
+          value.to_s
         end
+      end
 
-        value
+      def validate(value)
+        super(value)
+
+        unless !value || Validators.empty_value?(value) || valid_value?(value)
+          msg = Utils.format_string(error_messages[:invalid_choice],
+                                    :value => value)
+          raise ValidationError.new(msg)
+        end
       end
 
       def valid_value?(value)
@@ -446,6 +536,7 @@ module Bureaucrat
             return true if value == k.to_s
           end
         end
+
         false
       end
     end
@@ -458,15 +549,26 @@ module Bureaucrat
         super(choices, options)
       end
 
-      def clean(value)
+      def to_object(value)
         value = super(value)
-        return @empty_value if value == @empty_value || empty_value?(value)
+        original_validate(value)
+
+        if value == @empty_value || Validators.empty_value?(value)
+          return @empty_value
+        end
 
         begin
           @coerce.call(value)
-        rescue
-          validating { fail_with(:invalid_choice, :value => value) }
+        rescue # TODO: be specific
+          msg = Utils.format_string(error_messages[:invalid_choice],
+                                    :value => value)
+          raise ValidationError.new(msg)
         end
+      end
+
+      alias_method :original_validate, :validate
+
+      def validate(value)
       end
     end
 
@@ -484,21 +586,32 @@ module Bureaucrat
         Widgets::MultipleHiddenInput
       end
 
-      def clean(value)
-        validating do
-          is_present(value) if @required
-          return [] if ! @required && ! value || value.empty?
-          is_array(value)
-          not_empty(value) if @required
+      def to_object(value)
+        if !value || Validators.empty_value?(value)
+          []
+        elsif !value.is_a?(Array)
+          raise ValidationError.new(error_messages[:invalid_list])
+        else
+          value.map(&:to_s)
+        end
+      end
 
-          new_value = value.map(&:to_s)
-          new_value.each do |val|
-            fail_with(:invalid_choice, :value => val) unless valid_value?(val)
+      def validate(value)
+        if required && (!value || Validators.empty_value?(value))
+          raise ValidationError.new(error_messages[:required])
+        end
+
+        value.each do |val|
+          unless valid_value?(val)
+            msg = Utils.format_string(error_messages[:invalid_choice],
+                                      :value => val)
+            raise ValidationError.new(msg)
           end
-          new_value
         end
       end
     end
+
+    # TypedMultipleChoiceField < MultipleChoiceField
 
     # TODO: tests
     class ComboField < Field
@@ -518,7 +631,25 @@ module Bureaucrat
     # MultiValueField
     # FilePathField
     # SplitDateTimeField
-    # IPAddressField
-    # SlugField
+
+    class IPAddressField < CharField
+      def default_error_messages
+        super.merge(:invalid => 'Enter a valid IPv4 address.')
+      end
+
+      def default_validators
+        [Validators.validate_ipv4_address]
+      end
+    end
+
+    class SlugField < CharField
+      def default_error_messages
+        super.merge(:invalid => "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
+      end
+
+      def default_validators
+        [Validators.validate_slug]
+      end
+    end
   end
 end

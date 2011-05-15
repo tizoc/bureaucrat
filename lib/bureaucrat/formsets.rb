@@ -47,8 +47,10 @@ module Bureaucrat
         if @data || @files
           form = ManagementForm.new(@data, :auto_id => @auto_id,
                                     :prefix => @prefix)
-          raise FieldValidationError.new('ManagementForm data is missing or has been tampered with') unless
-            form.valid?
+          unless form.valid?
+            msg = 'ManagementForm data is missing or has been tampered with'
+            raise ValidationError.new(msg)
+          end
         else
           form = ManagementForm.new(nil, :auto_id => @auto_id,
                                     :prefix => @prefix,
@@ -180,7 +182,7 @@ module Bureaucrat
 
           begin
             self.clean
-          rescue FieldValidationError => e
+          rescue ValidationError => e
             @non_form_errors = e.messages
           end
         else
