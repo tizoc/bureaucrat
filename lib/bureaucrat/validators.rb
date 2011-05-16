@@ -24,7 +24,7 @@ module Bureaucrat
     end
 
     def validate_integer
-      lambda do |value|
+      @@validate_integer ||= lambda do |value|
         begin
           Integer(string)
         rescue ArgumentError
@@ -41,33 +41,37 @@ module Bureaucrat
     EMAIL_RE = /(^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*")@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/i
 
     def validate_email
-      RegexValidator.new(:regex => EMAIL_RE,
-                         :message => 'Enter a valid e-mail address.',
-                         :code => :invalid)
+      @@validate_email ||=
+        RegexValidator.new(:regex => EMAIL_RE,
+                           :message => 'Enter a valid e-mail address.',
+                           :code => :invalid)
     end
 
     SLUG_RE = /^[-\w]+$/
 
     def validate_slug
-      RegexValidator.new(:regex => SLUG_RE,
-                         :message => "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.",
-                         :code => :invalid)
+      @@validate_slug ||=
+        RegexValidator.new(:regex => SLUG_RE,
+                           :message => "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.",
+                           :code => :invalid)
     end
 
     IPV4_RE = /^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/
 
     def validate_ipv4_address
-      RegexValidator.new(:regex => IPV4_RE,
-                         :message => 'Enter a valid IPv4 address.',
-                         :code => 'invalid')
+      @@validate_ipv4_address ||=
+        RegexValidator.new(:regex => IPV4_RE,
+                           :message => 'Enter a valid IPv4 address.',
+                           :code => 'invalid')
     end
 
     COMMA_SEPARATED_INT_LIST_RE = /^[\d,]+$/
 
     def validate_comma_separated_integer_list
-      RegexValidator.new(:regex => COMMA_SEPARATED_INT_LIST_RE,
-                         :message => 'Enter only digits separated by commas.',
-                         :code => :invalid)
+      @@validate_comma_separated_integer_list ||=
+        RegexValidator.new(:regex => COMMA_SEPARATED_INT_LIST_RE,
+                           :message => 'Enter only digits separated by commas.',
+                           :code => :invalid)
     end
 
     class BaseValidator
