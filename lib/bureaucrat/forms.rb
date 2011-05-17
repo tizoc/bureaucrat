@@ -71,7 +71,7 @@ module Bureaucrat
 
       # The data associated to this field.
       def data
-        @field.widget.value_from_formdata(@form.data, @form.files, @html_name)
+        @field.widget.value_from_formdata(@form.data, @html_name)
       end
 
       # Renders the label tag for this field.
@@ -239,8 +239,8 @@ module Bureaucrat
         return if empty_permitted? && !changed?
 
         @fields.each do |name, field|
-          value = field.widget.value_from_formdata(@data, @files,
-                                                   add_prefix(name))
+          value = field.widget.
+            value_from_formdata(@data, add_prefix(name))
 
           begin
             if field.is_a?(Fields::FileField)
@@ -284,15 +284,16 @@ module Bureaucrat
 
           @fields.each do |name, field|
             prefixed_name = add_prefix(name)
-            data_value = field.widget.value_from_formdata(@data, @files,
-                                                          prefixed_name)
+            data_value = field.widget.
+              value_from_formdata(@data, prefixed_name)
+
             if !field.show_hidden_initial
               initial_value = @initial.fetch(name.to_sym, field.initial)
             else
               initial_prefixed_name = add_initial_prefix(name)
               hidden_widget = field.hidden_widget.new
-              initial_value = hidden_widget.value_from_formdata(@data, @files,
-                                                                initial_prefixed_name)
+              initial_value = hidden_widget.
+                value_from_formdata(@data, initial_prefixed_name)
             end
 
             @changed_data << name if
@@ -338,7 +339,7 @@ module Bureaucrat
       def raw_value(fieldname)
         field = @fields.fetch(fieldname)
         prefix = add_prefix(fieldname)
-        field.widget.value_from_formdata(@data, @files, prefix)
+        field.widget.value_from_formdata(@data, prefix)
       end
 
     end

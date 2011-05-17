@@ -24,6 +24,7 @@ module Bureaucrat
   autoload :Utils,       'bureaucrat/utils'
   autoload :Validators,  'bureaucrat/validators'
   autoload :Widgets,     'bureaucrat/widgets'
+  autoload :TemporaryUploadedFile, 'bureaucrat/temporary_uploaded_file'
 
   # Extra
   autoload :Formsets,    'bureaucrat/formsets'

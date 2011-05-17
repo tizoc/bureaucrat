@@ -1,5 +1,6 @@
 module Bureaucrat
   module Utils
+    extend self
 
     module SafeData
     end
@@ -41,7 +42,9 @@ module Bureaucrat
       end
     end
 
-  module_function
+    def blank?(value)
+      !value || value == ''
+    end
 
     def mark_safe(s)
       s.is_a?(SafeData) ? s : SafeString.new(s.to_s)
