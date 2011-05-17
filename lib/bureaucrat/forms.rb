@@ -74,6 +74,22 @@ module Bureaucrat
         @field.widget.value_from_formdata(@form.data, @html_name)
       end
 
+      def value
+        # Returns the value for this BoundField, using the initial value if
+        # the form is not bound or the data otherwise.
+
+        if form.bound?
+          data = field.bound_data(data, form.initial.fetch(name, field.initial))
+        else
+          data = form.initial.fetch(name, field.initial)
+          if data.respond_to?(:call)
+            data = data.call
+          end
+        end
+
+        field.prepare_value(data)
+      end
+
       # Renders the label tag for this field.
       def label_tag(contents=nil, attrs=nil)
         contents ||= conditional_escape(@label)
@@ -86,6 +102,30 @@ module Bureaucrat
         end
 
         mark_safe(contents)
+      end
+
+      def css_classes(extra_classes = nil)
+        # Returns a string of space-separated CSS classes for this field.
+
+        if extra_classes.respond_to?(:split)
+          extra_classes = extra_classes.split
+        end
+
+        extra_classes = Set.new(extra_classes)
+
+        if errors &&
+            form.respond_to?(:error_css_class) &&
+            !Utils.blank?(form.error_css_class)
+          extra_classes << form.error_css_class
+        end
+
+        if field.required &&
+            form.respond_to?(:required_css_class) &&
+            !Utils.blank?(form.required_css_class)
+          extra_classes << form.required_css_class
+        end
+
+        extra_classes.to_a.join(' ')
       end
 
       # true if the widget for this field is of the hidden kind.

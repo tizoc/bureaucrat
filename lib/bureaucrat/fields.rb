@@ -108,6 +108,10 @@ module Bureaucrat
         Widgets::HiddenInput
       end
 
+      def prepare_value(value)
+        value
+      end
+
       def to_object(value)
         value
       end
