@@ -28,5 +28,5 @@ module Bureaucrat
 
   # Extra
   autoload :Formsets,    'bureaucrat/formsets'
-  autoload :Quickfields, 'bureaucrat/validation'
+  autoload :Quickfields, 'bureaucrat/quickfields'
 end
