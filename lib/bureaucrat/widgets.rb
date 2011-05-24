@@ -133,15 +133,6 @@ module Bureaucrat
 
         mark_safe(inputs.join("\n"))
       end
-
-      def value_from_formdata(data, name)
-        #if data.is_a?(MultiValueDict) || data.is_a?(MergeDict)
-        #  data.getlist(name)
-        #else
-        #  data[name]
-        #end
-        data[name]
-      end
     end
 
     class FileInput < Input
@@ -409,21 +400,12 @@ module Bureaucrat
     class SelectMultiple < Select
       def render(name, value, attrs=nil, choices=[])
         value = [] if value.nil?
-        final_attrs = build_attrs(attrs, :name => name)
+        final_attrs = build_attrs(attrs, :name => "#{name}[]")
         output = ["<select multiple=\"multiple\"#{flatatt(final_attrs)}>"]
         options = render_options(choices, value)
         output << options if options && !options.empty?
         output << '</select>'
         mark_safe(output.join("\n"))
-      end
-
-      def value_from_formdata(data, name)
-        #if data.is_a?(MultiValueDict) || data.is_a?(MergeDict)
-        #  data.getlist(name)
-        #else
-        #  data[name]
-        #end
-        data[name]
       end
 
       def has_changed?(initial, data)
@@ -536,8 +518,9 @@ module Bureaucrat
 
       def render(name, values, attrs=nil, choices=[])
         values ||= []
+        multi_name = "#{name}[]"
         has_id = attrs && attrs.include?(:id)
-        final_attrs = build_attrs(attrs, :name => name)
+        final_attrs = build_attrs(attrs, :name => multi_name)
         output = ['<ul>']
         str_values = {}
         values.each {|val| str_values[(val.to_s)] = true}
@@ -554,7 +537,7 @@ module Bureaucrat
             check_test = lambda{|value| str_values[value]}
             cb = CheckboxInput.new(final_attrs, check_test)
             opt_val = opt_val.to_s
-            rendered_cb = cb.render(name, opt_val)
+            rendered_cb = cb.render(multi_name, opt_val)
             opt_label = conditional_escape(opt_label.to_s)
             output << "<li><label#{label_for}>#{rendered_cb} #{opt_label}</label></li>"
           end
