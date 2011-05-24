@@ -71,7 +71,7 @@ class TestWidgets < BureaucratTestCase
   describe 'MultipleHiddenInput widget' do
     should 'correctly render' do
       input = Widgets::MultipleHiddenInput.new
-      expected = normalize_html("<input name='test' type='hidden' value='v1'/>\n<input name='test' type='hidden' value='v2'/>")
+      expected = normalize_html("<input name='test[]' type='hidden' value='v1'/>\n<input name='test[]' type='hidden' value='v2'/>")
       rendered = normalize_html(input.render('test', ['v1', 'v2']))
       assert_equal(expected, rendered)
     end
@@ -247,7 +247,7 @@ class TestWidgets < BureaucratTestCase
     describe 'with empty choices' do
       should 'correctly render' do
         input = Widgets::SelectMultiple.new
-        expected = normalize_html("<select name='test' multiple='multiple'>\n</select>")
+        expected = normalize_html("<select name='test[]' multiple='multiple'>\n</select>")
         rendered = normalize_html(input.render('test', 'hello'))
         assert_equal(expected, rendered)
       end
@@ -256,14 +256,14 @@ class TestWidgets < BureaucratTestCase
     describe 'with flat choices' do
       should 'correctly render (none selected)' do
         input = Widgets::SelectMultiple.new(nil, @choices)
-        expected = normalize_html("<select name='test' multiple='multiple'>\n<option value='1'>One</option>\n<option value='2'>Two</option>\n</select>")
+        expected = normalize_html("<select name='test[]' multiple='multiple'>\n<option value='1'>One</option>\n<option value='2'>Two</option>\n</select>")
         rendered = normalize_html(input.render('test', 'hello'))
         assert_equal(expected, rendered)
       end
 
       should 'correctly render (with selected)' do
         input = Widgets::SelectMultiple.new(nil, @choices)
-        expected = normalize_html("<select name='test' multiple='multiple'>\n<option value='1' selected='selected'>One</option>\n<option value='2' selected='selected'>Two</option>\n</select>")
+        expected = normalize_html("<select name='test[]' multiple='multiple'>\n<option value='1' selected='selected'>One</option>\n<option value='2' selected='selected'>Two</option>\n</select>")
         rendered = normalize_html(input.render('test', ['1', '2']))
         assert_equal(expected, rendered)
       end
@@ -272,14 +272,14 @@ class TestWidgets < BureaucratTestCase
     describe 'with group choices' do
       should 'correctly render (none selected)' do
         input = Widgets::SelectMultiple.new(nil, @groupchoices)
-        expected = normalize_html("<select name='test' multiple='multiple'>\n<optgroup label='numbers'>\n<option value='1'/>\n<option value='One'/>\n</optgroup>\n<optgroup label='words'>\n<option value='spoon'>Spoon</option>\n<option value='banana'>Banana</option>\n</optgroup>\n</select>")
+        expected = normalize_html("<select name='test[]' multiple='multiple'>\n<optgroup label='numbers'>\n<option value='1'/>\n<option value='One'/>\n</optgroup>\n<optgroup label='words'>\n<option value='spoon'>Spoon</option>\n<option value='banana'>Banana</option>\n</optgroup>\n</select>")
         rendered = normalize_html(input.render('test', 'hello'))
         assert_equal(expected, rendered)
       end
 
       should 'correctly render (with selected)' do
         input = Widgets::SelectMultiple.new(nil, @groupchoices)
-        expected = normalize_html("<select name='test' multiple='multiple'>\n<optgroup label='numbers'>\n<option value='1'/>\n<option value='One'/>\n</optgroup>\n<optgroup label='words'>\n<option value='spoon' selected='selected'>Spoon</option>\n<option value='banana' selected='selected'>Banana</option>\n</optgroup>\n</select>")
+        expected = normalize_html("<select name='test[]' multiple='multiple'>\n<optgroup label='numbers'>\n<option value='1'/>\n<option value='One'/>\n</optgroup>\n<optgroup label='words'>\n<option value='spoon' selected='selected'>Spoon</option>\n<option value='banana' selected='selected'>Banana</option>\n</optgroup>\n</select>")
         rendered = normalize_html(input.render('test', ['banana', 'spoon']))
         assert_equal(expected, rendered)
       end
@@ -319,14 +319,14 @@ class TestWidgets < BureaucratTestCase
     describe 'with choices' do
       should 'correctly render (none selected)' do
         input = Widgets::CheckboxSelectMultiple.new(nil, @choices)
-        expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input name='test' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input name='test' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
+        expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input name='test[]' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input name='test[]' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test[]' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
         rendered = normalize_html(input.render('test', 'hello', :id => 'id_checkboxes'))
         assert_equal(expected, rendered)
       end
 
       should 'correctly render (with selected)' do
         input = Widgets::CheckboxSelectMultiple.new(nil, @choices)
-        expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input checked='checked' name='test' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input checked='checked' name='test' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
+        expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input checked='checked' name='test[]' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input checked='checked' name='test[]' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test[]' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
         rendered = normalize_html(input.render('test', ['1', '2'],
                                                :id => 'id_checkboxes'))
         assert_equal(expected, rendered)

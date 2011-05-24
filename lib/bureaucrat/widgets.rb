@@ -115,8 +115,7 @@ module Bureaucrat
       def render(name, value, attrs=nil, choices=[])
         value ||= []
         final_attrs = build_attrs(attrs, :type => input_type.to_s,
-                                  :name => name)
-
+                                  :name => "#{name}[]")
 
         id = final_attrs[:id]
         inputs = []
