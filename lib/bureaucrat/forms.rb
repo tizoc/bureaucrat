@@ -113,15 +113,11 @@ module Bureaucrat
 
         extra_classes = Set.new(extra_classes)
 
-        if errors &&
-            form.respond_to?(:error_css_class) &&
-            !Utils.blank?(form.error_css_class)
+        if !errors.empty? && !Utils.blank?(form.error_css_class)
           extra_classes << form.error_css_class
         end
 
-        if field.required &&
-            form.respond_to?(:required_css_class) &&
-            !Utils.blank?(form.required_css_class)
+        if field.required && !Utils.blank?(form.required_css_class)
           extra_classes << form.required_css_class
         end
 
@@ -168,8 +164,12 @@ module Bureaucrat
         c.instance_variable_set(:@base_fields, base_fields.dup)
       end
 
-      # Error class for this form
+      # Error object class for this form
       attr_accessor :error_class
+      # Required class for this form
+      attr_accessor :required_css_class
+      # Required class for this form
+      attr_accessor :error_css_class
       # Format string for field id generator
       attr_accessor :auto_id
       # Hash of {field_name => initial_value}
