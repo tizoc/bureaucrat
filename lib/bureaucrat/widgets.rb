@@ -501,7 +501,7 @@ module Bureaucrat
         value ||= ''
         str_value = value.to_s
         final_attrs = build_attrs(attrs)
-        choices = @choices + choices
+        choices = @choices.to_a + choices.to_a
         @renderer.new(name, str_value, final_attrs, choices)
       end
 
@@ -524,7 +524,7 @@ module Bureaucrat
         str_values = {}
         values.each {|val| str_values[(val.to_s)] = true}
 
-        (@choices + choices).each_with_index do |opt_pair, i|
+        (@choices.to_a + choices.to_a).each_with_index do |opt_pair, i|
             opt_val, opt_label = opt_pair
             if has_id
               final_attrs[:id] = "#{attrs[:id]}_#{i}"
