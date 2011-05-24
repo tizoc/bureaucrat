@@ -8,7 +8,7 @@ gem_spec = eval(File.read(gem_spec_file)) rescue nil
 
 desc 'Run all tests'
 Rake::TestTask.new(:test) do |t|
-  t.pattern = 'test/**/*_test.rb'
+  t.pattern = './test/**/*_test.rb'
   t.verbose = false
 end
 
