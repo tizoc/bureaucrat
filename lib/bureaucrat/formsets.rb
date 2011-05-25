@@ -29,8 +29,8 @@ module Bureaucrat
         @is_bound = !data.nil?
         @prefix = options.fetch(:prefix, self.class.default_prefix)
         @auto_id = options.fetch(:auto_id, 'id_%s')
-        @data = data
-        @files = options[:files]
+        @data = data || {}
+        @files = options[:files] || {}
         @initial = options[:initial]
         @error_class = options.fetch(:error_class, ErrorList)
         @errors = nil
@@ -44,7 +44,7 @@ module Bureaucrat
       end
 
       def management_form
-        if @data || @files
+        if @is_bound
           form = ManagementForm.new(@data, :auto_id => @auto_id,
                                     :prefix => @prefix)
           unless form.valid?
@@ -63,7 +63,7 @@ module Bureaucrat
       end
 
       def total_form_count
-        if @data || @files
+        if @is_bound
           management_form.cleaned_data[TOTAL_FORM_COUNT]
         else
           n = initial_form_count + self.extra
@@ -72,7 +72,7 @@ module Bureaucrat
       end
 
       def initial_form_count
-        if @data || @files
+        if @is_bound
           management_form.cleaned_data[INITIAL_FORM_COUNT]
         else
           n = @initial ? @initial.length : 0
@@ -143,7 +143,7 @@ module Bureaucrat
           @ordering = (0...total_form_count).map do |i|
             form = @forms[i]
             next if i >= initial_form_count && !form.changed?
-            next if self.can_delete && form.cleaned_data[DELETION_FIELD_NAME]
+            next if self.can_delete && should_delete_form?(form)
             [i, form.cleaned_data[ORDERING_FIELD_NAME]]
           end.compact
           @ordering.sort! do |a, b|
@@ -194,7 +194,7 @@ module Bureaucrat
           begin
             self.clean
           rescue ValidationError => e
-            @non_form_errors = e.messages
+            @non_form_errors = @error_class.new(e.messages)
           end
         else
           @errors = []
@@ -207,7 +207,7 @@ module Bureaucrat
       def add_fields(form, index)
         if can_order
           attrs = {:label => 'Order', :required => false}
-          attrs[:initial] = index + 1 if index < initial_form_count
+          attrs[:initial] = index + 1 if index && index < initial_form_count
           form.fields[ORDERING_FIELD_NAME] = IntegerField.new(attrs)
         end
         if can_delete
