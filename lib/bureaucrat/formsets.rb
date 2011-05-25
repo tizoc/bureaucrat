@@ -39,10 +39,6 @@ module Bureaucrat
         construct_forms
       end
 
-      def to_s
-        as_table
-      end
-
       def management_form
         if @is_bound
           form = ManagementForm.new(@data, :auto_id => @auto_id,
