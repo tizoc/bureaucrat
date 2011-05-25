@@ -2,6 +2,7 @@ module Bureaucrat
   module Formsets
     TOTAL_FORM_COUNT = :'TOTAL_FORMS'
     INITIAL_FORM_COUNT = :'INITIAL_FORMS'
+    MAX_NUM_FORM_COUNT = :'MAX_NUM_FORMS'
     ORDERING_FIELD_NAME = :'ORDER'
     DELETION_FIELD_NAME = :'DELETE'
 
@@ -11,6 +12,8 @@ module Bureaucrat
 
       field TOTAL_FORM_COUNT, IntegerField.new(:widget => HiddenInput)
       field INITIAL_FORM_COUNT, IntegerField.new(:widget => HiddenInput)
+      field MAX_NUM_FORM_COUNT, IntegerField.new(:widget => HiddenInput,
+                                                 :required => false)
     end
 
     class BaseFormSet
@@ -30,13 +33,24 @@ module Bureaucrat
         @prefix = options.fetch(:prefix, self.class.default_prefix)
         @auto_id = options.fetch(:auto_id, 'id_%s')
         @data = data || {}
-        @files = options[:files] || {}
         @initial = options[:initial]
         @error_class = options.fetch(:error_class, ErrorList)
         @errors = nil
         @non_form_errors = nil
 
         construct_forms
+      end
+
+      def each(&block)
+        forms.each(&block)
+      end
+
+      def [](index)
+        forms[index]
+      end
+
+      def length
+        forms.length
       end
 
       def management_form
@@ -52,7 +66,8 @@ module Bureaucrat
                                     :prefix => @prefix,
                                     :initial => {
                                       TOTAL_FORM_COUNT => total_form_count,
-                                      INITIAL_FORM_COUNT => initial_form_count
+                                      INITIAL_FORM_COUNT => initial_form_count,
+                                      MAX_NUM_FORM_COUNT => self.max_num
                                     })
         end
         form
@@ -62,8 +77,18 @@ module Bureaucrat
         if @is_bound
           management_form.cleaned_data[TOTAL_FORM_COUNT]
         else
-          n = initial_form_count + self.extra
-          (n > self.max_num && self.max_num > 0) ? self.max_num : n
+          initial_forms = initial_form_count
+          total_forms = initial_form_count + self.extra
+
+          # Allow all existing related objects/inlines to be displayed,
+          # but don't allow extra beyond max_num.
+          if self.max_num && initial_forms > self.max_num
+            initial_forms
+          elsif self.max_num && total_forms > self.max_num
+            max_num
+          else
+            total_forms
+          end
         end
       end
 
@@ -72,7 +97,8 @@ module Bureaucrat
           management_form.cleaned_data[INITIAL_FORM_COUNT]
         else
           n = @initial ? @initial.length : 0
-          (n > self.max_num && self.max_num > 0) ? self.max_num : n
+
+          (self.max_num && n > self.max_num) ? self.max_num : n
         end
       end
 
@@ -82,7 +108,6 @@ module Bureaucrat
 
       def construct_form(i, options={})
         defaults = {:auto_id => @auto_id, :prefix => add_prefix(i)}
-        defaults[:files] = @files if @files
         defaults[:initial] = @initial[i] if @initial && @initial[i]
 
         # Allow extra forms to be empty.
