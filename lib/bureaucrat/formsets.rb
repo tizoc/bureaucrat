@@ -122,9 +122,15 @@ module Bureaucrat
         if @deleted_form_indexes.nil?
           @deleted_form_indexes = (0...total_form_count).select do |i|
             form = @forms[i]
-            (i < initial_form_count || form.changed?) && form.cleaned_data[DELETION_FIELD_NAME]
+
+            if i >= initial_form_count && !form.changed?
+              false
+            else
+              should_delete_form?(form)
+            end
           end
         end
+
         @deleted_form_indexes.map {|i| @forms[i]}
       end
 
@@ -160,19 +166,24 @@ module Bureaucrat
         @errors
       end
 
+      def should_delete_form?(form)
+        field = form.fields[DELETION_FIELD_NAME]
+        raw_value = form.send(:raw_value, DELETION_FIELD_NAME)
+        field.clean(raw_value)
+      end
+
       def valid?
         return false unless @is_bound
+
         forms_valid = true
+
         (0...total_form_count).each do |i|
           form = @forms[i]
-          if self.can_delete
-            field = form.fields[DELETION_FIELD_NAME]
-            raw_value = form.send(:raw_value, DELETION_FIELD_NAME)
-            should_delete = field.clean(raw_value)
-            next if should_delete
-          end
+          next if self.can_delete && should_delete_form?(form)
+
           forms_valid = false unless errors[i].empty?
         end
+
         forms_valid && non_form_errors.empty?
       end
 
