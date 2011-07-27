@@ -48,7 +48,7 @@ class TestFormset < BureaucratTestCase
     end
 
     should 'correctly return the list of cleaned data' do
-      expected = [{:name => 'Lynch'}, {:name => 'Tio'}]
+      expected = [{'name' => 'Lynch'}, {'name' => 'Tio'}]
       result = @valid_bound_set.cleaned_data
       assert_equal(expected, result)
     end

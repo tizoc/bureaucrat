@@ -15,8 +15,8 @@ module Bureaucrat
         @form = form
         @field = field
         @name = name
-        @html_name = form.add_prefix(name).to_sym
-        @html_initial_name = form.add_initial_prefix(name).to_sym
+        @html_name = form.add_prefix(name)
+        @html_initial_name = form.add_initial_prefix(name)
         @label = @field.label || pretty_name(name)
         @help_text = @field.help_text || ''
       end
@@ -40,7 +40,7 @@ module Bureaucrat
         attrs[:id] ||= auto_id if auto_id && !widget.attrs.key?(:id)
 
         if !@form.bound?
-          data = @form.initial.fetch(@name.to_sym, @field.initial)
+          data = @form.initial.fetch(@name, @field.initial)
           data = data.call if data.respond_to?(:call)
         else
           if @field.is_a?(Fields::FileField) && @data.nil?
@@ -205,13 +205,11 @@ module Bureaucrat
 
       def initialize(data=nil, options={})
         @is_bound = !data.nil?
-        @data = {}
-        data.each {|k, v| @data[k.to_sym] = @data[k] = v} if data
+        @data = StringAccessHash.new(data || {})
         @files = options.fetch(:files, {})
         @auto_id = options.fetch(:auto_id, 'id_%s')
         @prefix = options[:prefix]
-        @initial = {}
-        options.fetch(:initial, {}).each {|k, v| @initial[k.to_sym] = @initial[k] = v}
+        @initial = StringAccessHash.new(options.fetch(:initial, {}))
         @error_class = options.fetch(:error_class, Fields::ErrorList)
         @label_suffix = options.fetch(:label_suffix, ':')
         @empty_permitted = options.fetch(:empty_permitted, false)
@@ -248,7 +246,7 @@ module Bureaucrat
 
       # Generates a prefix for field named +field_name+
       def add_prefix(field_name)
-        @prefix ? :"#{@prefix}-#{field_name}" : field_name
+        @prefix ? "#{@prefix}-#{field_name}" : field_name
       end
 
       # Generates an initial-prefix for field named +field_name+
@@ -274,7 +272,7 @@ module Bureaucrat
 
         return unless bound?
 
-        @cleaned_data = {}
+        @cleaned_data = StringAccessHash.new
 
         return if empty_permitted? && !changed?
 
@@ -284,7 +282,7 @@ module Bureaucrat
 
           begin
             if field.is_a?(Fields::FileField)
-              initial = @initial.fetch(name.to_sym, field.initial)
+              initial = @initial.fetch(name, field.initial)
               @cleaned_data[name] = field.clean(value, initial)
             else
               @cleaned_data[name] = field.clean(value)
@@ -328,7 +326,7 @@ module Bureaucrat
               value_from_formdata(@data, prefixed_name)
 
             if !field.show_hidden_initial
-              initial_value = @initial.fetch(name.to_sym, field.initial)
+              initial_value = @initial.fetch(name, field.initial)
             else
               initial_prefixed_name = add_initial_prefix(name)
               hidden_widget = field.hidden_widget.new
@@ -368,7 +366,7 @@ module Bureaucrat
       # Populates the passed object's attributes with data from the fields
       def populate_object(object)
         @fields.each do |name, field|
-          field.populate_object(object, name, @cleaned_data[name.to_sym])
+          field.populate_object(object, name, @cleaned_data[name])
         end
       end
 

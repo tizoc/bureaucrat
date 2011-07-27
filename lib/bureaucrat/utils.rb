@@ -42,6 +42,38 @@ module Bureaucrat
       end
     end
 
+    class StringAccessHash < Hash
+      def initialize(other = {})
+        super()
+        update(other)
+      end
+
+      def []=(key, value)
+        super(key.to_s, value)
+      end
+
+      def [](key)
+        super(key.to_s)
+      end
+
+      def fetch(key, *args)
+        super(key.to_s, *args)
+      end
+
+      def include?(key)
+        super(key.to_s)
+      end
+
+      def update(other)
+        other.each_pair{|k, v| self[k] = v}
+        self
+      end
+
+      def merge(other)
+        dup.update(other)
+      end
+    end
+
     def blank?(value)
       !value || value == ''
     end
