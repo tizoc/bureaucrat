@@ -1,25 +1,35 @@
 Bureaucrat
 ==========
 
-Form handling for Ruby inspired by Django forms.
+Form handling for Ruby inspired by [Django forms](https://docs.djangoproject.com/en/dev/#forms).
 
-Structure
----------
+Description
+-----------
 
-                     Form ----> as_<render_mode>, valid?, errors/cleaned_data
+Bureaucrat is a library for handling the processing, validation and rendering of HTML forms.
+
+Structure of a Form
+-------------------
+
+                     Form ----> valid?, errors/cleaned_data
                 ______|________
               /       |         \
           Field     Field      Field  ----> clean
             |         |          |
           Widget    Widget     Widget ----> render
 
-- A Form has a list of Fields.
-- A Field has a Widget.
-- A Widget knows how to render itself.
-- A Field knows how to validate an input value and convert it from a string to the required type.
-- A Form knows how to render all its fields along with all the required error messages.
-- After validation, a valid Form responds to 'cleaned_data' by returning a hash of validated values.
-- After validation an invalid Form responds to 'errors' by returning a hash of field_name => error_messages
+**Form**:
+Collection of named Fields, handles global validation and the last pass of
+data conversion.
+After validation, a valid Form responds to `cleaned_data` by returning a
+hash of validated values and an invalid Form responds to `errors` by
+returning a hash of field_name => error_messages.
+
+**Field**:
+Handles the validation and data conversion of each field belonging to the Form. Each Field is associated to a name on the parent Form.
+
+**Widget**:
+Handles the rendering of a Form field. Each Field has two widgets associated, one for normal rendering, and another for hidden inputs rendering. Every type of Field has default Widgets defined, but they can be overriden on a per-Form basis.
 
 Usage examples
 --------------
@@ -36,6 +46,7 @@ Usage examples
       integer :age, :min_value => 0
       boolean :newsletter, :required => false
 
+      # Note: Bureaucrat doesn't define save
       def save
         user = User.create!(cleaned_data)
         Mailer.deliver_confirmation_mail(user)
@@ -108,14 +119,14 @@ Examples of different ways of defining forms
       boolean :newsletter, :required => false
     end
 
-    def quicker_form
+    def inline_form
       f = Class.new(Bureaucrat::Forms::Form)
       f.extend(Bureaucrat::Quickfields)
       yield f
       f
     end
 
-    MyFormQuicker = quicker_form do |f|
+    form_maker = inline_form do |f|
       f.string  :nickname, :max_length => 50
       f.string  :realname, :required => false
       f.email   :email
