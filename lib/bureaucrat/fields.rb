@@ -47,19 +47,6 @@ module Bureaucrat
       end
     end
 
-    class FieldValidationError < Exception
-      attr_reader :messages
-
-      def initialize(message)
-        message = [message] unless message.is_a?(Array)
-        @messages = ErrorList.new(message)
-      end
-
-      def to_s
-        @messages.inspect
-      end
-    end
-
     class Field
       attr_accessor :required, :label, :initial, :error_messages, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators
 
