@@ -113,11 +113,11 @@ module Bureaucrat
 
         extra_classes = Set.new(extra_classes)
 
-        if !errors.empty? && !Utils.blank?(form.error_css_class)
+        if !errors.empty? && !Utils.blank_value?(form.error_css_class)
           extra_classes << form.error_css_class
         end
 
-        if field.required && !Utils.blank?(form.required_css_class)
+        if field.required && !Utils.blank_value?(form.required_css_class)
           extra_classes << form.required_css_class
         end
 

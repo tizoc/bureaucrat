@@ -436,7 +436,7 @@ module Bureaucrat
           raise ValidationError.new(msg)
         end
 
-        if Utils.blank?(file_name)
+        if Utils.blank_value?(file_name)
           raise ValidationError.new(error_messages[:invalid])
         end
 

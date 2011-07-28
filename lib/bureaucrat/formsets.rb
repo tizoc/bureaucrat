@@ -82,9 +82,9 @@ module Bureaucrat
 
           # Allow all existing related objects/inlines to be displayed,
           # but don't allow extra beyond max_num.
-          if self.max_num && initial_forms > self.max_num
+          if self.max_num > 0 && initial_forms > self.max_num
             initial_forms
-          elsif self.max_num && total_forms > self.max_num
+          elsif self.max_num > 0 && total_forms > self.max_num
             max_num
           else
             total_forms
@@ -98,7 +98,7 @@ module Bureaucrat
         else
           n = @initial ? @initial.length : 0
 
-          (self.max_num && n > self.max_num) ? self.max_num : n
+          (self.max_num > 0 && n > self.max_num) ? self.max_num : n
         end
       end
 
@@ -113,7 +113,8 @@ module Bureaucrat
         # Allow extra forms to be empty.
         defaults[:empty_permitted] = true if i >= initial_form_count
         defaults.merge!(options)
-        form = self.form.new(@data, defaults)
+        form_data = @is_bound ? @data : nil
+        form = self.form.new(form_data, defaults)
         add_fields(form, i)
         form
       end

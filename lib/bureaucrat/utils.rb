@@ -74,7 +74,7 @@ module Bureaucrat
       end
     end
 
-    def blank?(value)
+    def blank_value?(value)
       !value || value == ''
     end
 
