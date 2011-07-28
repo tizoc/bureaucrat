@@ -140,7 +140,7 @@ module Bureaucrat
       end
 
       def value_from_formdata(data, name)
-        data[name] && TemporaryUploadedFile(data[name])
+        data[name] && TemporaryUploadedFile.new(data[name])
       end
 
       def has_changed?(initial, data)
