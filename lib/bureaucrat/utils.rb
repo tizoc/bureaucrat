@@ -72,6 +72,10 @@ module Bureaucrat
       def merge(other)
         dup.update(other)
       end
+
+      def delete(key)
+        super(key.to_s)
+      end
     end
 
     def blank_value?(value)
