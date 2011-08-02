@@ -79,15 +79,15 @@ module Bureaucrat
         # the form is not bound or the data otherwise.
 
         if form.bound?
-          data = field.bound_data(data, form.initial.fetch(name, field.initial))
+          val = field.bound_data(data, form.initial.fetch(name, field.initial))
         else
-          data = form.initial.fetch(name, field.initial)
-          if data.respond_to?(:call)
-            data = data.call
+          val = form.initial.fetch(name, field.initial)
+          if val.respond_to?(:call)
+            val = val.call
           end
         end
 
-        field.prepare_value(data)
+        field.prepare_value(val)
       end
 
       # Renders the label tag for this field.
