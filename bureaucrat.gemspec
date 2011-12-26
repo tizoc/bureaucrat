@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
  
   s.specification_version = 2 if s.respond_to? :specification_version=
  
-  s.files = ["lib/bureaucrat/fields.rb", "lib/bureaucrat/forms.rb", "lib/bureaucrat/formsets.rb", "lib/bureaucrat/quickfields.rb", "lib/bureaucrat/utils.rb", "lib/bureaucrat/validation.rb", "lib/bureaucrat/validation_old.rb", "lib/bureaucrat/widgets.rb", "lib/bureaucrat/wizard.rb", "lib/bureaucrat.rb", "README.md", "LICENSE", "test/fields_test.rb", "test/forms_test.rb", "test/formsets_test.rb", "test/test_helper.rb", "test/widgets_test.rb"]
+  s.files = ["lib/bureaucrat/fields.rb", "lib/bureaucrat/forms.rb", "lib/bureaucrat/formsets.rb", "lib/bureaucrat/media.rb", "lib/bureaucrat/quickfields.rb", "lib/bureaucrat/temporary_uploaded_file.rb", "lib/bureaucrat/utils.rb", "lib/bureaucrat/validators.rb", "lib/bureaucrat/widgets.rb", "lib/bureaucrat.rb", "README.md", "LICENSE", "test/fields_test.rb", "test/forms_test.rb", "test/formsets_test.rb", "test/test_helper.rb", "test/utils_test.rb", "test/widgets_test.rb"]
  
   s.require_paths = ['lib']
  
