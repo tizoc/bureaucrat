@@ -41,7 +41,7 @@ Usage examples
       extend Bureaucrat::Quickfields
 
       string  :nickname, :max_length => 50
-      string  :realname, :require => false
+      string  :realname, :required => false
       email   :email
       integer :age, :min_value => 0
       boolean :newsletter, :required => false
