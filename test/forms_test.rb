@@ -1,61 +1,61 @@
 require_relative 'test_helper'
 
-class TestForm < BureaucratTestCase
-  describe 'inherited form with a CharField' do
+module FormTests
+  class Test_inherited_form_with_a_CharField < BureaucratTestCase
     class OneForm < Forms::Form
       include Bureaucrat::Fields
 
       field :name, CharField.new
     end
 
-    should 'have a BoundField in [:name]' do
+    def test_have_a_BoundField
       form = OneForm.new
       assert_kind_of(Forms::BoundField, form[:name])
     end
 
-    should 'be bound when data is provided' do
+    def test_be_bound_when_data_is_provided
       form = OneForm.new(name: 'name')
       assert_equal(true, form.bound?)
     end
 
-    describe 'when calling #valid?' do
-      should 'return false when data isn\'t valid' do
+    class Test_when_calling_valid < BureaucratTestCase
+      def test_return_false_when_data_isnt_valid
         form = OneForm.new(name: nil)
         assert_equal(false, form.valid?)
       end
 
-      should 'return true when data is valid' do
+      def test_return_true_when_data_is_valid
         form = OneForm.new(name: 'valid')
         assert_equal(true, form.valid?)
       end
     end
 
-    describe 'when calling #errors' do
-      should 'have errors when invalid' do
+    class Test_when_calling_errors < BureaucratTestCase
+      def test_have_errors_when_invalid
         form = OneForm.new(name: nil)
         assert_operator(form.errors.size, :>, 0)
       end
 
-      should 'not have errors when valid' do
+      def test_not_have_errors_when_valid
         form = OneForm.new(name: 'valid')
         assert_equal(form.errors.size, 0)
       end
     end
 
-    describe 'when calling #changed_data' do
-      should 'return an empty list if no field was changed' do
+    class Test_when_calling_changed_data < BureaucratTestCase
+      def test_return_an_empty_list_if_no_field_was_changed
         form = OneForm.new
         assert_equal([], form.changed_data)
       end
 
-      should 'return a list of changed fields when modified' do
+      def test_return_a_list_of_changed_fields_when_modified
         form = OneForm.new(name: 'changed')
         assert_equal([:name], form.changed_data)
       end
     end
   end
 
-  describe 'form with custom clean proc on field' do
+  class Test_form_with_custom_clean_proc_on_field < BureaucratTestCase
     class CustomCleanForm < Forms::Form
       include Bureaucrat::Fields
 
@@ -70,17 +70,17 @@ class TestForm < BureaucratTestCase
       end
     end
 
-    should 'not be valid if clean method fails' do
+    def test_not_be_valid_if_clean_method_fails
       form = CustomCleanForm.new(name: 'other')
       assert_equal(false, form.valid?)
     end
 
-    should 'be valid if clean method passes' do
+    def test_be_valid_if_clean_method_passes
       form = CustomCleanForm.new(name: 'valid_name')
       assert_equal(true, form.valid?)
     end
 
-    should 'set the value to the one returned by the custom clean method' do
+    def test_set_the_value_to_the_one_returned_by_the_custom_clean_method
       form = CustomCleanForm.new(name: 'valid_name')
       form.valid?
       assert_equal('VALID_NAME', form.cleaned_data[:name])
@@ -88,7 +88,7 @@ class TestForm < BureaucratTestCase
 
   end
 
-  describe 'populating objects' do
+  class Test_populating_objects < BureaucratTestCase
     class PopulatorForm < Forms::Form
       include Bureaucrat::Fields
 
@@ -97,7 +97,7 @@ class TestForm < BureaucratTestCase
       field :number, IntegerField.new(required: false)
     end
 
-    should 'correctly populate an object with all fields' do
+    def test_correctly_populate_an_object_with_all_fields
       obj = Struct.new(:name, :color, :number).new
       name_value = 'The Name'
       color_value = 'Black'
@@ -116,7 +116,7 @@ class TestForm < BureaucratTestCase
       assert_equal(number_value, obj.number)
     end
 
-    should 'correctly populate an object without all fields' do
+    def test_correctly_populate_an_object_without_all_fields
       obj = Struct.new(:name, :number).new
       name_value = 'The Name'
       color_value = 'Black'
@@ -134,7 +134,7 @@ class TestForm < BureaucratTestCase
       assert_equal(number_value, obj.number)
     end
 
-    should 'correctly populate an object with all fields with some missing values' do
+    def test_correctly_populate_an_object_with_all_fields_with_some_missing_values
       obj = Struct.new(:name, :color, :number).new('a', 'b', 2)
 
       form = PopulatorForm.new({})
