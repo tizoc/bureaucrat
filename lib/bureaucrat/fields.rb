@@ -525,6 +525,11 @@ module Bureaucrat
         self.choices = choices
       end
 
+      def initialize_copy(original)
+        super(original)
+        self.choices = original.choices.dup
+      end
+
       def default_error_messages
         super.merge(invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.')
       end

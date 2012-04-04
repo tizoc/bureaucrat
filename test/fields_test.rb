@@ -556,6 +556,18 @@ module NullBooleanFieldTests
 end
 
 module ChoiceFieldTests
+  class Test_when_copied < BureaucratTestCase
+    def setup
+      @choices = [['tea', 'Tea'], ['milk', 'Milk']]
+      @field = Fields::ChoiceField.new(@choices)
+      @field_copy = @field.dup
+    end
+
+    def test_have_its_own_copy_of_choices
+      assert_not_equal(@field.choices.object_id, @field_copy.choices.object_id)
+    end
+  end
+
   class Test_on_clean < BureaucratTestCase
     def setup
       @choices = [['tea', 'Tea'], ['milk', 'Milk']]
