@@ -53,6 +53,14 @@ module FieldTests
       assert_not_equal(@field.label.object_id, @field_copy.label.object_id)
     end
 
+    def test_have_its_own_copy_of_the_widget
+      assert_not_equal(@field.widget.object_id, @field_copy.widget.object_id)
+    end
+
+    def test_have_its_own_copy_of_validators
+      assert_not_equal(@field.validators.object_id, @field_copy.validators.object_id)
+    end
+
     def test_have_its_own_copy_of_the_error_messaes
       assert_not_equal(@field.error_messages.object_id, @field_copy.error_messages.object_id)
     end

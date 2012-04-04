@@ -59,8 +59,7 @@ module Bureaucrat
         @widget = options.fetch(:widget, default_widget)
 
         @widget = @widget.new if @widget.is_a?(Class)
-        extra_attrs = widget_attrs(@widget)
-        @widget.attrs.update(extra_attrs) if extra_attrs
+        @widget.attrs.update(widget_attrs(@widget))
         @widget.is_required = @required
 
         @hidden_widget = options.fetch(:hidden_widget, default_hidden_widget)
@@ -153,6 +152,7 @@ module Bureaucrat
 
       # List of attributes to add on the widget. Override to add field specific attributes
       def widget_attrs(widget)
+        {}
       end
 
       # Populates object.name if posible
@@ -174,6 +174,7 @@ module Bureaucrat
         end
         @label = original.label && original.label.dup
         @widget = original.widget && original.widget.dup
+        @validators = original.validators.dup
         @error_messages = original.error_messages.dup
       end
 
@@ -205,9 +206,11 @@ module Bureaucrat
       end
 
       def widget_attrs(widget)
-        if @max_length && (widget.kind_of?(Widgets::TextInput) ||
-                           widget.kind_of?(Widgets::PasswordInput))
-          { maxlength: @max_length.to_s }
+        super(widget).tap do |attrs|
+          if @max_length && (widget.kind_of?(Widgets::TextInput) ||
+                             widget.kind_of?(Widgets::PasswordInput))
+            attrs.merge(maxlength: @max_length.to_s)
+          end
         end
       end
     end
