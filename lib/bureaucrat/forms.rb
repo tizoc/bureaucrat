@@ -150,7 +150,7 @@ module Bureaucrat
 
       # Fields associated to the form class
       def self.base_fields
-        @base_fields ||= Utils::OrderedHash.new
+        @base_fields ||= {}
       end
 
       # Declares a named field to be used on this form.

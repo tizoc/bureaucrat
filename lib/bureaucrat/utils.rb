@@ -13,35 +13,6 @@ module Bureaucrat
       end
     end
 
-    # Dumb implementation that is good enough for Forms
-    class OrderedHash < Hash
-      def initialize
-        super
-        @ordered_keys = []
-      end
-
-      def []=(key, value)
-        super(key, value)
-        @ordered_keys << key unless @ordered_keys.include?(key)
-      end
-
-      def delete(key)
-        super(key)
-        @ordered_keys.delete(key)
-      end
-
-      def each
-        @ordered_keys.each do |key|
-          yield key, self[key]
-        end
-      end
-
-      def initialize_copy(original)
-        super(original)
-        @ordered_keys = original.instance_eval('@ordered_keys').dup
-      end
-    end
-
     class StringAccessHash < Hash
       def initialize(other = {})
         super()
