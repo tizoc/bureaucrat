@@ -1,10 +1,9 @@
 module Bureaucrat
   module Validators
-    extend self
-
     def empty_value?(value)
       value.nil? || value == '' || value == [] || value == {}
     end
+    module_function :empty_value?
 
     class RegexValidator
       attr_accessor :regex, :message, :code
@@ -23,13 +22,11 @@ module Bureaucrat
       end
     end
 
-    def validate_integer
-      @@validate_integer ||= lambda do |value|
-        begin
-          Integer(value)
-        rescue ArgumentError
-          raise ValidationError.new('')
-        end
+    ValidateInteger = lambda do |value|
+      begin
+        Integer(value)
+      rescue ArgumentError
+        raise ValidationError.new('')
       end
     end
 
@@ -38,38 +35,34 @@ module Bureaucrat
     #    r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
     #    r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
     #    r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
-    EMAIL_RE = /(^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*")@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/i
+    EMAIL_RE = /
+        (^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*
+        |^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"
+        )@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$
+    /xi
 
-    def validate_email
-      @@validate_email ||=
-        RegexValidator.new(regex: EMAIL_RE,
-                           message: 'Enter a valid e-mail address.')
-    end
+    ValidateEmail =
+      RegexValidator.new(regex: EMAIL_RE,
+                         message: 'Enter a valid e-mail address.')
 
     SLUG_RE = /^[-\w]+$/
 
-    def validate_slug
-      @@validate_slug ||=
-        RegexValidator.new(regex: SLUG_RE,
-                           message: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
-    end
+    ValidateSlug =
+      RegexValidator.new(regex: SLUG_RE,
+                         message: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
 
     IPV4_RE = /^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/
 
-    def validate_ipv4_address
-      @@validate_ipv4_address ||=
-        RegexValidator.new(regex: IPV4_RE,
-                           message: 'Enter a valid IPv4 address.')
-    end
+    IPV4Validator =
+      RegexValidator.new(regex: IPV4_RE,
+                         message: 'Enter a valid IPv4 address.')
 
     COMMA_SEPARATED_INT_LIST_RE = /^[\d,]+$/
 
-    def validate_comma_separated_integer_list
-      @@validate_comma_separated_integer_list ||=
-        RegexValidator.new(regex: COMMA_SEPARATED_INT_LIST_RE,
-                           message: 'Enter only digits separated by commas.',
-                           code: :invalid)
-    end
+    ValidateCommaSeparatedIntegerList =
+      RegexValidator.new(regex: COMMA_SEPARATED_INT_LIST_RE,
+                         message: 'Enter only digits separated by commas.',
+                         code: :invalid)
 
     class BaseValidator
       def initialize(limit_value)

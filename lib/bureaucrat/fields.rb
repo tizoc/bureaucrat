@@ -374,7 +374,7 @@ module Bureaucrat
       end
 
       def default_validators
-        [Validators.validate_email]
+        [Validators::ValidateEmail]
       end
 
       def clean(value)
@@ -672,7 +672,7 @@ module Bureaucrat
       end
 
       def default_validators
-        [Validators.validate_ipv4_address]
+        [Validators::ValidateIPV4Address]
       end
     end
 
@@ -682,7 +682,7 @@ module Bureaucrat
       end
 
       def default_validators
-        [Validators.validate_slug]
+        [Validators::ValidateSlug]
       end
     end
   end
