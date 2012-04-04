@@ -26,7 +26,7 @@ module Bureaucrat
     def validate_integer
       @@validate_integer ||= lambda do |value|
         begin
-          Integer(string)
+          Integer(value)
         rescue ArgumentError
           raise ValidationError.new('')
         end
