@@ -14,30 +14,30 @@ class TestForm < BureaucratTestCase
     end
 
     should 'be bound when data is provided' do
-      form = OneForm.new(:name => 'name')
+      form = OneForm.new(name: 'name')
       assert_equal(true, form.bound?)
     end
 
     describe 'when calling #valid?' do
       should 'return false when data isn\'t valid' do
-        form = OneForm.new(:name => nil)
+        form = OneForm.new(name: nil)
         assert_equal(false, form.valid?)
       end
 
       should 'return true when data is valid' do
-        form = OneForm.new(:name => 'valid')
+        form = OneForm.new(name: 'valid')
         assert_equal(true, form.valid?)
       end
     end
 
     describe 'when calling #errors' do
       should 'have errors when invalid' do
-        form = OneForm.new(:name => nil)
+        form = OneForm.new(name: nil)
         assert_operator(form.errors.size, :>, 0)
       end
 
       should 'not have errors when valid' do
-        form = OneForm.new(:name => 'valid')
+        form = OneForm.new(name: 'valid')
         assert_equal(form.errors.size, 0)
       end
     end
@@ -49,7 +49,7 @@ class TestForm < BureaucratTestCase
       end
 
       should 'return a list of changed fields when modified' do
-        form = OneForm.new(:name => 'changed')
+        form = OneForm.new(name: 'changed')
         assert_equal([:name], form.changed_data)
       end
     end
@@ -71,17 +71,17 @@ class TestForm < BureaucratTestCase
     end
 
     should 'not be valid if clean method fails' do
-      form = CustomCleanForm.new(:name => 'other')
+      form = CustomCleanForm.new(name: 'other')
       assert_equal(false, form.valid?)
     end
 
     should 'be valid if clean method passes' do
-      form = CustomCleanForm.new(:name => 'valid_name')
+      form = CustomCleanForm.new(name: 'valid_name')
       assert_equal(true, form.valid?)
     end
 
     should 'set the value to the one returned by the custom clean method' do
-      form = CustomCleanForm.new(:name => 'valid_name')
+      form = CustomCleanForm.new(name: 'valid_name')
       form.valid?
       assert_equal('VALID_NAME', form.cleaned_data[:name])
     end
@@ -92,9 +92,9 @@ class TestForm < BureaucratTestCase
     class PopulatorForm < Forms::Form
       include Bureaucrat::Fields
 
-      field :name, CharField.new(:required => false)
-      field :color, CharField.new(:required => false)
-      field :number, IntegerField.new(:required => false)
+      field :name, CharField.new(required: false)
+      field :color, CharField.new(required: false)
+      field :number, IntegerField.new(required: false)
     end
 
     should 'correctly populate an object with all fields' do
@@ -103,9 +103,9 @@ class TestForm < BureaucratTestCase
       color_value = 'Black'
       number_value = 10
 
-      form = PopulatorForm.new(:name => name_value,
-                               :color => color_value,
-                               :number => number_value.to_s)
+      form = PopulatorForm.new(name: name_value,
+                               color: color_value,
+                               number: number_value.to_s)
 
       assert form.valid?
 
@@ -122,9 +122,9 @@ class TestForm < BureaucratTestCase
       color_value = 'Black'
       number_value = 10
 
-      form = PopulatorForm.new(:name => name_value,
-                               :color => color_value,
-                               :number => number_value.to_s)
+      form = PopulatorForm.new(name: name_value,
+                               color: color_value,
+                               number: number_value.to_s)
 
       assert form.valid?
 

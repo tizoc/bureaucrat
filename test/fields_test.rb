@@ -17,7 +17,7 @@ class TestFields < BureaucratTestCase
 
     describe 'with required as false' do
       setup do
-        @field = Fields::Field.new(:required => false)
+        @field = Fields::Field.new(required: false)
       end
 
       should 'not be required' do
@@ -41,8 +41,8 @@ class TestFields < BureaucratTestCase
 
     describe 'when copied' do
       setup do
-        @field = Fields::Field.new(:initial => 'initial',
-                                   :label => 'label')
+        @field = Fields::Field.new(initial: 'initial',
+                                   label: 'label')
         @field_copy = @field.dup
       end
 
@@ -81,7 +81,7 @@ class TestFields < BureaucratTestCase
 
     describe 'with max length of 10' do
       setup do
-        @field = Fields::CharField.new(:max_length => 10)
+        @field = Fields::CharField.new(max_length: 10)
       end
 
       should 'allow values with length <= 10' do
@@ -99,7 +99,7 @@ class TestFields < BureaucratTestCase
 
     describe 'with min length of 10' do
       setup do
-        @field = Fields::CharField.new(:min_length => 10)
+        @field = Fields::CharField.new(min_length: 10)
       end
 
       should 'allow values with length >= 10' do
@@ -143,7 +143,7 @@ class TestFields < BureaucratTestCase
   describe 'IntegerField' do
     describe 'with max value of 10' do
       setup do
-        @field = Fields::IntegerField.new(:max_value => 10)
+        @field = Fields::IntegerField.new(max_value: 10)
       end
 
       should 'allow values <= 10' do
@@ -161,7 +161,7 @@ class TestFields < BureaucratTestCase
 
     describe 'with min value of 10' do
       setup do
-        @field = Fields::IntegerField.new(:min_value => 10)
+        @field = Fields::IntegerField.new(min_value: 10)
       end
 
       should 'allow values >= 10' do
@@ -232,7 +232,7 @@ class TestFields < BureaucratTestCase
   describe 'FloatField' do
     describe 'with max value of 10.5' do
       setup do
-        @field = Fields::FloatField.new(:max_value => 10.5)
+        @field = Fields::FloatField.new(max_value: 10.5)
       end
 
       should 'allow values <= 10.5' do
@@ -250,7 +250,7 @@ class TestFields < BureaucratTestCase
 
     describe 'with min value of 10.5' do
       setup do
-        @field = Fields::FloatField.new(:min_value => 10.5)
+        @field = Fields::FloatField.new(min_value: 10.5)
       end
 
       should 'allow values >= 10.5' do
@@ -314,7 +314,7 @@ class TestFields < BureaucratTestCase
   describe 'BigDecimalField' do
     describe 'with max value of 10.5' do
       setup do
-        @field = Fields::BigDecimalField.new(:max_value => 10.5)
+        @field = Fields::BigDecimalField.new(max_value: 10.5)
       end
 
       should 'allow values <= 10.5' do
@@ -332,7 +332,7 @@ class TestFields < BureaucratTestCase
 
     describe 'with min value of 10.5' do
       setup do
-        @field = Fields::BigDecimalField.new(:min_value => 10.5)
+        @field = Fields::BigDecimalField.new(min_value: 10.5)
       end
 
       should 'allow values >= 10.5' do
@@ -543,7 +543,7 @@ class TestFields < BureaucratTestCase
   describe 'ChoiceField' do
     setup do
       @choices = [['tea', 'Tea'], ['milk', 'Milk']]
-      @choices_hash = [[{ :value => "able" }, "able"], [{ :value => "baker" }, "Baker"]]
+      @choices_hash = [[{ value: "able" }, "able"], [{ value: "baker" }, "Baker"]]
       @field = Fields::ChoiceField.new(@choices)
       @field_hash = Fields::ChoiceField.new(@choices_hash)
     end
@@ -608,7 +608,7 @@ class TestFields < BureaucratTestCase
       @choices = [[1, 'One'], [2, 'Two'], ['3', 'Three']]
       to_int = lambda{|val| Integer(val)}
       @field = Fields::TypedChoiceField.new(@choices,
-                                            :coerce => to_int)
+                                            coerce: to_int)
     end
 
     describe 'on clean' do

@@ -7,7 +7,7 @@ class SimpleForm < Bureaucrat::Forms::Form
 end
 
 SimpleFormFormSet =
-  Bureaucrat::Formsets.make_formset_class(SimpleForm, :extra => 2)
+  Bureaucrat::Formsets.make_formset_class(SimpleForm, extra: 2)
 
 class CustomFormSet < Bureaucrat::Formsets::BaseFormSet
   def clean
@@ -17,8 +17,8 @@ end
 
 SimpleFormCustomFormSet =
   Bureaucrat::Formsets.make_formset_class(SimpleForm,
-                                          :extra => 2,
-                                          :formset => CustomFormSet)
+                                          extra: 2,
+                                          formset: CustomFormSet)
 
 class TestFormset < BureaucratTestCase
   describe 'formset with empty data' do
@@ -43,7 +43,7 @@ class TestFormset < BureaucratTestCase
     end
 
     should 'correctly return the list of errors' do
-      assert_equal([{}, {:name => ["This field is required"]}],
+      assert_equal([{}, {name: ["This field is required"]}],
                    @invalid_bound_set.errors)
     end
 

@@ -18,7 +18,7 @@ module Bureaucrat
       # Validates that the input validates the regular expression
       def call(value)
         if regex !~ value
-          raise ValidationError.new(@message, code, :regex => regex)
+          raise ValidationError.new(@message, code, regex: regex)
         end
       end
     end
@@ -42,36 +42,33 @@ module Bureaucrat
 
     def validate_email
       @@validate_email ||=
-        RegexValidator.new(:regex => EMAIL_RE,
-                           :message => 'Enter a valid e-mail address.',
-                           :code => :invalid)
+        RegexValidator.new(regex: EMAIL_RE,
+                           message: 'Enter a valid e-mail address.')
     end
 
     SLUG_RE = /^[-\w]+$/
 
     def validate_slug
       @@validate_slug ||=
-        RegexValidator.new(:regex => SLUG_RE,
-                           :message => "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.",
-                           :code => :invalid)
+        RegexValidator.new(regex: SLUG_RE,
+                           message: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
     end
 
     IPV4_RE = /^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/
 
     def validate_ipv4_address
       @@validate_ipv4_address ||=
-        RegexValidator.new(:regex => IPV4_RE,
-                           :message => 'Enter a valid IPv4 address.',
-                           :code => 'invalid')
+        RegexValidator.new(regex: IPV4_RE,
+                           message: 'Enter a valid IPv4 address.')
     end
 
     COMMA_SEPARATED_INT_LIST_RE = /^[\d,]+$/
 
     def validate_comma_separated_integer_list
       @@validate_comma_separated_integer_list ||=
-        RegexValidator.new(:regex => COMMA_SEPARATED_INT_LIST_RE,
-                           :message => 'Enter only digits separated by commas.',
-                           :code => :invalid)
+        RegexValidator.new(regex: COMMA_SEPARATED_INT_LIST_RE,
+                           message: 'Enter only digits separated by commas.',
+                           code: :invalid)
     end
 
     class BaseValidator
@@ -97,7 +94,7 @@ module Bureaucrat
 
       def call(value)
         cleaned = clean(value)
-        params = { :limit_value => @limit_value, :show_value => cleaned }
+        params = { limit_value: @limit_value, show_value: cleaned }
 
         if compare(cleaned, @limit_value)
           msg = Utils.format_string(message, params)

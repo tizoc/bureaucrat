@@ -56,8 +56,8 @@ module Bureaucrat
       def render(name, value, attrs=nil)
         value ||= ''
         final_attrs = build_attrs(attrs,
-                                  :type => input_type.to_s,
-                                  :name => name.to_s)
+                                  type: input_type.to_s,
+                                  name: name.to_s)
         final_attrs[:value] = value.to_s unless value == ''
         mark_safe("<input#{flatatt(final_attrs)} />")
       end
@@ -114,14 +114,14 @@ module Bureaucrat
 
       def render(name, value, attrs=nil, choices=[])
         value ||= []
-        final_attrs = build_attrs(attrs, :type => input_type.to_s,
-                                  :name => "#{name}[]")
+        final_attrs = build_attrs(attrs, type: input_type.to_s,
+                                  name: "#{name}[]")
 
         id = final_attrs[:id]
         inputs = []
 
         value.each.with_index do |v, i|
-          input_attrs = final_attrs.merge(:value => v.to_s)
+          input_attrs = final_attrs.merge(value: v.to_s)
 
           if id
             input_attrs[:id] = "#{id}_#{i}"
@@ -189,10 +189,10 @@ module Bureaucrat
 
       def render(name, value, attrs = nil)
         substitutions = {
-          :initial_text => initial_text,
-          :input_text => input_text,
-          :clear_template => '',
-          :clear_checkbox_label => clear_checkbox_label
+          initial_text: initial_text,
+          input_text: input_text,
+          clear_template: '',
+          clear_checkbox_label: clear_checkbox_label
         }
         template = '%(input)s'
         substitutions[:input] = super(name, value, attrs)
@@ -207,7 +207,7 @@ module Bureaucrat
             substitutions[:clear_checkbox_name] = conditional_escape(checkbox_name)
             substitutions[:clear_checkbox_id] = conditional_escape(checkbox_id)
             substitutions[:clear] = CheckboxInput.new.
-              render(checkbox_name, false, {:id => checkbox_id})
+              render(checkbox_name, false, {id: checkbox_id})
             substitutions[:clear_template] =
               Utils.format_string(template_with_clear, substitutions)
           end
@@ -240,7 +240,7 @@ module Bureaucrat
     class Textarea < Widget
       def initialize(attrs=nil)
         # The 'rows' and 'cols' attributes are required for HTML correctness.
-        default_attrs = {:cols => '40', :rows => '10'}
+        default_attrs = {cols: '40', rows: '10'}
         default_attrs.merge!(attrs) if attrs
 
         super(default_attrs)
@@ -248,7 +248,7 @@ module Bureaucrat
 
       def render(name, value, attrs=nil)
         value ||= ''
-        final_attrs = build_attrs(attrs, :name => name)
+        final_attrs = build_attrs(attrs, name: name)
         mark_safe("<textarea#{flatatt(final_attrs)}>#{conditional_escape(value.to_s)}</textarea>")
       end
     end
@@ -264,7 +264,7 @@ module Bureaucrat
       end
 
       def render(name, value, attrs=nil)
-        final_attrs = build_attrs(attrs, :type => 'checkbox', :name => name.to_s)
+        final_attrs = build_attrs(attrs, type: 'checkbox', name: name.to_s)
 
         # FIXME: this is horrible, shouldn't just rescue everything
         result = @check_test.call(value) rescue false
@@ -313,7 +313,7 @@ module Bureaucrat
 
       def render(name, value, attrs=nil, choices=[])
         value = '' if value.nil?
-        final_attrs = build_attrs(attrs, :name => name)
+        final_attrs = build_attrs(attrs, name: name)
         output = ["<select#{flatatt(final_attrs)}>"]
         options = render_options(choices, [value])
         output << options if options && !options.empty?
@@ -343,7 +343,7 @@ module Bureaucrat
 
       def render_option(option_attributes, option_label, selected_choices)
         unless option_attributes.is_a?(Hash)
-          option_attributes = { :value => option_attributes.to_s }
+          option_attributes = { value: option_attributes.to_s }
         end
 
         if selected_choices.include?(option_attributes[:value])
@@ -399,7 +399,7 @@ module Bureaucrat
     class SelectMultiple < Select
       def render(name, value, attrs=nil, choices=[])
         value = [] if value.nil?
-        final_attrs = build_attrs(attrs, :name => "#{name}[]")
+        final_attrs = build_attrs(attrs, name: "#{name}[]")
         output = ["<select multiple=\"multiple\"#{flatatt(final_attrs)}>"]
         options = render_options(choices, value)
         output << options if options && !options.empty?
@@ -443,8 +443,8 @@ module Bureaucrat
 
       def tag
         @attrs[:id] = "#{@attrs[:id]}_#{@index}" if @attrs.include?(:id)
-        final_attrs = @attrs.merge(:type => 'radio', :name => @name,
-                                   :value => @choice_value)
+        final_attrs = @attrs.merge(type: 'radio', name: @name,
+                                   value: @choice_value)
         final_attrs[:checked] = 'checked' if checked?
         mark_safe("<input#{flatatt(final_attrs)} />")
       end
@@ -519,7 +519,7 @@ module Bureaucrat
         values ||= []
         multi_name = "#{name}[]"
         has_id = attrs && attrs.include?(:id)
-        final_attrs = build_attrs(attrs, :name => multi_name)
+        final_attrs = build_attrs(attrs, name: multi_name)
         output = ['<ul>']
         str_values = {}
         values.each {|val| str_values[(val.to_s)] = true}

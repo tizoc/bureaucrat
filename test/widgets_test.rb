@@ -14,7 +14,7 @@ class TestWidgets < BureaucratTestCase
 
     describe 'with attributes' do
       should 'correctly render' do
-        input = Widgets::TextInput.new(:attribute => 'value')
+        input = Widgets::TextInput.new(attribute: 'value')
         expected = normalize_html('<input type="text" value="hi" name="test" attribute="value" />')
         rendered = normalize_html(input.render('test', 'hi'))
         assert_equal(expected, rendered)
@@ -32,7 +32,7 @@ class TestWidgets < BureaucratTestCase
 
     describe 'when copied' do
       should 'have a copy of the attributes' do
-        input1 = Widgets::TextInput.new(:attribute => 2)
+        input1 = Widgets::TextInput.new(attribute: 2)
         input2 = input1.dup
         assert_not_equal(input1.attrs.object_id, input2.attrs.object_id)
       end
@@ -90,14 +90,14 @@ class TestWidgets < BureaucratTestCase
 
   describe 'Textarea widget' do
     should 'correctly render' do
-      input = Widgets::Textarea.new(:cols => '50', :rows => '15')
+      input = Widgets::Textarea.new(cols: '50', rows: '15')
       expected = normalize_html("<textarea name='test' rows='15' cols='50'>hello</textarea>")
       rendered = normalize_html(input.render('test', "hello"))
       assert_equal(expected, rendered)
     end
 
     should 'correctly render multiline' do
-      input = Widgets::Textarea.new(:cols => '50', :rows => '15')
+      input = Widgets::Textarea.new(cols: '50', rows: '15')
       expected = normalize_html("<textarea name='test' rows='15' cols='50'>hello\n\ntest</textarea>")
       rendered = normalize_html(input.render('test', "hello\n\ntest"))
       assert_equal(expected, rendered)
@@ -134,10 +134,10 @@ class TestWidgets < BureaucratTestCase
       @groupchoices = [['numbers', ['1', 'One'], ['2', 'Two']],
                        ['words', [['spoon', 'Spoon'], ['banana', 'Banana']]]]
       @simplechoices = [ "able", "baker", "charlie" ]
-      @optionchoices = [[{ :value => "foo", :disabled => "disabled", :onSelect => "doSomething();" }, "Foo"],
-                        [{ :value => "bar" }, "Bar"]]
-      @optionchoicesselected = [[{ :value => "foo", :disabled => "disabled" }, "Foo"],
-                                [{ :value => "bar", :selected => "selected" }, "Bar"]]
+      @optionchoices = [[{ value: "foo", disabled: "disabled", onSelect: "doSomething();" }, "Foo"],
+                        [{ value: "bar" }, "Bar"]]
+      @optionchoicesselected = [[{ value: "foo", disabled: "disabled" }, "Foo"],
+                                [{ value: "bar", selected: "selected" }, "Bar"]]
     end
 
     describe 'with empty choices' do
@@ -290,14 +290,14 @@ class TestWidgets < BureaucratTestCase
     should 'correctly render (none selected)' do
       input = Widgets::RadioSelect.new(nil, [['1', 'One'], ['2', 'Two']])
       expected = normalize_html("<ul>\n<li><label for='id_radio_0'><input name='radio' id='id_radio_0' type='radio' value='1'/> One</label></li>\n<li><label for='id_radio_1'><input name='radio' id='id_radio_1' type='radio' value='2'/> Two</label></li>\n</ul>")
-      rendered = normalize_html(input.render('radio', '', :id => 'id_radio'))
+      rendered = normalize_html(input.render('radio', '', id: 'id_radio'))
       assert_equal(expected, rendered)
     end
 
     should 'correctly render (with selected)' do
       input = Widgets::RadioSelect.new(nil, [['1', 'One'], ['2', 'Two']])
       expected = normalize_html("<ul>\n<li><label for='id_radio_0'><input checked='checked' name='radio' id='id_radio_0' type='radio' value='1'/> One</label></li>\n<li><label for='id_radio_1'><input name='radio' id='id_radio_1' type='radio' value='2'/> Two</label></li>\n</ul>")
-      rendered = normalize_html(input.render('radio', '1', :id => 'id_radio'))
+      rendered = normalize_html(input.render('radio', '1', id: 'id_radio'))
       assert_equal(expected, rendered)
     end
   end
@@ -311,7 +311,7 @@ class TestWidgets < BureaucratTestCase
       should 'render an empty ul' do
         input = Widgets::CheckboxSelectMultiple.new
         expected = normalize_html("<ul>\n</ul>")
-        rendered = normalize_html(input.render('test', ['hello'], :id => 'id_checkboxes'))
+        rendered = normalize_html(input.render('test', ['hello'], id: 'id_checkboxes'))
         assert_equal(expected, rendered)
       end
     end
@@ -320,7 +320,7 @@ class TestWidgets < BureaucratTestCase
       should 'correctly render (none selected)' do
         input = Widgets::CheckboxSelectMultiple.new(nil, @choices)
         expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input name='test[]' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input name='test[]' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test[]' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
-        rendered = normalize_html(input.render('test', ['hello'], :id => 'id_checkboxes'))
+        rendered = normalize_html(input.render('test', ['hello'], id: 'id_checkboxes'))
         assert_equal(expected, rendered)
       end
 
@@ -328,7 +328,7 @@ class TestWidgets < BureaucratTestCase
         input = Widgets::CheckboxSelectMultiple.new(nil, @choices)
         expected = normalize_html("<ul>\n<li><label for='id_checkboxes_0'><input checked='checked' name='test[]' id='id_checkboxes_0' type='checkbox' value='1'/> One</label></li>\n<li><label for='id_checkboxes_1'><input checked='checked' name='test[]' id='id_checkboxes_1' type='checkbox' value='2'/> Two</label></li>\n<li><label for='id_checkboxes_2'><input name='test[]' id='id_checkboxes_2' type='checkbox' value='3'/> Three</label></li>\n</ul>")
         rendered = normalize_html(input.render('test', ['1', '2'],
-                                               :id => 'id_checkboxes'))
+                                               id: 'id_checkboxes'))
         assert_equal(expected, rendered)
       end
     end

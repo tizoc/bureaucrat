@@ -10,10 +10,10 @@ module Bureaucrat
       include Fields
       include Widgets
 
-      field TOTAL_FORM_COUNT, IntegerField.new(:widget => HiddenInput)
-      field INITIAL_FORM_COUNT, IntegerField.new(:widget => HiddenInput)
-      field MAX_NUM_FORM_COUNT, IntegerField.new(:widget => HiddenInput,
-                                                 :required => false)
+      field TOTAL_FORM_COUNT, IntegerField.new(widget: HiddenInput)
+      field INITIAL_FORM_COUNT, IntegerField.new(widget: HiddenInput)
+      field MAX_NUM_FORM_COUNT, IntegerField.new(widget: HiddenInput,
+                                                 required: false)
     end
 
     class BaseFormSet
@@ -55,16 +55,16 @@ module Bureaucrat
 
       def management_form
         if @is_bound
-          form = ManagementForm.new(@data, :auto_id => @auto_id,
-                                    :prefix => @prefix)
+          form = ManagementForm.new(@data, auto_id: @auto_id,
+                                    prefix: @prefix)
           unless form.valid?
             msg = 'ManagementForm data is missing or has been tampered with'
             raise ValidationError.new(msg)
           end
         else
-          form = ManagementForm.new(nil, :auto_id => @auto_id,
-                                    :prefix => @prefix,
-                                    :initial => {
+          form = ManagementForm.new(nil, auto_id: @auto_id,
+                                    prefix: @prefix,
+                                    initial: {
                                       TOTAL_FORM_COUNT => total_form_count,
                                       INITIAL_FORM_COUNT => initial_form_count,
                                       MAX_NUM_FORM_COUNT => self.max_num
@@ -107,7 +107,7 @@ module Bureaucrat
       end
 
       def construct_form(i, options={})
-        defaults = {:auto_id => @auto_id, :prefix => add_prefix(i)}
+        defaults = {auto_id: @auto_id, prefix: add_prefix(i)}
         defaults[:initial] = @initial[i] if @initial && @initial[i]
 
         # Allow extra forms to be empty.
@@ -228,12 +228,12 @@ module Bureaucrat
 
       def add_fields(form, index)
         if can_order
-          attrs = {:label => 'Order', :required => false}
+          attrs = {label: 'Order', required: false}
           attrs[:initial] = index + 1 if index && index < initial_form_count
           form.fields[ORDERING_FIELD_NAME] = IntegerField.new(attrs)
         end
         if can_delete
-          field = BooleanField.new(:label => 'Delete', :required => false)
+          field = BooleanField.new(label: 'Delete', required: false)
           form.fields[DELETION_FIELD_NAME] = field
         end
       end

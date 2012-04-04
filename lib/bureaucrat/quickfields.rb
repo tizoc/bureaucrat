@@ -21,12 +21,12 @@ module Bureaucrat
 
     # Declare a +CharField+ with text area widget
     def text(name, options = {})
-      field name, CharField.new(options.merge(:widget => Widgets::Textarea.new))
+      field name, CharField.new(options.merge(widget: Widgets::Textarea.new))
     end
 
     # Declare a +CharField+ with password widget
     def password(name, options = {})
-      field name, CharField.new(options.merge(:widget => Widgets::PasswordInput.new))
+      field name, CharField.new(options.merge(widget: Widgets::PasswordInput.new))
     end
 
     # Declare an +IntegerField+
@@ -81,12 +81,12 @@ module Bureaucrat
 
     # Declare a +ChoiceField+ using the +RadioSelect+ widget
     def radio_choice(name, choices = [], options = {})
-      field name, ChoiceField.new(choices, options.merge(:widget => Widgets::RadioSelect.new))
+      field name, ChoiceField.new(choices, options.merge(widget: Widgets::RadioSelect.new))
     end
 
     # Declare a +MultipleChoiceField+ with the +CheckboxSelectMultiple+ widget
     def checkbox_multiple_choice(name, choices = [], options = {})
-      field name, MultipleChoiceField.new(choices, options.merge(:widget => Widgets::CheckboxSelectMultiple.new))
+      field name, MultipleChoiceField.new(choices, options.merge(widget: Widgets::CheckboxSelectMultiple.new))
     end
   end
 end

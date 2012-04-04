@@ -75,8 +75,8 @@ module Bureaucrat
       # Default error messages for this kind of field. Override on subclasses to add or replace messages
       def default_error_messages
         {
-          :required => 'This field is required',
-          :invalid => 'Enter a valid value'
+          required: 'This field is required',
+          invalid: 'Enter a valid value'
         }
       end
 
@@ -207,7 +207,7 @@ module Bureaucrat
       def widget_attrs(widget)
         if @max_length && (widget.kind_of?(Widgets::TextInput) ||
                            widget.kind_of?(Widgets::PasswordInput))
-          { :maxlength => @max_length.to_s }
+          { maxlength: @max_length.to_s }
         end
       end
     end
@@ -228,9 +228,9 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(:invalid => 'Enter a whole number.',
-                    :max_value => 'Ensure this value is less than or equal to %(max)s.',
-                    :min_value => 'Ensure this value is greater than or equal to %(min)s.')
+        super.merge(invalid: 'Enter a whole number.',
+                    max_value: 'Ensure this value is less than or equal to %(max)s.',
+                    min_value: 'Ensure this value is greater than or equal to %(min)s.')
       end
 
       def to_object(value)
@@ -250,7 +250,7 @@ module Bureaucrat
 
     class FloatField < IntegerField
       def default_error_messages
-        super.merge(:invalid => 'Enter a number.')
+        super.merge(invalid: 'Enter a number.')
       end
 
       def to_object(value)
@@ -289,12 +289,12 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(:invalid => 'Enter a number.',
-                    :max_value => 'Ensure this value is less than or equal to %(max)s.',
-                    :min_value => 'Ensure this value is greater than or equal to %(min)s.',
-                    :max_digits => 'Ensure that there are no more than %(max)s digits in total.',
-                    :max_decimal_places => 'Ensure that there are no more than %(max)s decimal places.',
-                    :max_whole_digits => 'Ensure that there are no more than %(max)s digits before the decimal point.')
+        super.merge(invalid: 'Enter a number.',
+                    max_value: 'Ensure this value is less than or equal to %(max)s.',
+                    min_value: 'Ensure this value is greater than or equal to %(min)s.',
+                    max_digits: 'Ensure that there are no more than %(max)s digits in total.',
+                    max_decimal_places: 'Ensure that there are no more than %(max)s decimal places.',
+                    max_whole_digits: 'Ensure that there are no more than %(max)s digits before the decimal point.')
       end
 
       def to_object(value)
@@ -325,7 +325,7 @@ module Bureaucrat
 
         if @max_digits && alldigits.length > @max_digits
           msg = Utils.format_string(error_messages[:max_digits],
-                                    :max => @max_digits)
+                                    max: @max_digits)
           raise ValidationError.new(msg)
         end
 
@@ -333,13 +333,13 @@ module Bureaucrat
 
         if @max_decimal_places && decimals > @max_decimal_places
           msg = Utils.format_string(error_messages[:max_decimal_places],
-                                    :max => @max_decimal_places)
+                                    max: @max_decimal_places)
           raise ValidationError.new(msg)
         end
 
         if @max_whole_digits && whole_digits > @max_whole_digits
           msg = Utils.format_string(error_messages[:max_whole_digits],
-                                    :max => @max_whole_digits)
+                                    max: @max_whole_digits)
           raise ValidationError.new(msg)
         end
 
@@ -364,13 +364,13 @@ module Bureaucrat
 
         @regex = regex
 
-        validators << Validators::RegexValidator.new(:regex => regex)
+        validators << Validators::RegexValidator.new(regex: regex)
       end
     end
 
     class EmailField < CharField
       def default_error_messages
-        super.merge(:invalid => 'Enter a valid e-mail address.')
+        super.merge(invalid: 'Enter a valid e-mail address.')
       end
 
       def default_validators
@@ -392,11 +392,11 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(:invalid => 'No file was submitted. Check the encoding type on the form.',
-                    :missing => 'No file was submitted.',
-                    :empty => 'The submitted file is empty.',
-                    :max_length => 'Ensure this filename has at most %(max)d characters (it has %(length)d).',
-                    :contradiction => 'Please either submit a file or check the clear checkbox, not both.')
+        super.merge(invalid: 'No file was submitted. Check the encoding type on the form.',
+                    missing: 'No file was submitted.',
+                    empty: 'The submitted file is empty.',
+                    max_length: 'Ensure this filename has at most %(max)d characters (it has %(length)d).',
+                    contradiction: 'Please either submit a file or check the clear checkbox, not both.')
       end
 
       def default_widget
@@ -418,8 +418,8 @@ module Bureaucrat
 
         if @max_length && file_name.length > @max_length
           msg = Utils.format_string(error_messages[:max_length],
-                                    :max => @max_length,
-                                    :length => file_name.length)
+                                    max: @max_length,
+                                    length: file_name.length)
           raise ValidationError.new(msg)
         end
 
@@ -523,7 +523,7 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(:invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.')
+        super.merge(invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.')
       end
 
       def default_widget
@@ -551,7 +551,7 @@ module Bureaucrat
 
         unless !value || Validators.empty_value?(value) || valid_value?(value)
           msg = Utils.format_string(error_messages[:invalid_choice],
-                                    :value => value)
+                                    value: value)
           raise ValidationError.new(msg)
         end
       end
@@ -595,7 +595,7 @@ module Bureaucrat
           @coerce.call(value)
         rescue TypeError, ValidationError
           msg = Utils.format_string(error_messages[:invalid_choice],
-                                    :value => value)
+                                    value: value)
           raise ValidationError.new(msg)
         end
       end
@@ -608,8 +608,8 @@ module Bureaucrat
 
     class MultipleChoiceField < ChoiceField
       def default_error_messages
-        super.merge(:invalid_choice => 'Select a valid choice. %(value)s is not one of the available choices.',
-                    :invalid_list => 'Enter a list of values.')
+        super.merge(invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.',
+                    invalid_list: 'Enter a list of values.')
       end
 
       def default_widget
@@ -638,7 +638,7 @@ module Bureaucrat
         value.each do |val|
           unless valid_value?(val)
             msg = Utils.format_string(error_messages[:invalid_choice],
-                                      :value => val)
+                                      value: val)
             raise ValidationError.new(msg)
           end
         end
@@ -668,7 +668,7 @@ module Bureaucrat
 
     class IPAddressField < CharField
       def default_error_messages
-        super.merge(:invalid => 'Enter a valid IPv4 address.')
+        super.merge(invalid: 'Enter a valid IPv4 address.')
       end
 
       def default_validators
@@ -678,7 +678,7 @@ module Bureaucrat
 
     class SlugField < CharField
       def default_error_messages
-        super.merge(:invalid => "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
+        super.merge(invalid: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
       end
 
       def default_validators
