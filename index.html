@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Bureaucrat : Form handling for Ruby inspired by Django forms. " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Bureaucrat</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/tizoc/bureaucrat">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Bureaucrat</h1>
+          <h2 id="project_tagline">Form handling for Ruby inspired by Django forms. </h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/tizoc/bureaucrat/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/tizoc/bureaucrat/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Bureaucrat</h1>
+
+<p>Form handling for Ruby inspired by <a href="https://docs.djangoproject.com/en/dev/#forms">Django forms</a>.</p>
+
+<h2>Description</h2>
+
+<p>Bureaucrat is a library for handling the processing, validation and rendering of HTML forms.</p>
+
+<h2>Structure of a Form</h2>
+
+<pre><code>                 Form ----&gt; valid?, errors/cleaned_data
+            ______|________
+          /       |         \
+      Field     Field      Field  ----&gt; clean
+        |         |          |
+      Widget    Widget     Widget ----&gt; render
+</code></pre>
+
+<p><strong>Form</strong>:
+Collection of named Fields, handles global validation and the last pass of
+data conversion.
+After validation, a valid Form responds to <code>cleaned_data</code> by returning a
+hash of validated values and an invalid Form responds to <code>errors</code> by
+returning a hash of field_name =&gt; error_messages.</p>
+
+<p><strong>Field</strong>:
+Handles the validation and data conversion of each field belonging to the Form. Each Field is associated to a name on the parent Form.</p>
+
+<p><strong>Widget</strong>:
+Handles the rendering of a Form field. Each Field has two widgets associated, one for normal rendering, and another for hidden inputs rendering. Every type of Field has default Widgets defined, but they can be overriden on a per-Form basis.</p>
+
+<h2>Usage examples</h2>
+
+<div class="highlight">
+<pre><span class="nb">require</span> <span class="s1">'bureaucrat'</span>
+<span class="nb">require</span> <span class="s1">'bureaucrat/quickfields'</span>
+
+<span class="k">class</span> <span class="nc">MyForm</span> <span class="o">&lt;</span> <span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Forms</span><span class="o">::</span><span class="no">Form</span>
+  <span class="kp">extend</span> <span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Quickfields</span>
+
+  <span class="n">string</span>  <span class="ss">:nickname</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="n">string</span>  <span class="ss">:realname</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="kp">false</span>
+  <span class="n">email</span>   <span class="ss">:email</span>
+  <span class="n">integer</span> <span class="ss">:age</span><span class="p">,</span> <span class="n">min_value</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="n">boolean</span> <span class="ss">:newsletter</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="kp">false</span>
+
+  <span class="c1"># Note: Bureaucrat doesn't define save</span>
+  <span class="k">def</span> <span class="nf">save</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">create!</span><span class="p">(</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="no">Mailer</span><span class="o">.</span><span class="n">deliver_confirmation_mail</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">user</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># A Form initialized without parameters is an unbound Form.</span>
+<span class="n">unbound_form</span> <span class="o">=</span> <span class="no">MyForm</span><span class="o">.</span><span class="n">new</span>
+<span class="n">unbound_form</span><span class="o">.</span><span class="n">valid?</span> <span class="c1"># =&gt; false</span>
+<span class="n">unbound_form</span><span class="o">.</span><span class="n">errors</span> <span class="c1"># =&gt; {}</span>
+<span class="n">unbound_form</span><span class="o">.</span><span class="n">cleaned_data</span> <span class="c1"># =&gt; nil</span>
+<span class="nb">puts</span> <span class="n">unbound_form</span><span class="o">.</span><span class="n">as_p</span>
+<span class="c1"># Prints:</span>
+<span class="c1"># &lt;p&gt;&lt;label for="id_nickname"&gt;Nickname:&lt;/label&gt; &lt;input type="text" name="nickname" id="id_nickname" maxlength="50" /&gt;&lt;/p&gt;</span>
+<span class="c1"># &lt;p&gt;&lt;label for="id_realname"&gt;Realname:&lt;/label&gt; &lt;input type="text" name="realname" id="id_realname" /&gt;&lt;/p&gt;</span>
+<span class="c1"># &lt;p&gt;&lt;label for="id_email"&gt;Email:&lt;/label&gt; &lt;input type="text" name="email" id="id_email" /&gt;&lt;/p&gt;</span>
+<span class="c1"># &lt;p&gt;&lt;label for="id_age"&gt;Age:&lt;/label&gt; &lt;input type="text" name="age" id="id_age" /&gt;&lt;/p&gt;</span>
+<span class="c1"># &lt;p&gt;&lt;label for="id_newsletter"&gt;Newsletter:&lt;/label&gt; &lt;input type="checkbox" name="newsletter" id="id_newsletter" /&gt;&lt;/p&gt;</span>
+
+<span class="n">invalid_bound_form</span> <span class="o">=</span> <span class="no">MyForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">nickname</span><span class="p">:</span> <span class="s1">'bureaucrat'</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="s1">'badformat'</span><span class="p">,</span> <span class="n">age</span><span class="p">:</span> <span class="s1">'30'</span><span class="p">)</span>
+<span class="n">invalid_bound_form</span><span class="o">.</span><span class="n">valid?</span> <span class="c1"># =&gt; false</span>
+<span class="n">invalid_bound_form</span><span class="o">.</span><span class="n">errors</span> <span class="c1"># {email: ["Enter a valid e-mail address."]}</span>
+<span class="n">invalid_bound_form</span><span class="o">.</span><span class="n">cleaned_data</span> <span class="c1"># =&gt; nil</span>
+<span class="nb">puts</span> <span class="n">invalid_bound_form</span><span class="o">.</span><span class="n">as_table</span>
+<span class="c1"># Prints:</span>
+<span class="c1"># &lt;tr&gt;&lt;th&gt;&lt;label for="id_nickname"&gt;Nickname:&lt;/label&gt;&lt;/th&gt;&lt;td&gt;&lt;input type="text" value="bureaucrat" name="nickname" id="id_nickname" maxlength="50" /&gt;&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="c1"># &lt;tr&gt;&lt;th&gt;&lt;label for="id_realname"&gt;Realname:&lt;/label&gt;&lt;/th&gt;&lt;td&gt;&lt;ul class="errorlist"&gt;&lt;li&gt;This field is required&lt;/li&gt;&lt;/ul&gt;&lt;input type="text" name="realname" id="id_realname" /&gt;&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="c1"># &lt;tr&gt;&lt;th&gt;&lt;label for="id_email"&gt;Email:&lt;/label&gt;&lt;/th&gt;&lt;td&gt;&lt;ul class="errorlist"&gt;&lt;li&gt;Enter a valid e-mail address.&lt;/li&gt;&lt;/ul&gt;&lt;input type="text" value="badformat" name="email" id="id_email" /&gt;&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="c1"># &lt;tr&gt;&lt;th&gt;&lt;label for="id_age"&gt;Age:&lt;/label&gt;&lt;/th&gt;&lt;td&gt;&lt;input type="text" value="30" name="age" id="id_age" /&gt;&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="c1"># &lt;tr&gt;&lt;th&gt;&lt;label for="id_newsletter"&gt;Newsletter:&lt;/label&gt;&lt;/th&gt;&lt;td&gt;&lt;input type="checkbox" name="newsletter" id="id_newsletter" /&gt;&lt;/td&gt;&lt;/tr&gt;</span>
+
+<span class="n">valid_bound_form</span> <span class="o">=</span> <span class="no">MyForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">nickname</span><span class="p">:</span> <span class="s1">'bureaucrat'</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="s1">'valid@email.com'</span><span class="p">,</span> <span class="n">age</span><span class="p">:</span> <span class="s1">'30'</span><span class="p">)</span>
+<span class="n">valid_bound_form</span><span class="o">.</span><span class="n">valid?</span> <span class="c1"># =&gt; true</span>
+<span class="n">valid_bound_form</span><span class="o">.</span><span class="n">errors</span> <span class="c1"># {}</span>
+<span class="n">valid_bound_form</span><span class="o">.</span><span class="n">cleaned_data</span> <span class="c1"># =&gt; {age: 30, newsletter: false, nickname: "bureaucrat", realname: "", :email = &gt;"valid@email.com"}</span>
+<span class="nb">puts</span> <span class="n">valid_bound_form</span><span class="o">.</span><span class="n">as_ul</span>
+<span class="c1"># Prints:</span>
+<span class="c1"># &lt;li&gt;&lt;label for="id_nickname"&gt;Nickname:&lt;/label&gt; &lt;input type="text" value="bureaucrat" name="nickname" id="id_nickname" maxlength="50" /&gt;&lt;/li&gt;</span>
+<span class="c1"># &lt;li&gt;&lt;ul class="errorlist"&gt;&lt;li&gt;This field is required&lt;/li&gt;&lt;/ul&gt;&lt;label for="id_realname"&gt;Realname:&lt;/label&gt; &lt;input type="text" name="realname" id="id_realname" /&gt;&lt;/li&gt;</span>
+<span class="c1"># &lt;li&gt;&lt;label for="id_email"&gt;Email:&lt;/label&gt; &lt;input type="text" value="valid@email.com" name="email" id="id_email" /&gt;&lt;/li&gt;</span>
+<span class="c1"># &lt;li&gt;&lt;label for="id_age"&gt;Age:&lt;/label&gt; &lt;input type="text" value="30" name="age" id="id_age" /&gt;&lt;/li&gt;</span>
+<span class="c1"># &lt;li&gt;&lt;label for="id_newsletter"&gt;Newsletter:&lt;/label&gt; &lt;input type="checkbox" name="newsletter" id="id_newsletter" /&gt;&lt;/li&gt;</span>
+
+<span class="n">valid_bound_form</span><span class="o">.</span><span class="n">save</span> <span class="c1"># A new User is created and a confirmation mail is delivered</span>
+</pre>
+</div>
+
+
+<h2>Examples of different ways of defining forms</h2>
+
+<div class="highlight">
+<pre><span class="nb">require</span> <span class="s1">'bureaucrat'</span>
+<span class="nb">require</span> <span class="s1">'bureaucrat/quickfields'</span>
+
+<span class="k">class</span> <span class="nc">MyForm</span> <span class="o">&lt;</span> <span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Forms</span><span class="o">::</span><span class="no">Form</span>
+  <span class="kp">include</span> <span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Fields</span>
+
+  <span class="n">field</span> <span class="ss">:nickname</span><span class="p">,</span> <span class="no">CharField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">max_length</span><span class="p">:</span> <span class="mi">50</span><span class="p">)</span>
+  <span class="n">field</span> <span class="ss">:realname</span><span class="p">,</span> <span class="no">CharField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">required</span><span class="p">:</span> <span class="kp">false</span><span class="p">)</span>
+  <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="no">EmailField</span><span class="o">.</span><span class="n">new</span>
+  <span class="n">field</span> <span class="ss">:age</span><span class="p">,</span> <span class="no">IntegerField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">min_value</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">field</span> <span class="ss">:newsletter</span><span class="p">,</span> <span class="no">BooleanField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">required</span><span class="p">:</span> <span class="kp">false</span><span class="p">)</span> 
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MyFormQuick</span> <span class="o">&lt;</span> <span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Forms</span><span class="o">::</span><span class="no">Form</span>
+  <span class="kp">extend</span> <span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Quickfields</span>
+
+  <span class="n">string</span>  <span class="ss">:nickname</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="n">string</span>  <span class="ss">:realname</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="kp">false</span>
+  <span class="n">email</span>   <span class="ss">:email</span>
+  <span class="n">integer</span> <span class="ss">:age</span><span class="p">,</span> <span class="n">min_value</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="n">boolean</span> <span class="ss">:newsletter</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="kp">false</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">inline_form</span>
+  <span class="n">f</span> <span class="o">=</span> <span class="no">Class</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Forms</span><span class="o">::</span><span class="no">Form</span><span class="p">)</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="no">Bureaucrat</span><span class="o">::</span><span class="no">Quickfields</span><span class="p">)</span>
+  <span class="k">yield</span> <span class="n">f</span>
+  <span class="n">f</span>
+<span class="k">end</span>
+
+<span class="n">form_maker</span> <span class="o">=</span> <span class="n">inline_form</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">string</span>  <span class="ss">:nickname</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">string</span>  <span class="ss">:realname</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="kp">false</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">email</span>   <span class="ss">:email</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">integer</span> <span class="ss">:age</span><span class="p">,</span> <span class="n">min_value</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">boolean</span> <span class="ss">:newsletter</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="kp">false</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Bureaucrat maintained by <a href="https://github.com/tizoc">tizoc</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
