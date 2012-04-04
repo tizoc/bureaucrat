@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/test_helper"
+require_relative 'test_helper'
 
 class TestForm < BureaucratTestCase
   describe 'inherited form with a CharField' do

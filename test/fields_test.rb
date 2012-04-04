@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/test_helper"
+require_relative 'test_helper'
 
 class TestFields < BureaucratTestCase
   describe 'Field' do
@@ -9,7 +9,7 @@ class TestFields < BureaucratTestCase
 
       should 'be required' do
         blank_value = ''
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean(blank_value)
         end
       end
@@ -91,7 +91,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values with length > 10' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('a' * 11)
         end
       end
@@ -109,7 +109,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values with length < 10' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('a' * 9)
         end
       end
@@ -153,7 +153,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values > 10' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('11')
         end
       end
@@ -171,7 +171,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values < 10' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('9')
         end
       end
@@ -205,7 +205,7 @@ class TestFields < BureaucratTestCase
                            '123.0', '123..4']
 
         invalid_formats.each do |invalid|
-          assert_raise(ValidationError) do
+          assert_raises(ValidationError) do
             @field.clean(invalid)
           end
         end
@@ -242,7 +242,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values > 10.5' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('10.55')
         end
       end
@@ -260,7 +260,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values < 10.5' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('10.49')
         end
       end
@@ -288,7 +288,7 @@ class TestFields < BureaucratTestCase
                            '123..', '123..4']
 
         invalid_formats.each do |invalid|
-          assert_raise(ValidationError) do
+          assert_raises(ValidationError) do
             @field.clean(invalid)
           end
         end
@@ -324,7 +324,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values > 10.5' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('10.55')
         end
       end
@@ -342,7 +342,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not allow values < 10.5' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('10.49')
         end
       end
@@ -370,7 +370,7 @@ class TestFields < BureaucratTestCase
                            '123..', '123..4']
 
         invalid_formats.each do |invalid|
-          assert_raise(ValidationError) do
+          assert_raises(ValidationError) do
             @field.clean(invalid)
           end
         end
@@ -410,7 +410,7 @@ class TestFields < BureaucratTestCase
 
       should 'not validate non-matching values' do
         invalid_values = ['bana', 'spoon']
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           invalid_values.each do |invalid|
             @field.clean(invalid)
           end
@@ -446,7 +446,7 @@ class TestFields < BureaucratTestCase
                           'invalid@@domain.com', 'invalid@domain',
                           'invalid@.com']
         invalid_values.each do |invalid|
-          assert_raise(ValidationError) do
+          assert_raises(ValidationError) do
             @field.clean(invalid)
           end
         end
@@ -485,7 +485,7 @@ class TestFields < BureaucratTestCase
 
       should 'not validate on false values when required' do
         @false_values.each do |false_value|
-          assert_raise(ValidationError) do
+          assert_raises(ValidationError) do
             @field.clean(false_value)
           end
         end
@@ -566,13 +566,13 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not validate a value not in choices list' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('not_in_choices')
         end
       end
 
       should 'not validate a value not in a hash choices list' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field_hash.clean('not_in_choices')
         end
       end
@@ -621,7 +621,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not validate a value not in choices list' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean('four')
         end
       end
@@ -669,7 +669,7 @@ class TestFields < BureaucratTestCase
       end
 
       should 'not validate a value not in choices list' do
-        assert_raise(ValidationError) do
+        assert_raises(ValidationError) do
           @field.clean(['tea', 'not_in_choices'])
         end
       end

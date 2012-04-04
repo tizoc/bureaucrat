@@ -129,7 +129,7 @@ class TestWidgets < BureaucratTestCase
   end
 
   describe 'Select widget' do
-    def setup
+    setup do
       @choices = [['1', 'One'], ['2', 'Two']]
       @groupchoices = [['numbers', ['1', 'One'], ['2', 'Two']],
                        ['words', [['spoon', 'Spoon'], ['banana', 'Banana']]]]
@@ -238,7 +238,7 @@ class TestWidgets < BureaucratTestCase
   end
 
   describe 'SelectMultiple widget' do
-    def setup
+    setup do
       @choices = [['1', 'One'], ['2', 'Two']]
       @groupchoices = [['numbers', ['1', 'One'], ['2', 'Two']],
                        ['words', [['spoon', 'Spoon'], ['banana', 'Banana']]]]
@@ -303,7 +303,7 @@ class TestWidgets < BureaucratTestCase
   end
 
   describe 'CheckboxSelectMultiple widget' do
-    def setup
+    setup do
       @choices = [['1', 'One'], ['2', 'Two'], ['3', 'Three']]
     end
 
