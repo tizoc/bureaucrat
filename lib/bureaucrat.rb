@@ -19,14 +19,10 @@ module Bureaucrat
     end
   end
 
-  autoload :Fields,      'bureaucrat/fields'
-  autoload :Forms,       'bureaucrat/forms'
-  autoload :Utils,       'bureaucrat/utils'
-  autoload :Validators,  'bureaucrat/validators'
-  autoload :Widgets,     'bureaucrat/widgets'
-  autoload :TemporaryUploadedFile, 'bureaucrat/temporary_uploaded_file'
-
-  # Extra
-  autoload :Formsets,    'bureaucrat/formsets'
-  autoload :Quickfields, 'bureaucrat/quickfields'
+  require_relative 'bureaucrat/utils'
+  require_relative 'bureaucrat/validators'
+  require_relative 'bureaucrat/widgets'
+  require_relative 'bureaucrat/fields'
+  require_relative 'bureaucrat/forms'
+  require_relative 'bureaucrat/temporary_uploaded_file'
 end
