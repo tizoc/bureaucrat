@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
     "test/forms_test.rb",
     "test/formsets_test.rb",
     "test/test_helper.rb",
-    "test/utils_test.rb",
     "test/widgets_test.rb",
     "Rakefile",
     "bureaucrat.gemspec"
