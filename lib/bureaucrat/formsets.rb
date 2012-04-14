@@ -25,7 +25,28 @@ module Bureaucrat
         'form'
       end
 
-      attr_accessor :forms, :form, :extra, :can_order, :can_delete, :max_num
+      # All forms in this formset
+      attr_accessor :forms
+      # Form class used for this formset forms
+      attr_accessor :form
+      # Amount of extra (empty) forms on this formset
+      attr_accessor :extra
+      # Boolean that determines is this formset supports reordering
+      attr_accessor :can_order
+      # Boolean that determines is this formset supports deletion
+      attr_accessor :can_delete
+      # Maximum count of forms allowed on this formset
+      attr_accessor :max_num
+      # Prefix that will be used when rendering form fields
+      attr_accessor :prefix
+      # Error object class for this formset
+      attr_accessor :error_class
+      # Initial data for the forms in this formset. Array of Hashes of {field_name => initial_value}
+      attr_accessor :initial
+      # Data associated to this formset. Hash of {prefixed_field_name => value}
+      attr_accessor :data
+      # Format string for field id generator
+      attr_accessor :auto_id
 
       def initialize(data=nil, options={})
         set_defaults
