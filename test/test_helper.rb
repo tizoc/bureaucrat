@@ -23,7 +23,7 @@ class BureaucratTestCase < MiniTest::Unit::TestCase
     begin
       node = REXML::Document.new("<DUMMYROOT>#{html.strip}</DUMMYROOT>")
       node.to_s.gsub!(/<\/?DUMMYROOT>/, '')
-    rescue Exception => e
+    rescue
       html
     end
   end
