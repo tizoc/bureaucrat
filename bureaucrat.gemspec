@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'bureaucrat'
-  s.version = '0.10.0'
+  s.version = '0.10.1'
   s.summary = "Form handling for Ruby inspired by Django forms."
   s.description = "Bureaucrat is a form handling library for Ruby."
   s.author = "Bruno Deferrari"
