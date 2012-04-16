@@ -1,6 +1,6 @@
 module Bureaucrat
   class TemporaryUploadedFile
-    attr_accessor :filename, :content_type, :name, :tempfile, :head
+    attr_accessor :filename, :content_type, :name, :tempfile, :head, :size
 
     def initialize(data)
       @filename = data[:filename]
