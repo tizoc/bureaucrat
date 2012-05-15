@@ -60,37 +60,24 @@ unbound_form = MyForm.new
 unbound_form.valid? # => false
 unbound_form.errors # => {}
 unbound_form.cleaned_data # => nil
-puts unbound_form.as_p
-# Prints:
-# <p><label for="id_nickname">Nickname:</label> <input type="text" name="nickname" id="id_nickname" maxlength="50" /></p>
-# <p><label for="id_realname">Realname:</label> <input type="text" name="realname" id="id_realname" /></p>
-# <p><label for="id_email">Email:</label> <input type="text" name="email" id="id_email" /></p>
-# <p><label for="id_age">Age:</label> <input type="text" name="age" id="id_age" /></p>
-# <p><label for="id_newsletter">Newsletter:</label> <input type="checkbox" name="newsletter" id="id_newsletter" /></p>
+unbound_form[:nickname].to_s # => '<input type="text" name="nickname" id="id_nickname" />'
+unbound_form[:nickname].errors # => []
+unbound_form[:nickname].label_tag # => '<label for="id_nickname">Nickname</label>'
 
+# Bound form with validation errors
 invalid_bound_form = MyForm.new(nickname: 'bureaucrat', email: 'badformat', age: '30')
 invalid_bound_form.valid? # => false
 invalid_bound_form.errors # {email: ["Enter a valid e-mail address."]}
 invalid_bound_form.cleaned_data # => nil
-puts invalid_bound_form.as_table
-# Prints:
-# <tr><th><label for="id_nickname">Nickname:</label></th><td><input type="text" value="bureaucrat" name="nickname" id="id_nickname" maxlength="50" /></td></tr>
-# <tr><th><label for="id_realname">Realname:</label></th><td><ul class="errorlist"><li>This field is required</li></ul><input type="text" name="realname" id="id_realname" /></td></tr>
-# <tr><th><label for="id_email">Email:</label></th><td><ul class="errorlist"><li>Enter a valid e-mail address.</li></ul><input type="text" value="badformat" name="email" id="id_email" /></td></tr>
-# <tr><th><label for="id_age">Age:</label></th><td><input type="text" value="30" name="age" id="id_age" /></td></tr>
-# <tr><th><label for="id_newsletter">Newsletter:</label></th><td><input type="checkbox" name="newsletter" id="id_newsletter" /></td></tr>
+invalid_bound_form[:email].to_s # => '<input type="text" name="email" id="id_email" value="badformat" />'
+invalid_bound_form[:email].errors # => ["Enter a valid e-mail address."]
+invalid_bound_form[:email].label_tag # => '<label for="id_email">Email</label>'
 
+# Bound form without validation errors
 valid_bound_form = MyForm.new(nickname: 'bureaucrat', email: 'valid@email.com', age: '30')
 valid_bound_form.valid? # => true
 valid_bound_form.errors # {}
 valid_bound_form.cleaned_data # => {age: 30, newsletter: false, nickname: "bureaucrat", realname: "", :email = >"valid@email.com"}
-puts valid_bound_form.as_ul
-# Prints:
-# <li><label for="id_nickname">Nickname:</label> <input type="text" value="bureaucrat" name="nickname" id="id_nickname" maxlength="50" /></li>
-# <li><ul class="errorlist"><li>This field is required</li></ul><label for="id_realname">Realname:</label> <input type="text" name="realname" id="id_realname" /></li>
-# <li><label for="id_email">Email:</label> <input type="text" value="valid@email.com" name="email" id="id_email" /></li>
-# <li><label for="id_age">Age:</label> <input type="text" value="30" name="age" id="id_age" /></li>
-# <li><label for="id_newsletter">Newsletter:</label> <input type="checkbox" name="newsletter" id="id_newsletter" /></li>
 
 valid_bound_form.save # A new User is created and a confirmation mail is delivered
 ```
