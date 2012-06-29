@@ -35,6 +35,7 @@ class TestForm1 < Bureaucrat::Forms::Form
                            [['a', 'Letter A'],
                             ['b', 'Letter B'],
                             ['c', 'Letter C']]
+  date          :date, ['%Y-%m-%d']
 
   def initialize(*args)
     super(*args)

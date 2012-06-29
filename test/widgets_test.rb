@@ -103,6 +103,15 @@ module WidgetTests
     end
   end
 
+  class Test_DateInput_widget < BureaucratTestCase
+    def test_correctly_render
+      input = Widgets::DateInput.new(nil, '%Y/%m/%d')
+      expected = normalize_html("<input name='test' type='text' value='1982/10/25' />")
+      rendered = normalize_html(input.render('test', Date.parse('1982-10-25')))
+      assert_equal(expected, rendered)
+    end
+  end
+
   class Test_CheckboxInput_widget < BureaucratTestCase
     def test_correctly_render_with_a_false_value
       input = Widgets::CheckboxInput.new

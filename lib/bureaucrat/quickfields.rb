@@ -44,6 +44,11 @@ module Bureaucrat
       field name, RegexField.new(regexp, options)
     end
 
+    # Declare a +DateField+
+    def date(name, input_formats, options = {})
+      field name, DateField.new(input_formats, options)
+    end
+
     # Declare an +EmailField+
     def email(name, options = {})
       field name, EmailField.new(options)

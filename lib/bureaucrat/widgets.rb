@@ -253,7 +253,25 @@ module Bureaucrat
       end
     end
 
-    # DateInput
+    class DateInput < TextInput
+      def initialize(attrs=nil, format=nil)
+        super(attrs)
+        @format = format || '%Y-%m-%d'
+      end
+
+      def format_value(value)
+        if value.respond_to?(:strftime)
+          value.strftime(@format)
+        else
+          value
+        end
+      end
+
+      def render(name, value, attrs=nil)
+        value = format_value(value)
+        super(name, value, attrs)
+      end
+    end
     # DateTimeInput
     # TimeInput
 
