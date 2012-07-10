@@ -1,0 +1,7 @@
+en:
+  bureaucrat:
+    errors:
+      test_form:
+        test_field:
+          required: "test-required"
+          invalid: "test-invalid"

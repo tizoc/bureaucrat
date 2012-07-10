@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string'
+
 module Bureaucrat
   module Forms
 
@@ -155,6 +157,8 @@ module Bureaucrat
 
       # Declares a named field to be used on this form.
       def self.field(name, field_obj)
+        field_obj.form_name = self.to_s.underscore
+        field_obj.name = name
         base_fields[name] = field_obj
       end
 

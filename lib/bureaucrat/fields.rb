@@ -49,7 +49,7 @@ module Bureaucrat
     end
 
     class Field
-      attr_accessor :required, :label, :initial, :error_messages, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators
+      attr_accessor :required, :label, :initial, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators, :form_name, :name
 
       def initialize(options={})
         @required = options.fetch(:required, true)
@@ -66,18 +66,26 @@ module Bureaucrat
         @hidden_widget = options.fetch(:hidden_widget, default_hidden_widget)
         @hidden_widget = @hidden_widget.new if @hidden_widget.is_a?(Class)
 
-        @error_messages = default_error_messages.
-          merge(options.fetch(:error_messages, {}))
+        @given_error_messages = options.fetch(:error_messages, {})
 
         @validators = default_validators + options.fetch(:validators, [])
       end
 
       # Default error messages for this kind of field. Override on subclasses to add or replace messages
+
+      def error_message(error)
+        I18n.t("bureaucrat.errors.#{form_name}.#{name}.#{error}", default: I18n.t("bureaucrat.default_errors.#{error}"))
+      end
+
       def default_error_messages
         {
-          required: 'This field is required',
-          invalid: 'Enter a valid value'
+          required: error_message(:required),
+          invalid: error_message(:invalid)
         }
+      end
+
+      def error_messages
+        @error_messages ||= default_error_messages.merge(@given_error_messages)
       end
 
       # Default validators for this kind of field.

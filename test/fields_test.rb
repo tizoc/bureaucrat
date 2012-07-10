@@ -65,6 +65,23 @@ module FieldTests
       assert_not_equal(@field.error_messages.object_id, @field_copy.error_messages.object_id)
     end
   end
+
+  class Test_translated_errors < BureaucratTestCase
+    def setup
+      @field = Fields::Field.new(initial: 'initial',
+                                 label: 'label')
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+    end
+
+    def test_translates_required_fields
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.required'), @field.error_messages[:required])
+    end
+
+    def test_translates_invalid_fields
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.invalid'), @field.error_messages[:invalid])
+    end
+  end
 end
 
 module CharFieldTests
