@@ -89,8 +89,9 @@ module Bureaucrat
         @given_label || I18n.t("bureaucrat.#{form_name}.#{name}.label", default: name.to_s.humanize)
       end
 
-      def error_message(scope, error)
-        I18n.t("bureaucrat.#{form_name}.#{name}.errors.#{error}", default: I18n.t("bureaucrat.default_errors.#{scope}.#{error}"))
+      def error_message(scope, error, params={})
+        message = I18n.t("bureaucrat.#{form_name}.#{name}.errors.#{error}", default: I18n.t("bureaucrat.default_errors.#{scope}.#{error}"))
+        Utils.format_string(message, params)
       end
 
       def default_error_messages

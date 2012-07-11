@@ -91,11 +91,11 @@ module IntegerFieldTests
 
   class Test_translate_errors < BureaucratTestCase
     def setup
-      @field = Fields::IntegerField.new
+      @field = Fields::IntegerField.new(min_value: 5, max_value: 10)
     end
 
     def test_translates_min_value_error_default
-      assert_equal(I18n.t('bureaucrat.default_errors.integer.min_value'), @field.error_messages[:min_value])
+      assert_equal('Ensure this value is greater than or equal to 5.', @field.error_messages[:min_value])
     end
 
     def test_translates_min_value_error
@@ -105,7 +105,7 @@ module IntegerFieldTests
     end
 
     def test_translates_max_value_error_default
-      assert_equal(I18n.t('bureaucrat.default_errors.integer.max_value'), @field.error_messages[:max_value])
+      assert_equal('Ensure this value is less than or equal to 10.', @field.error_messages[:max_value])
     end
 
     def test_translates_max_value_error

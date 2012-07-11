@@ -19,8 +19,8 @@ module Bureaucrat
 
       def default_error_messages
         super.merge(invalid: error_message(:integer, :invalid),
-                    max_value: error_message(:integer, :max_value),
-                    min_value: error_message(:integer, :min_value))
+                    max_value: error_message(:integer, :max_value, {:max => @max_value}),
+                    min_value: error_message(:integer, :min_value, {:min => @min_value}))
       end
 
       def to_object(value)

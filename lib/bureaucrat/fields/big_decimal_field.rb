@@ -26,11 +26,11 @@ module Bureaucrat
 
       def default_error_messages
         super.merge(invalid: error_message(:big_decimal, :invalid),
-                    max_value: error_message(:big_decimal, :max_value),
-                    min_value: error_message(:big_decimal, :min_value),
-                    max_digits: error_message(:big_decimal, :max_digits),
-                    max_decimal_places: error_message(:big_decimal, :max_decimal_places),
-                    max_whole_digits: error_message(:big_decimal, :max_whole_digits))
+                    max_value: error_message(:big_decimal, :max_value, {max: @max_value}),
+                    min_value: error_message(:big_decimal, :min_value, {min: @min_value}),
+                    max_digits: error_message(:big_decimal, :max_digits, {max: @max_digits}),
+                    max_decimal_places: error_message(:big_decimal, :max_decimal_places, {max: @max_decimal_places}),
+                    max_whole_digits: error_message(:big_decimal, :max_whole_digits, {max: @max_whole_digits}))
       end
 
       def to_object(value)

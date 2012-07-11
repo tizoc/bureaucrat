@@ -25,7 +25,7 @@ en:
         invalid: 'No file was submitted. Check the encoding type on the form.'
         missing: 'No file was submitted.'
         empty: 'The submitted file is empty.'
-        max_length: 'Ensure this filename has at most %(max)d characters (it has %(length)d).'
+        max_length: 'Ensure this filename has at most %(max)s characters (it has %(length)s).'
         contradiction: 'Please either submit a file or check the clear checkbox, not both.'
       choice:
         invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.'

@@ -80,7 +80,11 @@ module ChoiceFieldTests
     end
 
     def test_translates_invalid_choice_default
-      assert_equal(I18n.t('bureaucrat.default_errors.choice.invalid_choice'), @field.error_messages[:invalid_choice])
+      begin
+        @field.clean(1)
+      rescue ValidationError => e
+        assert_equal(["Select a valid choice. 1 is not one of the available choices."], e.messages)
+      end
     end
 
     def test_translates_invalid_choice

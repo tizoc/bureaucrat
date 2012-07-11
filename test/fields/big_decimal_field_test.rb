@@ -103,7 +103,7 @@ module BigDecimalFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::BigDecimalField.new
+      @field = Fields::BigDecimalField.new(max_value: 10, min_value: 2, max_digits: 7, max_decimal_places: 4)
     end
 
     def test_translates_invalid_default
@@ -111,15 +111,15 @@ module BigDecimalFieldTests
     end
 
     def test_translates_max_value_default
-      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_value'), @field.error_messages[:max_value])
+      assert_equal('Ensure this value is less than or equal to 10.', @field.error_messages[:max_value])
     end
 
     def test_translates_min_value_default
-      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.min_value'), @field.error_messages[:min_value])
+      assert_equal('Ensure this value is greater than or equal to 2.', @field.error_messages[:min_value])
     end
 
     def test_translates_max_digits_default
-      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_digits'), @field.error_messages[:max_digits])
+      assert_equal('Ensure that there are no more than 7 digits in total.', @field.error_messages[:max_digits])
     end
 
     def test_translates_max_digits_error
@@ -129,7 +129,7 @@ module BigDecimalFieldTests
     end
 
     def test_translates_max_decimal_places_default
-      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_decimal_places'), @field.error_messages[:max_decimal_places])
+      assert_equal('Ensure that there are no more than 4 decimal places.', @field.error_messages[:max_decimal_places])
     end
 
     def test_translates_max_decimal_places_error
@@ -139,7 +139,7 @@ module BigDecimalFieldTests
     end
 
     def test_translates_max_whole_digits_default
-      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_whole_digits'), @field.error_messages[:max_whole_digits])
+      assert_equal('Ensure that there are no more than 3 digits before the decimal point.', @field.error_messages[:max_whole_digits])
     end
 
     def test_translates_max_whole_digits_error

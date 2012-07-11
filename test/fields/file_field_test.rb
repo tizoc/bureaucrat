@@ -1,9 +1,13 @@
 require_relative '../test_helper'
 
 module FileFieldTests
+  class MockFile
+    attr_accessor :name, :size
+  end
+
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::FileField.new({})
+      @field = Fields::FileField.new(max_length: 6)
     end
 
     def test_translates_invalid_default
@@ -37,7 +41,14 @@ module FileFieldTests
     end
 
     def test_translates_max_length_default
-      assert_equal(I18n.t('bureaucrat.default_errors.file.max_length'), @field.error_messages[:max_length])
+      file = MockFile.new
+      file.name = 'x' * 12
+
+      begin
+        @field.clean(file)
+      rescue ValidationError => e
+        assert_equal(['Ensure this filename has at most 6 characters (it has 12).'], e.messages)
+      end
     end
 
     def test_translates_max_length
