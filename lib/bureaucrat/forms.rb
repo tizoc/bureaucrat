@@ -19,7 +19,7 @@ module Bureaucrat
         @name = name
         @html_name = form.add_prefix(name)
         @html_initial_name = form.add_initial_prefix(name)
-        @label = @field.label || pretty_name(name)
+        @label = @field.label
         @help_text = @field.help_text || ''
       end
 

@@ -1,8 +1,9 @@
 en:
   bureaucrat:
-    errors:
-      test_form:
-        test_field:
+    test_form:
+      test_field:
+        label: 'test-label'
+        errors:
           required: "test-required"
           invalid: "test-invalid"
           invalid_choice: "test-invalid-choice"

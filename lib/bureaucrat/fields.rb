@@ -49,12 +49,12 @@ module Bureaucrat
     end
 
     class Field
-      attr_accessor :required, :label, :initial, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators, :form_name, :name
+      attr_accessor :required, :initial, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators, :form_name, :name
 
       def initialize(options={})
         @required = options.fetch(:required, true)
         @show_hidden_initial = options.fetch(:show_hidden_initial, false)
-        @label = options[:label]
+        @given_label = options[:label]
         @initial = options[:initial]
         @help_text = options.fetch(:help_text, '')
         @widget = options.fetch(:widget, default_widget)
@@ -71,10 +71,28 @@ module Bureaucrat
         @validators = default_validators + options.fetch(:validators, [])
       end
 
+      def initialize_copy(original)
+        super(original)
+        @initial = original.initial
+        begin
+          @initial = @initial.dup
+        rescue TypeError
+          # non-clonable
+        end
+        @given_label = original.label && original.label.dup
+        @widget = original.widget && original.widget.dup
+        @validators = original.validators.dup
+        @given_error_messages = original.error_messages.dup
+      end
+
       # Default error messages for this kind of field. Override on subclasses to add or replace messages
+      #
+      def label
+        @given_label || I18n.t("bureaucrat.#{form_name}.#{name}.label", default: name.to_s.humanize)
+      end
 
       def error_message(scope, error)
-        I18n.t("bureaucrat.errors.#{form_name}.#{name}.#{error}", default: I18n.t("bureaucrat.default_errors.#{scope}.#{error}"))
+        I18n.t("bureaucrat.#{form_name}.#{name}.errors.#{error}", default: I18n.t("bureaucrat.default_errors.#{scope}.#{error}"))
       end
 
       def default_error_messages
@@ -171,20 +189,6 @@ module Bureaucrat
         if object.respond_to?(setter)
           object.send(setter, value)
         end
-      end
-
-      def initialize_copy(original)
-        super(original)
-        @initial = original.initial
-        begin
-          @initial = @initial.dup
-        rescue TypeError
-          # non-clonable
-        end
-        @label = original.label && original.label.dup
-        @widget = original.widget && original.widget.dup
-        @validators = original.validators.dup
-        @error_messages = original.error_messages.dup
       end
 
     end
