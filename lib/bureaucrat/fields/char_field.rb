@@ -19,6 +19,13 @@ module Bureaucrat
         end
       end
 
+      def default_error_messages
+        super.merge(
+          max_length: error_message(:char, :max_length, {max: @max_length}),
+          min_length: error_message(:char, :min_length, {min: @min_length})
+        )
+      end
+
       def to_object(value)
         if Validators.empty_value?(value)
           ''

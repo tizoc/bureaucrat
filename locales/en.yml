@@ -5,6 +5,9 @@ en:
         field:
           required: "This field is required"
           invalid: "Enter a valid value"
+        char:
+          max_length: 'Ensure this value is less than or equal to %(max)s.'
+          min_length: 'Ensure this value is greater than or equal to %(min)s.'
         integer:
           invalid: 'Enter a whole number.'
           min_value: "Ensure this value is greater than or equal to %(min)s."

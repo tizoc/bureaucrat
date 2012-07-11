@@ -79,4 +79,18 @@ module CharFieldTests
       assert_equal('', @field.clean(empty_value))
     end
   end
+
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::CharField.new(max_length: 10, min_length: 2)
+    end
+
+    def test_translates_max_length_default
+      assert_equal('Ensure this value is less than or equal to 10.', @field.error_messages[:max_length])
+    end
+
+    def test_translates_min_length_default
+      assert_equal('Ensure this value is greater than or equal to 2.', @field.error_messages[:min_length])
+    end
+  end
 end
