@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name = 'bureaucrat'
-  s.version = '0.10.2'
+  s.version = '0.11.1'
   s.summary = "Form handling for Ruby inspired by Django forms."
   s.description = "Bureaucrat is a form handling library for Ruby."
   s.author = "Bruno Deferrari"
   s.email = "utizoc@gmail.com"
   s.homepage = "http://github.com/tizoc/bureaucrat"
-  s.files = Dir[File.join(File.expand_path('../lib/', __FILE__), '**', '*.rb')]
+  s.files = Dir[File.join('lib', '**', '*.rb')]
   s.files += [
     "README.md",
     "LICENSE",
