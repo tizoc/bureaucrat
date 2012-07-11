@@ -1,5 +1,5 @@
 require 'date'
-require 'bureaucrat/fields/date_field'
+require 'bureaucrat/fields/char_field'
 
 module Bureaucrat
   module Fields
