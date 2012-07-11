@@ -6,7 +6,7 @@ root = File.expand_path('../..', __FILE__)
 I18n.load_path += Dir[File.join(root, 'locales', '**', '*.yml').to_s]
 
 module Bureaucrat
-  VERSION = '0.11.1'
+  VERSION = '0.11.2'
 
   class ValidationError < Exception
     attr_reader :code, :params, :messages
