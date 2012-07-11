@@ -115,7 +115,7 @@ module IntegerFieldTests
     end
 
     def test_translates_invalid_error_default
-      assert_equal(I18n.t('bureaucrat.default_errors.integer.invalid'), @field.error_messages[:invalid])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.integer.invalid'), @field.error_messages[:invalid])
     end
   end
 end

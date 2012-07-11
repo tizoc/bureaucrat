@@ -107,7 +107,7 @@ module BigDecimalFieldTests
     end
 
     def test_translates_invalid_default
-      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.invalid'), @field.error_messages[:invalid])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.big_decimal.invalid'), @field.error_messages[:invalid])
     end
 
     def test_translates_max_value_default

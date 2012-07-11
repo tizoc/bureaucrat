@@ -55,7 +55,7 @@ module MultipleChoiceFieldTests
     end
 
     def test_translates_invalid_list_default
-      assert_equal(I18n.t('bureaucrat.default_errors.multiple_choice.invalid_list'), @field.error_messages[:invalid_list])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.multiple_choice.invalid_list'), @field.error_messages[:invalid_list])
     end
 
     def test_translates_invalid_list

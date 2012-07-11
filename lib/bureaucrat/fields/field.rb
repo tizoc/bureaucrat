@@ -90,7 +90,7 @@ module Bureaucrat
       end
 
       def error_message(scope, error, params={})
-        message = I18n.t("bureaucrat.#{form_name}.#{name}.errors.#{error}", default: I18n.t("bureaucrat.default_errors.#{scope}.#{error}"))
+        message = I18n.t("bureaucrat.#{form_name}.#{name}.errors.#{error}", default: I18n.t("bureaucrat.default_errors.fields.#{scope}.#{error}"))
         Utils.format_string(message, params)
       end
 

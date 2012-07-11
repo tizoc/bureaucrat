@@ -73,7 +73,7 @@ module FieldTests
     end
 
     def test_translates_required_default
-      assert_equal(I18n.t('bureaucrat.default_errors.field.required'), @field.error_messages[:required])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.field.required'), @field.error_messages[:required])
     end
 
     def test_translates_required_fields

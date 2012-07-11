@@ -11,7 +11,7 @@ module FileFieldTests
     end
 
     def test_translates_invalid_default
-      assert_equal(I18n.t('bureaucrat.default_errors.file.invalid'), @field.error_messages[:invalid])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.file.invalid'), @field.error_messages[:invalid])
     end
 
     def test_translates_invalid
@@ -27,11 +27,11 @@ module FileFieldTests
     end
 
     def test_translates_missing_default
-      assert_equal(I18n.t('bureaucrat.default_errors.file.missing'), @field.error_messages[:missing])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.file.missing'), @field.error_messages[:missing])
     end
 
     def test_translates_empty_default
-      assert_equal(I18n.t('bureaucrat.default_errors.file.empty'), @field.error_messages[:empty])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.file.empty'), @field.error_messages[:empty])
     end
 
     def test_translates_empty
@@ -58,7 +58,7 @@ module FileFieldTests
     end
 
     def test_translates_contradiction_default
-      assert_equal(I18n.t('bureaucrat.default_errors.file.contradiction'), @field.error_messages[:contradiction])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.file.contradiction'), @field.error_messages[:contradiction])
     end
 
     def test_translates_contradiction

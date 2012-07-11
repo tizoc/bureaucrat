@@ -49,7 +49,7 @@ module DateFieldTests
     end
 
     def test_translates_invalid_default
-      assert_equal(I18n.t('bureaucrat.default_errors.date.invalid'), @field.error_messages[:invalid])
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.date.invalid'), @field.error_messages[:invalid])
     end
   end
 end
