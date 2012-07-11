@@ -1,3 +1,5 @@
+$: << File.expand_path('..', __FILE__)
+
 require 'i18n'
 
 root = File.expand_path('../..', __FILE__)

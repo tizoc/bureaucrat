@@ -1,8 +1,8 @@
 require 'bigdecimal'
 require 'minitest/autorun'
 
-require_relative '../lib/bureaucrat'
-require_relative '../lib/bureaucrat/formsets'
+require 'bureaucrat'
+require 'bureaucrat/formsets'
 
 # Used to compare rendered htmls
 require 'rexml/document'
