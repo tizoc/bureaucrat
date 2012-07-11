@@ -73,14 +73,14 @@ module Bureaucrat
 
       # Default error messages for this kind of field. Override on subclasses to add or replace messages
 
-      def error_message(error)
-        I18n.t("bureaucrat.errors.#{form_name}.#{name}.#{error}", default: I18n.t("bureaucrat.default_errors.#{error}"))
+      def error_message(scope, error)
+        I18n.t("bureaucrat.errors.#{form_name}.#{name}.#{error}", default: I18n.t("bureaucrat.default_errors.#{scope}.#{error}"))
       end
 
       def default_error_messages
         {
-          required: error_message(:required),
-          invalid: error_message(:invalid)
+          required: error_message(:field, :required),
+          invalid: error_message(:field, :invalid)
         }
       end
 
@@ -240,9 +240,9 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(invalid: 'Enter a whole number.',
-                    max_value: 'Ensure this value is less than or equal to %(max)s.',
-                    min_value: 'Ensure this value is greater than or equal to %(min)s.')
+        super.merge(invalid: error_message(:integer, :invalid),
+                    max_value: error_message(:integer, :max_value),
+                    min_value: error_message(:integer, :min_value))
       end
 
       def to_object(value)
@@ -262,7 +262,7 @@ module Bureaucrat
 
     class FloatField < IntegerField
       def default_error_messages
-        super.merge(invalid: 'Enter a number.')
+        super.merge(invalid: error_message(:float, :invalid))
       end
 
       def to_object(value)
@@ -301,12 +301,12 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(invalid: 'Enter a number.',
-                    max_value: 'Ensure this value is less than or equal to %(max)s.',
-                    min_value: 'Ensure this value is greater than or equal to %(min)s.',
-                    max_digits: 'Ensure that there are no more than %(max)s digits in total.',
-                    max_decimal_places: 'Ensure that there are no more than %(max)s decimal places.',
-                    max_whole_digits: 'Ensure that there are no more than %(max)s digits before the decimal point.')
+        super.merge(invalid: error_message(:big_decimal, :invalid),
+                    max_value: error_message(:big_decimal, :max_value),
+                    min_value: error_message(:big_decimal, :min_value),
+                    max_digits: error_message(:big_decimal, :max_digits),
+                    max_decimal_places: error_message(:big_decimal, :max_decimal_places),
+                    max_whole_digits: error_message(:big_decimal, :max_whole_digits))
       end
 
       def to_object(value)
@@ -366,7 +366,7 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(invalid: 'Enter a valid date.')
+        super.merge(invalid: error_message(:date, :invalid))
       end
 
       def default_widget
@@ -420,7 +420,7 @@ module Bureaucrat
 
     class EmailField < CharField
       def default_error_messages
-        super.merge(invalid: 'Enter a valid e-mail address.')
+        super.merge(invalid: error_message(:email, :invalid))
       end
 
       def default_validators
@@ -442,11 +442,11 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(invalid: 'No file was submitted. Check the encoding type on the form.',
-                    missing: 'No file was submitted.',
-                    empty: 'The submitted file is empty.',
-                    max_length: 'Ensure this filename has at most %(max)d characters (it has %(length)d).',
-                    contradiction: 'Please either submit a file or check the clear checkbox, not both.')
+        super.merge(invalid: error_message(:file, :invalid),
+                    missing: error_message(:file, :missing),
+                    empty: error_message(:file, :empty),
+                    max_length: error_message(:file, :max_length),
+                    contradiction: error_message(:file, :contradiction))
       end
 
       def default_widget
@@ -578,7 +578,7 @@ module Bureaucrat
       end
 
       def default_error_messages
-        super.merge(invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.')
+        super.merge(invalid_choice: error_message(:choice, :invalid_choice))
       end
 
       def default_widget
@@ -663,8 +663,8 @@ module Bureaucrat
 
     class MultipleChoiceField < ChoiceField
       def default_error_messages
-        super.merge(invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.',
-                    invalid_list: 'Enter a list of values.')
+        super.merge(invalid_choice: error_message(:multiple_choice, :invalid_choice),
+                    invalid_list: error_message(:multiple_choice, :invalid_list))
       end
 
       def default_widget

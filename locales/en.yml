@@ -1,5 +1,36 @@
 en:
   bureaucrat:
     default_errors:
-      required: "This field is required"
-      invalid: "Enter a valid value"
+      field:
+        required: "This field is required"
+        invalid: "Enter a valid value"
+      integer:
+        invalid: 'Enter a whole number.'
+        min_value: "Ensure this value is greater than or equal to %(min)s."
+        max_value: "Ensure this value is less than or equal to %(max)s."
+      float:
+        invalid: 'Enter a number.'
+      big_decimal:
+        invalid: 'Enter a number.'
+        max_value: 'Ensure this value is less than or equal to %(max)s.'
+        min_value: 'Ensure this value is greater than or equal to %(min)s.'
+        max_digits: 'Ensure that there are no more than %(max)s digits in total.'
+        max_decimal_places: 'Ensure that there are no more than %(max)s decimal places.'
+        max_whole_digits: 'Ensure that there are no more than %(max)s digits before the decimal point.'
+      date:
+        invalid: 'Enter a valid date.'
+      email:
+        invalid: 'Enter a valid e-mail address.'
+      file:
+        invalid: 'No file was submitted. Check the encoding type on the form.'
+        missing: 'No file was submitted.'
+        empty: 'The submitted file is empty.'
+        max_length: 'Ensure this filename has at most %(max)d characters (it has %(length)d).'
+        contradiction: 'Please either submit a file or check the clear checkbox, not both.'
+      choice:
+        invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.'
+      multiple_choice:
+        invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.'
+        invalid_list: 'Enter a list of values.'
+      ip_address:
+        :invalid: 'Enter a valid IPv4 address.'

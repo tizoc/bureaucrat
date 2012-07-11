@@ -53,9 +53,11 @@ module Bureaucrat
 
     IPV4_RE = /^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/
 
-    IPV4Validator =
+    ValidateIPV4Address =
       RegexValidator.new(regex: IPV4_RE,
                          message: 'Enter a valid IPv4 address.')
+
+    IPV4Validator = ValidateIPV4Address
 
     COMMA_SEPARATED_INT_LIST_RE = /^[\d,]+$/
 

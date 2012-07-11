@@ -70,15 +70,21 @@ module FieldTests
     def setup
       @field = Fields::Field.new(initial: 'initial',
                                  label: 'label')
-      @field.form_name = 'test_form'
-      @field.name = 'test_field'
+    end
+
+    def test_translates_required_default
+      assert_equal(I18n.t('bureaucrat.default_errors.field.required'), @field.error_messages[:required])
     end
 
     def test_translates_required_fields
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
       assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.required'), @field.error_messages[:required])
     end
 
     def test_translates_invalid_fields
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
       assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.invalid'), @field.error_messages[:invalid])
     end
   end
@@ -163,7 +169,6 @@ module CharFieldTests
       assert_equal('', @field.clean(empty_value))
     end
   end
-
 end
 
 module IntegerFieldTests
@@ -203,7 +208,6 @@ module IntegerFieldTests
         @field.clean('9')
       end
     end
-
   end
 
   class Test_on_clean < BureaucratTestCase
@@ -255,6 +259,35 @@ module IntegerFieldTests
     end
   end
 
+  class Test_translate_errors < BureaucratTestCase
+    def setup
+      @field = Fields::IntegerField.new
+    end
+
+    def test_translates_min_value_error_default
+      assert_equal(I18n.t('bureaucrat.default_errors.integer.min_value'), @field.error_messages[:min_value])
+    end
+
+    def test_translates_min_value_error
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.min_value'), @field.error_messages[:min_value])
+    end
+
+    def test_translates_max_value_error_default
+      assert_equal(I18n.t('bureaucrat.default_errors.integer.max_value'), @field.error_messages[:max_value])
+    end
+
+    def test_translates_max_value_error
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.max_value'), @field.error_messages[:max_value])
+    end
+
+    def test_translates_invalid_error_default
+      assert_equal(I18n.t('bureaucrat.default_errors.integer.invalid'), @field.error_messages[:invalid])
+    end
+  end
 end
 
 module FloatFieldTests
@@ -337,6 +370,16 @@ module FloatFieldTests
     def test_return_an_instance_of_Float_if_valid
       result = @field.clean('3.14')
       assert_instance_of(Float, result)
+    end
+  end
+
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::FloatField.new
+    end
+
+    def test_translates_invalid_default
+      assert_equal(I18n.t('bureaucrat.default_errors.float.invalid'), @field.error_messages[:invalid])
     end
   end
 end
@@ -442,6 +485,54 @@ module BigDecimalFieldTests
       assert_instance_of(BigDecimal, result)
     end
   end
+
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::BigDecimalField.new
+    end
+
+    def test_translates_invalid_default
+      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.invalid'), @field.error_messages[:invalid])
+    end
+
+    def test_translates_max_value_default
+      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_value'), @field.error_messages[:max_value])
+    end
+
+    def test_translates_min_value_default
+      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.min_value'), @field.error_messages[:min_value])
+    end
+
+    def test_translates_max_digits_default
+      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_digits'), @field.error_messages[:max_digits])
+    end
+
+    def test_translates_max_digits_error
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.max_digits'), @field.error_messages[:max_digits])
+    end
+
+    def test_translates_max_decimal_places_default
+      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_decimal_places'), @field.error_messages[:max_decimal_places])
+    end
+
+    def test_translates_max_decimal_places_error
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.max_decimal_places'), @field.error_messages[:max_decimal_places])
+    end
+
+    def test_translates_max_whole_digits_default
+      assert_equal(I18n.t('bureaucrat.default_errors.big_decimal.max_whole_digits'), @field.error_messages[:max_whole_digits])
+    end
+
+    def test_translates_max_whole_digits_error
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.max_whole_digits'), @field.error_messages[:max_whole_digits])
+    end
+  end
 end
 
 module DateFieldTests
@@ -484,6 +575,16 @@ module DateFieldTests
     def test_return_value_if_value_is_already_date
       value = Date.parse('1982/10/25')
       assert_equal(value, @field.clean(value))
+    end
+  end
+
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::DateField.new([])
+    end
+
+    def test_translates_invalid_default
+      assert_equal(I18n.t('bureaucrat.default_errors.date.invalid'), @field.error_messages[:invalid])
     end
   end
 end
@@ -545,6 +646,74 @@ module EmailFieldTests
           @field.clean(invalid)
         end
       end
+    end
+  end
+
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::EmailField.new
+    end
+
+    def test_translates_invalid_default
+      assert_equal(I18n.t('bureaucrat.default_errors.email.invalid'), @field.error_messages[:invalid])
+    end
+  end
+end
+
+module FileFieldTests
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::FileField.new({})
+    end
+
+    def test_translates_invalid_default
+      assert_equal(I18n.t('bureaucrat.default_errors.file.invalid'), @field.error_messages[:invalid])
+    end
+
+    def test_translates_invalid
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.invalid'), @field.error_messages[:invalid])
+    end
+
+    def test_translates_missing
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.missing'), @field.error_messages[:missing])
+    end
+
+    def test_translates_missing_default
+      assert_equal(I18n.t('bureaucrat.default_errors.file.missing'), @field.error_messages[:missing])
+    end
+
+    def test_translates_empty_default
+      assert_equal(I18n.t('bureaucrat.default_errors.file.empty'), @field.error_messages[:empty])
+    end
+
+    def test_translates_empty
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.empty'), @field.error_messages[:empty])
+    end
+
+    def test_translates_max_length_default
+      assert_equal(I18n.t('bureaucrat.default_errors.file.max_length'), @field.error_messages[:max_length])
+    end
+
+    def test_translates_max_length
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.max_length'), @field.error_messages[:max_length])
+    end
+
+    def test_translates_contradiction_default
+      assert_equal(I18n.t('bureaucrat.default_errors.file.contradiction'), @field.error_messages[:contradiction])
+    end
+
+    def test_translates_contradiction
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.contradiction'), @field.error_messages[:contradiction])
     end
   end
 end
@@ -708,6 +877,22 @@ module ChoiceFieldTests
       assert_equal('', result)
     end
   end
+
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::ChoiceField.new({})
+    end
+
+    def test_translates_invalid_choice_default
+      assert_equal(I18n.t('bureaucrat.default_errors.choice.invalid_choice'), @field.error_messages[:invalid_choice])
+    end
+
+    def test_translates_invalid_choice
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.invalid_choice'), @field.error_messages[:invalid_choice])
+    end
+  end
 end
 
 module TypedChoiceFieldTests
@@ -791,6 +976,42 @@ module MultipleChoiceFieldTests
       @field.required = false
       result = @field.clean([])
       assert_equal([], result)
+    end
+  end
+
+  class Test_translation_errors < BureaucratTestCase
+    def setup
+      @field = Fields::MultipleChoiceField.new({})
+    end
+
+    def test_translates_invalid_choice_default
+      assert_equal(I18n.t('bureaucrat.default_errors.multiple_choice.invalid_choice'), @field.error_messages[:invalid_choice])
+    end
+
+    def test_translates_invalid_list_default
+      assert_equal(I18n.t('bureaucrat.default_errors.multiple_choice.invalid_list'), @field.error_messages[:invalid_list])
+    end
+
+    def test_translates_invalid_list
+      @field.form_name = 'test_form'
+      @field.name = 'test_field'
+      assert_equal(I18n.t('bureaucrat.errors.test_form.test_field.invalid_list'), @field.error_messages[:invalid_list])
+    end
+  end
+
+  module IPAddressFieldTests
+    class Test_translation_errors < BureaucratTestCase
+      def setup
+        @field = Fields::IPAddressField.new({})
+      end
+
+      def test_translates_invalid_default
+        assert_equal(I18n.t('bureaucrat.default_errors.ip_address.invalid'), @field.error_messages[:invalid])
+      end
+
+      def test_translates_invalid_default
+        assert_equal(I18n.t('bureaucrat.default_errors.ip_address.invalid'), @field.error_messages[:invalid])
+      end
     end
   end
 end
