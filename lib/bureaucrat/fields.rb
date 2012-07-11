@@ -278,7 +278,7 @@ module Bureaucrat
         @max_decimal_places = options.delete(:max_decimal_places)
 
         if @max_digits && @max_decimal_places
-          @max_whole_digits = @max_digits - @decimal_places
+          @max_whole_digits = @max_digits - @max_decimal_places
         end
 
         super(options)

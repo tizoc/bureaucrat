@@ -325,6 +325,25 @@ module FloatFieldTests
 end
 
 module BigDecimalFieldTests
+
+  class Test_with_max_digits_and_decimal_places < BureaucratTestCase
+    def setup
+      @field = Fields::BigDecimalField.new(max_digits: 8, max_decimal_places: 4)
+    end
+
+    def test_not_allow_values_greater_than_max_digits
+      assert_raises(ValidationError) do
+        @field.clean('123456789')
+      end
+    end
+
+    def test_not_allow_values_greater_than_max_decimal_places
+      assert_raises(ValidationError) do
+        @field.clean('12.34567')
+      end
+    end
+  end
+
   class Test_with_max_value < BureaucratTestCase
     def setup
       @field = Fields::BigDecimalField.new(max_value: 10.5)
