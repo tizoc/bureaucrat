@@ -79,7 +79,7 @@ module Bureaucrat
       end
 
       def message
-        'Ensure this value is %(limit_value)s (it is %(show_value)s).'
+        I18n.t('bureaucrat.default_errors.validators.base_validator')
       end
 
       def code
@@ -107,7 +107,7 @@ module Bureaucrat
 
     class MaxValueValidator < BaseValidator
       def message
-        'Ensure this value is less than or equal to %(limit_value)s.'
+        I18n.t('bureaucrat.default_errors.validators.max_value_validator')
       end
 
       def code
@@ -121,7 +121,7 @@ module Bureaucrat
 
     class MinValueValidator < BaseValidator
       def message
-        'Ensure this value is greater than or equal to %(limit_value)s.'
+        I18n.t('bureaucrat.default_errors.validators.min_value_validator')
       end
 
       def code
@@ -135,7 +135,7 @@ module Bureaucrat
 
     class MinLengthValidator < BaseValidator
       def message
-        'Ensure this value has at least %(limit_value)s characters (it has %(show_value)s).'
+        I18n.t('bureaucrat.default_errors.validators.min_length_validator')
       end
 
       def code
@@ -153,7 +153,7 @@ module Bureaucrat
 
     class MaxLengthValidator < BaseValidator
       def message
-        'Ensure this value has at most %(limit_value)s characters (it has %(show_value)s).'
+        I18n.t('bureaucrat.default_errors.validators.max_length_validator')
       end
 
       def code
