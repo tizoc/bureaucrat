@@ -17,10 +17,13 @@ module Bureaucrat
       end
 
       def to_object(value)
-        value.map(&:to_i)
-        {:min => value.min, :max => value.max}
+        value_array = value.values.map(&:to_i)
+        {:min => value_array.min, :max => value_array.max}
       end
 
+      def default_widget
+        Widgets::Range
+      end
     end
   end
 end

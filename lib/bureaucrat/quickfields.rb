@@ -95,7 +95,7 @@ module Bureaucrat
     end
 
     def range(name, options = {})
-      field name, RangeField.new(options.merge(widget: Widgets::Range.new))
+      field name, RangeField.new(options)
     end
   end
 end
