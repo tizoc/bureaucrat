@@ -93,5 +93,9 @@ module Bureaucrat
     def checkbox_multiple_choice(name, choices = [], options = {})
       field name, MultipleChoiceField.new(choices, options.merge(widget: Widgets::CheckboxSelectMultiple.new))
     end
+
+    def range(name, options = {})
+      field name, RangeField.new(options.merge(widget: Widgets::Range.new))
+    end
   end
 end

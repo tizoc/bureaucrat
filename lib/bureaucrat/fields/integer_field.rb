@@ -4,8 +4,8 @@ module Bureaucrat
   module Fields
     class IntegerField < Field
       def initialize(options={})
-        @max_value = options.delete(:max_value)
-        @min_value = options.delete(:min_value)
+        @max_value = options[:max_value]
+        @min_value = options[:min_value]
         super(options)
 
         if @min_value

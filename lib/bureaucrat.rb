@@ -29,6 +29,7 @@ module Bureaucrat
   require_relative 'bureaucrat/utils'
   require_relative 'bureaucrat/validators'
   require_relative 'bureaucrat/widgets'
+  require_relative 'bureaucrat/widgets/range'
   require_relative 'bureaucrat/fields'
   require_relative 'bureaucrat/forms'
   require_relative 'bureaucrat/temporary_uploaded_file'
