@@ -31,6 +31,7 @@ module Bureaucrat
   require_relative 'bureaucrat/widgets'
   require_relative 'bureaucrat/widgets/range'
   require_relative 'bureaucrat/fields'
+  require_relative 'bureaucrat/fields/range_field'
   require_relative 'bureaucrat/forms'
   require_relative 'bureaucrat/temporary_uploaded_file'
 end

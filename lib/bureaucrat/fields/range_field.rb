@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/widgets/range'
 
 module Bureaucrat
   module Fields
@@ -27,9 +28,10 @@ module Bureaucrat
       end
 
       def clean(value)
-        value[:min] = @min.clean(value[:min])
-        value[:max] = @max.clean(value[:max])
-        raise ValidationError.new(error_message("range", :reversed)) if value[:min] > value[:max]
+        value ||= {}
+        value['min'] = @min.clean(value['min'])
+        value['max'] = @max.clean(value['max'])
+        raise ValidationError.new(error_message("range", :reversed)) if value['min'] > value['max']
         super(value)
       end
 
