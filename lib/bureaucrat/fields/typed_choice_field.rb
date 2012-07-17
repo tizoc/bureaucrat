@@ -4,9 +4,8 @@ module Bureaucrat
   module Fields
     class TypedChoiceField < ChoiceField
       def initialize(choices=[], options={})
-        @coerce = options.delete(:coerce) || lambda{|val| val}
+        @coerce = options[:coerce] || lambda{|val| val}
         @empty_value = options.fetch(:empty_value, '')
-        options.delete(:empty_value)
         super(choices, options)
       end
 

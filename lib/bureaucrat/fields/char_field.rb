@@ -6,8 +6,8 @@ module Bureaucrat
       attr_accessor :max_length, :min_length
 
       def initialize(options = {})
-        @max_length = options.delete(:max_length)
-        @min_length = options.delete(:min_length)
+        @max_length = options[:max_length]
+        @min_length = options[:min_length]
         super(options)
 
         if @min_length

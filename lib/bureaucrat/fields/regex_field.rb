@@ -4,7 +4,7 @@ module Bureaucrat
   module Fields
     class RegexField < CharField
       def initialize(regex, options={})
-        error_message = options.delete(:error_message)
+        error_message = options[:error_message]
 
         if error_message
           options[:error_messages] ||= {}

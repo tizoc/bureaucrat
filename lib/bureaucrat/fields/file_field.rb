@@ -4,8 +4,8 @@ module Bureaucrat
   module Fields
     class FileField < Field
       def initialize(options)
-        @max_length = options.delete(:max_length)
-        @allow_empty_file = options.delete(:allow_empty_file)
+        @max_length = options[:max_length]
+        @allow_empty_file = options[:allow_empty_file]
         super(options)
       end
 

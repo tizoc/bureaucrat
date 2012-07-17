@@ -4,10 +4,10 @@ module Bureaucrat
   module Fields
     class BigDecimalField < Field
       def initialize(options={})
-        @max_value = options.delete(:max_value)
-        @min_value = options.delete(:min_value)
-        @max_digits = options.delete(:max_digits)
-        @max_decimal_places = options.delete(:max_decimal_places)
+        @max_value = options[:max_value]
+        @min_value = options[:min_value]
+        @max_digits = options[:max_digits]
+        @max_decimal_places = options[:max_decimal_places]
 
         if @max_digits && @max_decimal_places
           @max_whole_digits = @max_digits - @max_decimal_places
