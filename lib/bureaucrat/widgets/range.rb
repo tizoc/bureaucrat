@@ -3,8 +3,9 @@ module Bureaucrat
     class Range < Widget
       def initialize(options = {})
         super(options)
-        @min = TextInput.new(options[:min])
-        @max = TextInput.new(options[:max])
+        sub_widget_class = options[:sub_widget_class] || TextInput
+        @min = sub_widget_class.new(options[:min])
+        @max = sub_widget_class.new(options[:max])
         @separator = options[:separator].to_s
         @suffix = options[:suffix].to_s
       end
@@ -18,7 +19,6 @@ module Bureaucrat
         html << " " << @suffix
         html
       end
-
     end
   end
 end

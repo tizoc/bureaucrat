@@ -13,5 +13,21 @@ module Widgets
       range = Widgets::Range.new()
       assert_nothing_raised {Bureaucrat::Fields::Field.new(:widget => range)}
     end
+
+    class Foo
+      def initialize(options)
+      end
+
+      def render(*args)
+        "blagh"
+      end
+    end
+
+    def test_takes_an_alternate_sub_widget
+      range = Widgets::Range.new(:sub_widget_class => Foo)
+      html =  range.render("pay_range", {:min => 5, :max => 12} )
+      assert(html.include?("blagh"))
+    end
+
   end
 end
