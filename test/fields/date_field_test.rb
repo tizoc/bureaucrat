@@ -3,24 +3,18 @@ require_relative '../test_helper'
 module DateFieldTests
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::DateField.new(['%Y/%m/%d', '%A %B %e %Y'])
+      @field = Fields::DateField.new
     end
 
-    def test_validate_valid_date_formats
-      valid_values = ['1982/10/25', 'Sunday January 2 1983']
-      valid_values.each do |valid|
-        assert_nothing_raised do
-          @field.clean(valid)
-        end
+    def test_accepts_date_as_valid
+      assert_nothing_raised do
+        @field.clean(Date.parse('1982/10/25'))
       end
     end
 
-    def test_not_validate_non_matching_values
-      invalid_values = ['1982', 'Sunday']
+    def test_does_not_accept_not_date_values
       assert_raises(ValidationError) do
-        invalid_values.each do |invalid|
-          @field.clean(invalid)
-        end
+        @field.clean('str')
       end
     end
 
@@ -28,13 +22,6 @@ module DateFieldTests
       @field.required = false
       empty_value = ''
       assert_equal(nil, @field.clean(empty_value))
-    end
-
-    def test_return_date_if_value_is_a_datetime
-      value = DateTime.parse('1982/10/25 12:30 p.m.')
-      assert_block do
-        @field.clean(value).is_a? Date
-      end
     end
 
     def test_return_value_if_value_is_already_date
@@ -45,7 +32,7 @@ module DateFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::DateField.new([])
+      @field = Fields::DateField.new
     end
 
     def test_translates_invalid_default

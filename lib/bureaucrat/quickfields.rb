@@ -45,8 +45,8 @@ module Bureaucrat
     end
 
     # Declare a +DateField+
-    def date(name, input_formats, options = {})
-      field name, DateField.new(input_formats, options)
+    def date(name, options = {})
+      field name, DateField.new(options)
     end
 
     # Declare an +EmailField+
