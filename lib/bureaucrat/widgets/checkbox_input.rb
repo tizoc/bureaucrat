@@ -2,7 +2,7 @@ require 'bureaucrat/widgets/widget'
 
 module Bureaucrat
   module Widgets
-    class InlineCheckboxInput < Widget
+    class CheckboxInput < Widget
       def initialize(attrs=nil, check_test=nil)
         super(attrs)
         @check_test = check_test || lambda {|v| make_bool(v)}
@@ -22,9 +22,29 @@ module Bureaucrat
           final_attrs[:value] = value.to_s
         end
 
-        copy = final_attrs.delete(:copy)
+        mark_safe("<input#{flatatt(final_attrs)} />")
+      end
 
-        mark_safe("<div class=#{final_attrs[:class]}><label><input#{flatatt(final_attrs)}/>#{copy}</label></div>")
+      def value_from_formdata(data, name)
+        if data.include?(name)
+          value = data[name]
+
+          if value.is_a?(String)
+            case value.downcase
+            when 'true' then true
+            when 'false' then false
+            else value
+            end
+          else
+            value
+          end
+        else
+          false
+        end
+      end
+
+      def has_changed(initial, data)
+        make_bool(initial) != make_bool(data)
       end
     end
   end

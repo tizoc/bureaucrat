@@ -1,3 +1,5 @@
+require 'bureaucrat/widgets/hidden_input'
+
 module Bureaucrat
   module Formsets
     TOTAL_FORM_COUNT = :'TOTAL_FORMS'

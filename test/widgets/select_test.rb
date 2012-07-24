@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/null_boolean_select'
 
 module Widget
   class Test_NullBooleanSelect_widget < BureaucratTestCase

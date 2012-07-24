@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/text_area'
 
 module Widget
   class Test_Textarea_widget < BureaucratTestCase

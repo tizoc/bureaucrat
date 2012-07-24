@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/password_input'
 
 module Widget
   class Test_PasswordInput_widget < BureaucratTestCase

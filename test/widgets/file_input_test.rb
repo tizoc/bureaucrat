@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/file_input'
 
 module WidgetTests
   class Test_FileInput_widget < BureaucratTestCase

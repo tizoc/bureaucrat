@@ -1,3 +1,5 @@
+require 'bureaucrat/widgets/widget'
+
 module Bureaucrat
   module Widgets
     class Range < Widget

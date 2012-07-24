@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/widgets/clearable_file_input'
 
 module Bureaucrat
   module Fields

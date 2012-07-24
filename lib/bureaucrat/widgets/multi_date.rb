@@ -1,3 +1,6 @@
+require 'bureaucrat/widgets/select'
+require 'bureaucrat/widgets/widget'
+
 module Bureaucrat
   module Widgets
     class MultiDate < Widget

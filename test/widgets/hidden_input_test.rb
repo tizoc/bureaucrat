@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/multiple_hidden_input'
 
 module Widget
   class Test_HiddenInput_widget < BureaucratTestCase

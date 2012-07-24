@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/date_input'
 
 module Widget
   class Test_on_clean < BureaucratTestCase

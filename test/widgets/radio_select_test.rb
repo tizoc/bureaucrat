@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/radio_select'
 
 module Widget
   class Test_RadioSelect_widget < BureaucratTestCase

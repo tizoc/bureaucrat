@@ -1,4 +1,6 @@
 require_relative '../test_helper'
+require 'bureaucrat/widgets/checkbox_input'
+require 'bureaucrat/widgets/checkbox_select_multiple'
 
 module Widgets
   class Test_CheckboxInput_widget < BureaucratTestCase
