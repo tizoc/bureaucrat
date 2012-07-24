@@ -15,10 +15,11 @@ describe Bureaucrat::Fields::PhoneNumberField do
     '1234438',
     '1.123.123.1234',
     '123.123.1234',
-    '123.4438'
+    '123.4438',
+    '     123.4438     '
   ].each do |phone_number|
     it "allows #{phone_number}" do
-      @field.clean(phone_number).should == phone_number
+      @field.clean(phone_number).should == phone_number.strip
     end
   end
 

@@ -1,15 +1,15 @@
-require 'bureaucrat/fields/char_field'
-require 'bureaucrat/validators/email'
+require 'bureaucrat/fields/regex_field'
 
 module Bureaucrat
   module Fields
-    class EmailField < CharField
-      def default_error_messages
-        super.merge(invalid: error_message(:email, :invalid))
-      end
+    class EmailField < RegexField
+      EMAIL = /
+      (^[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+(\.[-!#\$%&'*+\/=?^_`{}|~0-9A-Z]+)*
+       |^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"
+      )@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$/xi
 
-      def default_validators
-        [Validators::ValidateEmail]
+      def initialize(options={})
+        super(EMAIL, options)
       end
 
       def clean(value)

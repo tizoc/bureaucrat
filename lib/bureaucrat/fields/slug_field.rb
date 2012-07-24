@@ -1,14 +1,17 @@
-require 'bureaucrat/fields/char_field'
+require 'bureaucrat/fields/regex_field'
 
 module Bureaucrat
   module Fields
-    class SlugField < CharField
-      def default_error_messages
-        super.merge(invalid: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
+    class SlugField < RegexField
+      SLUG = /^[-\w]+$/
+
+      def initialize(options={})
+        super(SLUG, options)
       end
 
-      def default_validators
-        [Validators::ValidateSlug]
+      def clean(value)
+        value = to_object(value).strip
+        super(value)
       end
     end
   end

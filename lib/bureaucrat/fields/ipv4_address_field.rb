@@ -2,11 +2,11 @@ require 'bureaucrat/fields/regex_field'
 
 module Bureaucrat
   module Fields
-    class PhoneNumberField < RegexField
-      US_PHONE_NUMBER = /^(1?( |-)??(\()?(-|\.)?[0-9]{3}(\))?)?(-|\.| )?[0-9]{3}(-|\.| )?[0-9]{4}$/
+    class Ipv4AddressField < RegexField
+      IPV4 = /^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/
 
       def initialize(options={})
-        super(US_PHONE_NUMBER, options)
+        super(IPV4, options)
       end
 
       def clean(value)
@@ -16,4 +16,3 @@ module Bureaucrat
     end
   end
 end
-
