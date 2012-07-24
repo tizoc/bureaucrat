@@ -1,3 +1,4 @@
+require 'bigdecimal'
 require 'bureaucrat/fields/field'
 
 module Bureaucrat
