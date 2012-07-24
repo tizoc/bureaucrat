@@ -1,4 +1,6 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/validators/max_length'
+require 'bureaucrat/validators/min_length'
 require 'bureaucrat/widgets/text_input'
 require 'bureaucrat/widgets/password_input'
 
@@ -29,7 +31,7 @@ module Bureaucrat
       end
 
       def to_object(value)
-        if Validators.empty_value?(value)
+        if value.blank?
           ''
         else
           value

@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/char_field'
+require 'bureaucrat/validators/regex'
 
 module Bureaucrat
   module Fields
@@ -15,7 +16,7 @@ module Bureaucrat
 
         @regex = regex
 
-        validators << Validators::RegexValidator.new(regex: regex)
+        validators << Bureaucrat::Validators::RegexValidator.new(regex: regex)
       end
     end
   end

@@ -1,4 +1,6 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/validators/max_value'
+require 'bureaucrat/validators/min_value'
 
 module Bureaucrat
   module Fields
@@ -34,7 +36,7 @@ module Bureaucrat
       end
 
       def to_object(value)
-        if Validators.empty_value?(value)
+        if value.blank?
           return nil
         end
 
@@ -49,7 +51,7 @@ module Bureaucrat
       def validate(value)
         super(value)
 
-        if Validators.empty_value?(value)
+        if value.blank?
           return nil
         end
 

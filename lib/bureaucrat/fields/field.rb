@@ -134,13 +134,13 @@ module Bureaucrat
       end
 
       def validate(value)
-        if required && Validators.empty_value?(value)
+        if required && value.blank?
           raise ValidationError.new(error_messages[:required])
         end
       end
 
       def run_validators(value)
-        if Validators.empty_value?(value)
+        if value.blank?
           return
         end
 

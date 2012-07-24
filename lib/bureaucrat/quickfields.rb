@@ -1,3 +1,22 @@
+require 'bureaucrat/fields/big_decimal_field'
+require 'bureaucrat/fields/boolean_field'
+require 'bureaucrat/fields/char_field'
+require 'bureaucrat/fields/choice_field'
+require 'bureaucrat/fields/date_field'
+require 'bureaucrat/fields/email_field'
+require 'bureaucrat/fields/file_field'
+require 'bureaucrat/fields/integer_field'
+require 'bureaucrat/fields/null_boolean_field'
+require 'bureaucrat/fields/multiple_choice_field'
+require 'bureaucrat/fields/range_field'
+require 'bureaucrat/fields/regex_field'
+require 'bureaucrat/fields/typed_choice_field'
+require 'bureaucrat/widgets/checkbox_select_multiple'
+require 'bureaucrat/widgets/hidden_input'
+require 'bureaucrat/widgets/password_input'
+require 'bureaucrat/widgets/radio_select'
+require 'bureaucrat/widgets/text_area'
+
 module Bureaucrat
   # Shortcuts for declaring form fields
   module Quickfields

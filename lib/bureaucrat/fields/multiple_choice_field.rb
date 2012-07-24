@@ -19,7 +19,7 @@ module Bureaucrat
       end
 
       def to_object(value)
-        if !value || Validators.empty_value?(value)
+        if value.blank?
           []
         elsif !value.is_a?(Array)
           raise ValidationError.new(error_messages[:invalid_list])
@@ -29,7 +29,7 @@ module Bureaucrat
       end
 
       def validate(value)
-        if required && (!value || Validators.empty_value?(value))
+        if required && (!value || value.blank?)
           raise ValidationError.new(error_messages[:required])
         end
 

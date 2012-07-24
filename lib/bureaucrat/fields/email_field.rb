@@ -1,5 +1,5 @@
 require 'bureaucrat/fields/char_field'
-require 'bureaucrat/validators'
+require 'bureaucrat/validators/email'
 
 module Bureaucrat
   module Fields

@@ -26,7 +26,7 @@ module Bureaucrat
       def to_object(value)
         value = super(value)
 
-        if Validators.empty_value?(value)
+        if value.blank?
           return nil
         end
 

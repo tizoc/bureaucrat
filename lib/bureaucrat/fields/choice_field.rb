@@ -32,7 +32,7 @@ module Bureaucrat
       end
 
       def to_object(value)
-        if Validators.empty_value?(value)
+        if value.blank?
           ''
         else
           value.to_s
@@ -42,7 +42,7 @@ module Bureaucrat
       def validate(value)
         super(value)
 
-        unless !value || Validators.empty_value?(value) || valid_value?(value)
+        unless !value || value.blank? || valid_value?(value)
           msg = Utils.format_string(error_messages[:invalid_choice],
                                     value: value)
           raise ValidationError.new(msg)

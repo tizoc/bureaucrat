@@ -23,7 +23,7 @@ module Bureaucrat
       end
 
       def to_object(data)
-        if Validators.empty_value?(data)
+        if data.blank?
           return nil
         end
 

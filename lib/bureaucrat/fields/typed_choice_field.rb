@@ -13,7 +13,7 @@ module Bureaucrat
         value = super(value)
         original_validate(value)
 
-        if value == @empty_value || Validators.empty_value?(value)
+        if value == @empty_value || value.blank?
           return @empty_value
         end
 

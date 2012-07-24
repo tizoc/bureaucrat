@@ -14,7 +14,7 @@ module Bureaucrat
       end
 
       def to_object(value)
-        if Validators.empty_value?(value)
+        if value.blank?
           return nil
         end
 

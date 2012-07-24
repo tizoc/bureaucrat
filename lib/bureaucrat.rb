@@ -1,6 +1,5 @@
-$: << File.expand_path('..', __FILE__)
-
 require 'i18n'
+require 'active_support/core_ext/object/blank'
 
 root = File.expand_path('../..', __FILE__)
 I18n.load_path += Dir[File.join(root, 'locales', '**', '*.yml').to_s]
@@ -27,9 +26,6 @@ module Bureaucrat
   end
 
   require_relative 'bureaucrat/utils'
-  require_relative 'bureaucrat/validators'
-  require_relative 'bureaucrat/widgets'
-  require_relative 'bureaucrat/widgets/range'
   require_relative 'bureaucrat/fields'
   require_relative 'bureaucrat/fields/range_field'
   require_relative 'bureaucrat/forms'
