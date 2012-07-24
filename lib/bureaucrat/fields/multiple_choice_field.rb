@@ -1,4 +1,6 @@
 require 'bureaucrat/fields/choice_field'
+require 'bureaucrat/widgets/multiple_hidden_input'
+require 'bureaucrat/widgets/select_multiple'
 
 module Bureaucrat
   module Fields

@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/boolean_field'
+require 'bureaucrat/fields/null_boolean_field'
 
 module Bureaucrat
   module Fields

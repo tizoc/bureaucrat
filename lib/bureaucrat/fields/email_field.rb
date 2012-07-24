@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/char_field'
+require 'bureaucrat/validators'
 
 module Bureaucrat
   module Fields

@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/widgets/select'
 
 module Bureaucrat
   module Fields

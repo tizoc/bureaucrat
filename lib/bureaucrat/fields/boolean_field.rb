@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/widgets/checkbox_input'
 
 module Bureaucrat
   module Fields

@@ -1,4 +1,5 @@
 require 'bureaucrat/utils'
+require 'bureaucrat/widgets/hidden_input'
 require 'bureaucrat/widgets/text_input'
 
 module Bureaucrat

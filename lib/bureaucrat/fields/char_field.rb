@@ -1,4 +1,6 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/widgets/text_input'
+require 'bureaucrat/widgets/password_input'
 
 module Bureaucrat
   module Fields
