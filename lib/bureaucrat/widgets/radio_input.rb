@@ -1,4 +1,5 @@
 require 'bureaucrat/widgets/radio_input'
+require 'bureaucrat/utils'
 
 module Bureaucrat
   module Widgets
