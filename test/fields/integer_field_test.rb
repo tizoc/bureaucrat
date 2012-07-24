@@ -4,7 +4,7 @@ require_relative '../test_helper'
 module IntegerFieldTests
   class Test_with_max_value < BureaucratTestCase
     def setup
-      @field = Fields::IntegerField.new(max_value: 10)
+      @field = Bureaucrat::Fields::IntegerField.new(max_value: 10)
     end
 
     def test_allow_values_less_or_equal_to_max_value
@@ -15,7 +15,7 @@ module IntegerFieldTests
     end
 
     def test_not_allow_values_greater_than_max_value
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('11')
       end
     end
@@ -23,7 +23,7 @@ module IntegerFieldTests
 
   class Test_with_min_value < BureaucratTestCase
     def setup
-      @field = Fields::IntegerField.new(min_value: 10)
+      @field = Bureaucrat::Fields::IntegerField.new(min_value: 10)
     end
 
     def test_allow_values_greater_or_equal_to_min_value
@@ -34,7 +34,7 @@ module IntegerFieldTests
     end
 
     def test_not_allow_values_less_than_min_value
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('9')
       end
     end
@@ -42,7 +42,7 @@ module IntegerFieldTests
 
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::IntegerField.new
+      @field = Bureaucrat::Fields::IntegerField.new
     end
 
     def test_return_an_integer_if_valid
@@ -67,7 +67,7 @@ module IntegerFieldTests
                          '123.0', '123..4']
 
       invalid_formats.each do |invalid|
-        assert_raises(ValidationError) do
+        assert_raises(Bureaucrat::ValidationError) do
           @field.clean(invalid)
         end
       end
@@ -91,7 +91,7 @@ module IntegerFieldTests
 
   class Test_translate_errors < BureaucratTestCase
     def setup
-      @field = Fields::IntegerField.new(min_value: 5, max_value: 10)
+      @field = Bureaucrat::Fields::IntegerField.new(min_value: 5, max_value: 10)
     end
 
     def test_translates_min_value_error_default

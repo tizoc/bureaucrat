@@ -4,7 +4,7 @@ module ChoiceFieldTests
   class Test_when_copied < BureaucratTestCase
     def setup
       @choices = [['tea', 'Tea'], ['milk', 'Milk']]
-      @field = Fields::ChoiceField.new(@choices)
+      @field = Bureaucrat::Fields::ChoiceField.new(@choices)
       @field_copy = @field.dup
     end
 
@@ -17,8 +17,8 @@ module ChoiceFieldTests
     def setup
       @choices = [['tea', 'Tea'], ['milk', 'Milk']]
       @choices_hash = [[{ value: "able" }, "able"], [{ value: "baker" }, "Baker"]]
-      @field = Fields::ChoiceField.new(@choices)
-      @field_hash = Fields::ChoiceField.new(@choices_hash)
+      @field = Bureaucrat::Fields::ChoiceField.new(@choices)
+      @field_hash = Bureaucrat::Fields::ChoiceField.new(@choices_hash)
     end
 
     def test_validate_all_values_in_choices_list
@@ -38,13 +38,13 @@ module ChoiceFieldTests
     end
 
     def test_not_validate_a_value_not_in_choices_list
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('not_in_choices')
       end
     end
 
     def test_not_validate_a_value_not_in_a_hash_choices_list
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field_hash.clean('not_in_choices')
       end
     end
@@ -76,13 +76,13 @@ module ChoiceFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::ChoiceField.new({})
+      @field = Bureaucrat::Fields::ChoiceField.new({})
     end
 
     def test_translates_invalid_choice_default
       begin
         @field.clean(1)
-      rescue ValidationError => e
+      rescue Bureaucrat::ValidationError => e
         assert_equal(["Select a valid choice. 1 is not one of the available choices."], e.messages)
       end
     end

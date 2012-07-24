@@ -1,3 +1,5 @@
+require 'bureaucrat'
+
 module Bureaucrat
   module Validators
     class BaseValidator

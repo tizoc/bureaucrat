@@ -1,11 +1,12 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/typed_choice_field'
 
 module TypedChoiceFieldTests
   class Test_on_clean < BureaucratTestCase
     def setup
       @choices = [[1, 'One'], [2, 'Two'], ['3', 'Three']]
       to_int = lambda{|val| Integer(val)}
-      @field = Fields::TypedChoiceField.new(@choices,
+      @field = Bureaucrat::Fields::TypedChoiceField.new(@choices,
                                             coerce: to_int)
     end
 
@@ -18,7 +19,7 @@ module TypedChoiceFieldTests
     end
 
     def test_not_validate_a_value_not_in_choices_list
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('four')
       end
     end

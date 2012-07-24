@@ -1,10 +1,11 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/multiple_choice_field'
 
 module MultipleChoiceFieldTests
   class Test_on_clean < BureaucratTestCase
     def setup
       @choices = [['tea', 'Tea'], ['milk', 'Milk'], ['coffee', 'Coffee']]
-      @field = Fields::MultipleChoiceField.new(@choices)
+      @field = Bureaucrat::Fields::MultipleChoiceField.new(@choices)
     end
 
     def test_validate_all_single_values_in_choices_list
@@ -23,7 +24,7 @@ module MultipleChoiceFieldTests
     end
 
     def test_not_validate_a_value_not_in_choices_list
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean(['tea', 'not_in_choices'])
       end
     end
@@ -43,13 +44,13 @@ module MultipleChoiceFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::MultipleChoiceField.new({})
+      @field = Bureaucrat::Fields::MultipleChoiceField.new({})
     end
 
     def test_translates_invalid_choice_default
       begin
         @field.clean([1])
-      rescue ValidationError => e
+      rescue Bureaucrat::ValidationError => e
         assert_equal(["Select a valid choice. 1 is not one of the available choices."], e.messages)
       end
     end

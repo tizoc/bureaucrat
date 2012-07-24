@@ -1,9 +1,10 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/regex_field'
 
 module RegexFieldTests
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::RegexField.new(/ba(na){2,}/)
+      @field = Bureaucrat::Fields::RegexField.new(/ba(na){2,}/)
     end
 
     def test_validate_matching_values
@@ -17,7 +18,7 @@ module RegexFieldTests
 
     def test_not_validate_non_matching_values
       invalid_values = ['bana', 'spoon']
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         invalid_values.each do |invalid|
           @field.clean(invalid)
         end

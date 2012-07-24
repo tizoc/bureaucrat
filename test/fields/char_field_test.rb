@@ -3,7 +3,7 @@ require_relative '../test_helper'
 module CharFieldTests
   class Test_with_empty_options < BureaucratTestCase
     def setup
-      @field = Fields::CharField.new
+      @field = Bureaucrat::Fields::CharField.new
     end
 
     def test_not_validate_max_length
@@ -21,7 +21,7 @@ module CharFieldTests
 
   class Test_with_max_length < BureaucratTestCase
     def setup
-      @field = Fields::CharField.new(max_length: 10)
+      @field = Bureaucrat::Fields::CharField.new(max_length: 10)
     end
 
     def test_allow_values_with_length_less_than_or_equal_to_max_length
@@ -32,7 +32,7 @@ module CharFieldTests
     end
 
     def test_not_allow_values_with_length_greater_than_max_length
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('a' * 11)
       end
     end
@@ -40,7 +40,7 @@ module CharFieldTests
 
   class Test_with_min_length < BureaucratTestCase
     def setup
-      @field = Fields::CharField.new(min_length: 10)
+      @field = Bureaucrat::Fields::CharField.new(min_length: 10)
     end
 
     def test_allow_values_with_length_greater_or_equal_to_min_length
@@ -51,7 +51,7 @@ module CharFieldTests
     end
 
     def test_not_allow_values_with_length_less_than_min_length
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('a' * 9)
       end
     end
@@ -59,7 +59,7 @@ module CharFieldTests
 
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::CharField.new
+      @field = Bureaucrat::Fields::CharField.new
     end
 
     def test_return_the_original_value_if_valid
@@ -82,7 +82,7 @@ module CharFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::CharField.new(max_length: 10, min_length: 2)
+      @field = Bureaucrat::Fields::CharField.new(max_length: 10, min_length: 2)
     end
 
     def test_translates_max_length_default

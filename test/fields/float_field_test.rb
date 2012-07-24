@@ -1,9 +1,10 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/float_field'
 
 module FloatFieldTests
   class Test_with_max_value < BureaucratTestCase
     def setup
-      @field = Fields::FloatField.new(max_value: 10.5)
+      @field = Bureaucrat::Fields::FloatField.new(max_value: 10.5)
     end
 
     def test_allow_values_less_or_equal_to_max_value
@@ -14,7 +15,7 @@ module FloatFieldTests
     end
 
     def test_not_allow_values_greater_than_max_value
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('10.55')
       end
     end
@@ -22,7 +23,7 @@ module FloatFieldTests
 
   class Test_with_min_value < BureaucratTestCase
     def setup
-      @field = Fields::FloatField.new(min_value: 10.5)
+      @field = Bureaucrat::Fields::FloatField.new(min_value: 10.5)
     end
 
     def test_allow_values_greater_or_equal_than_min_value
@@ -33,7 +34,7 @@ module FloatFieldTests
     end
 
     def test_not_allow_values_less_than_min_value
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('10.49')
       end
     end
@@ -41,7 +42,7 @@ module FloatFieldTests
 
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::FloatField.new
+      @field = Bureaucrat::Fields::FloatField.new
     end
 
     def test_return_nil_if_value_is_nil_and_required_is_false
@@ -61,7 +62,7 @@ module FloatFieldTests
                          '123..', '123..4']
 
       invalid_formats.each do |invalid|
-        assert_raises(ValidationError) do
+        assert_raises(Bureaucrat::ValidationError) do
           @field.clean(invalid)
         end
       end
@@ -85,7 +86,7 @@ module FloatFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::FloatField.new
+      @field = Bureaucrat::Fields::FloatField.new
     end
 
     def test_translates_invalid_default

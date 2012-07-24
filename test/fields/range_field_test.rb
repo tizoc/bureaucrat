@@ -1,9 +1,10 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/range_field'
 
 module RangeFieldTest
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::RangeField.new(max_value:10, min_value:1, required: false)
+      @field = Bureaucrat::Fields::RangeField.new(max_value:10, min_value:1, required: false)
       @field.form_name = "blah_form"
       @field.name = "awesomeness"
     end
@@ -15,7 +16,7 @@ module RangeFieldTest
     end
 
     def test_reverses_min_and_max
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean({'max' => 2, 'min'=> 5})
       end
     end
@@ -27,16 +28,16 @@ module RangeFieldTest
     end
 
     def test_one_field
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean({'max' => 44, 'min' => nil})
       end
     end
 
     def test_outside_range
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean({'max' => 11, 'min' => 1})
       end
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean({'max' => 10, 'min' => 0})
       end
     end
@@ -46,7 +47,7 @@ module RangeFieldTest
     end
 
     def test_take_any_sub_field_class
-      @field = Fields::RangeField.new(max_value:10, min_value:1, sub_field:Bureaucrat::Fields::FloatField)
+      @field = Bureaucrat::Fields::RangeField.new(max_value:10, min_value:1, sub_field:Bureaucrat::Fields::FloatField)
       assert_equal({'max' => 5.6, 'min' => 2.2}, @field.clean({'max' => 5.6, 'min'=> 2.2}))
     end
   end

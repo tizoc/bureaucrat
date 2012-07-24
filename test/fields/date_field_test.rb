@@ -1,9 +1,10 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/date_field'
 
 module DateFieldTests
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::DateField.new
+      @field = Bureaucrat::Fields::DateField.new
     end
 
     def test_accepts_date_as_valid
@@ -13,7 +14,7 @@ module DateFieldTests
     end
 
     def test_does_not_accept_not_date_values
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('str')
       end
     end
@@ -32,7 +33,7 @@ module DateFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::DateField.new
+      @field = Bureaucrat::Fields::DateField.new
     end
 
     def test_translates_invalid_default

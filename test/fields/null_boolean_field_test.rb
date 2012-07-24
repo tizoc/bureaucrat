@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/null_boolean_field'
 
 module NullBooleanFieldTests
   class Test_on_clean < BureaucratTestCase
@@ -6,7 +7,7 @@ module NullBooleanFieldTests
       @true_values = [true, 'true', '1']
       @false_values = [false, 'false', '0']
       @null_values = [nil, '', 'banana']
-      @field = Fields::NullBooleanField.new
+      @field = Bureaucrat::Fields::NullBooleanField.new
     end
 
     def test_return_true_for_true_values

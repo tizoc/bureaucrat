@@ -1,17 +1,14 @@
-require 'bigdecimal'
 require 'minitest/autorun'
-
-require 'bureaucrat'
-require 'bureaucrat/formsets'
+require 'i18n'
 
 # Used to compare rendered htmls
 require 'rexml/document'
 
-root = File.expand_path('..', __FILE__)
-I18n.load_path += Dir[File.join(root, 'locales', '**', '*.yml').to_s]
+
+root = File.expand_path('../..', __FILE__)
+I18n.load_path += Dir[File.join(root, 'test', 'locales', '**', '*.yml').to_s]
 
 class BureaucratTestCase < MiniTest::Unit::TestCase
-  include Bureaucrat
 
   def assert_nothing_raised(&block)
     block.call

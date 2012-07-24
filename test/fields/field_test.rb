@@ -3,12 +3,12 @@ require_relative '../test_helper'
 module FieldTests
   class Test_with_empty_options < BureaucratTestCase
     def setup
-      @field = Fields::Field.new
+      @field = Bureaucrat::Fields::Field.new
     end
 
     def test_be_required
       blank_value = ''
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean(blank_value)
       end
     end
@@ -16,7 +16,7 @@ module FieldTests
 
   class Test_with_required_as_false < BureaucratTestCase
     def setup
-      @field = Fields::Field.new(required: false)
+      @field = Bureaucrat::Fields::Field.new(required: false)
     end
 
     def test_not_be_required
@@ -29,7 +29,7 @@ module FieldTests
 
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::Field.new
+      @field = Bureaucrat::Fields::Field.new
     end
 
     def test_return_the_original_value_if_valid
@@ -40,7 +40,7 @@ module FieldTests
 
   class Test_when_copied < BureaucratTestCase
     def setup
-      @field = Fields::Field.new(initial: 'initial',
+      @field = Bureaucrat::Fields::Field.new(initial: 'initial',
                                  label: 'label')
       @field_copy = @field.dup
     end
@@ -68,7 +68,7 @@ module FieldTests
 
   class Test_translated_errors < BureaucratTestCase
     def setup
-      @field = Fields::Field.new(initial: 'initial',
+      @field = Bureaucrat::Fields::Field.new(initial: 'initial',
                                  label: 'label')
     end
 
@@ -91,7 +91,7 @@ module FieldTests
 
   class Test_label < BureaucratTestCase
     def setup
-      @field = Fields::Field.new
+      @field = Bureaucrat::Fields::Field.new
     end
 
     def test_uses_translation_if_no_default_is_given_and_translation_present
@@ -101,7 +101,7 @@ module FieldTests
     end
 
     def test_uses_default_if_given
-      new_field = Fields::Field.new(label: "something")
+      new_field = Bureaucrat::Fields::Field.new(label: "something")
       assert_equal("something", new_field.label)
     end
 

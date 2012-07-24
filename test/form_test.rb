@@ -1,32 +1,29 @@
 require_relative 'test_helper'
+require 'bureaucrat/form'
+require 'bureaucrat/fields/char_field'
+require 'bureaucrat/fields/integer_field'
 
 module TestNamespace
-  class TestForm < Bureaucrat::Forms::Form
-    include Bureaucrat::Fields
-
-    field :name, CharField.new(required: false)
+  class TestForm < Bureaucrat::Form
+    field :name, Bureaucrat::Fields::CharField.new(required: false)
   end
 end
 
-class PopulatorForm < Bureaucrat::Forms::Form
-  include Bureaucrat::Fields
+class PopulatorForm < Bureaucrat::Form
+  field :name, Bureaucrat::Fields::CharField.new(required: false)
+  field :color, Bureaucrat::Fields::CharField.new(required: false)
+  field :number, Bureaucrat::Fields::IntegerField.new(required: false)
+end
 
-  field :name, CharField.new(required: false)
-  field :color, CharField.new(required: false)
-  field :number, IntegerField.new(required: false)
+class OneForm < Bureaucrat::Form
+  field :name, Bureaucrat::Fields::CharField.new
 end
 
 module FormTests
   class Test_inherited_form_with_a_CharField < BureaucratTestCase
-    class OneForm < Forms::Form
-      include Bureaucrat::Fields
-
-      field :name, CharField.new
-    end
-
     def test_have_a_BoundField
       form = OneForm.new
-      assert_kind_of(Forms::BoundField, form[:name])
+      assert_kind_of(Bureaucrat::Fields::BoundField, form[:name])
     end
 
     def test_be_bound_when_data_is_provided
@@ -72,10 +69,8 @@ module FormTests
   end
 
   class Test_form_with_custom_clean_proc_on_field < BureaucratTestCase
-    class CustomCleanForm < Forms::Form
-      include Bureaucrat::Fields
-
-      field :name, CharField.new
+    class CustomCleanForm < Bureaucrat::Form
+      field :name, Bureaucrat::Fields::CharField.new
 
       def clean_name
         value = cleaned_data[:name]

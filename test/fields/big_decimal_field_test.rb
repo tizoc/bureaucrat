@@ -1,19 +1,20 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/big_decimal_field'
 
 module BigDecimalFieldTests
   class Test_with_max_digits_and_decimal_places < BureaucratTestCase
     def setup
-      @field = Fields::BigDecimalField.new(max_digits: 8, max_decimal_places: 4)
+      @field = Bureaucrat::Fields::BigDecimalField.new(max_digits: 8, max_decimal_places: 4)
     end
 
     def test_not_allow_values_greater_than_max_digits
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('123456789')
       end
     end
 
     def test_not_allow_values_greater_than_max_decimal_places
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('12.34567')
       end
     end
@@ -21,7 +22,7 @@ module BigDecimalFieldTests
 
   class Test_with_max_value < BureaucratTestCase
     def setup
-      @field = Fields::BigDecimalField.new(max_value: 10.5)
+      @field = Bureaucrat::Fields::BigDecimalField.new(max_value: 10.5)
     end
 
     def test_allow_values_less_or_equal_to_max_value
@@ -32,7 +33,7 @@ module BigDecimalFieldTests
     end
 
     def test_not_allow_values_greater_than_max_value
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('10.55')
       end
     end
@@ -40,7 +41,7 @@ module BigDecimalFieldTests
 
   class Test_with_min_value < BureaucratTestCase
     def setup
-      @field = Fields::BigDecimalField.new(min_value: 10.5)
+      @field = Bureaucrat::Fields::BigDecimalField.new(min_value: 10.5)
     end
 
     def test_allow_values_greater_or_equal_to_min_value
@@ -51,7 +52,7 @@ module BigDecimalFieldTests
     end
 
     def test_not_allow_values_less_than_min_value
-      assert_raises(ValidationError) do
+      assert_raises(Bureaucrat::ValidationError) do
         @field.clean('10.49')
       end
     end
@@ -59,7 +60,7 @@ module BigDecimalFieldTests
 
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::BigDecimalField.new
+      @field = Bureaucrat::Fields::BigDecimalField.new
     end
 
     def test_return_nil_if_value_is_nil_and_required_is_false
@@ -79,7 +80,7 @@ module BigDecimalFieldTests
                          '123..', '123..4']
 
       invalid_formats.each do |invalid|
-        assert_raises(ValidationError) do
+        assert_raises(Bureaucrat::ValidationError) do
           @field.clean(invalid)
         end
       end
@@ -103,7 +104,7 @@ module BigDecimalFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::BigDecimalField.new(max_value: 10, min_value: 2, max_digits: 7, max_decimal_places: 4)
+      @field = Bureaucrat::Fields::BigDecimalField.new(max_value: 10, min_value: 2, max_digits: 7, max_decimal_places: 4)
     end
 
     def test_translates_invalid_default

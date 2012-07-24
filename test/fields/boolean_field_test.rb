@@ -5,7 +5,7 @@ module BooleanFieldTests
     def setup
       @true_values = [1, true, 'true', '1']
       @false_values = [nil, 0, false, 'false', '0']
-      @field = Fields::BooleanField.new
+      @field = Bureaucrat::Fields::BooleanField.new
     end
 
     def test_return_true_for_true_values
@@ -31,7 +31,7 @@ module BooleanFieldTests
 
     def test_not_validate_on_false_values_when_required
       @false_values.each do |false_value|
-        assert_raises(ValidationError) do
+        assert_raises(Bureaucrat::ValidationError) do
           @field.clean(false_value)
         end
       end

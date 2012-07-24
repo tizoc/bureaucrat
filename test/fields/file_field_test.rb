@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'bureaucrat/fields/file_field'
 
 module FileFieldTests
   class MockFile
@@ -7,7 +8,7 @@ module FileFieldTests
 
   class Test_translation_errors < BureaucratTestCase
     def setup
-      @field = Fields::FileField.new(max_length: 6)
+      @field = Bureaucrat::Fields::FileField.new(max_length: 6)
     end
 
     def test_translates_invalid_default
@@ -46,7 +47,7 @@ module FileFieldTests
 
       begin
         @field.clean(file)
-      rescue ValidationError => e
+      rescue Bureaucrat::ValidationError => e
         assert_equal(['Ensure this filename has at most 6 characters (it has 12).'], e.messages)
       end
     end
