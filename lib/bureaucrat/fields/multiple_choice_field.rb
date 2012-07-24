@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/choice_field'
+require 'bureaucrat/validation_error'
 require 'bureaucrat/widgets/multiple_hidden_input'
 require 'bureaucrat/widgets/select_multiple'
 

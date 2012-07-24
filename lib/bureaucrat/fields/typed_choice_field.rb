@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/choice_field'
+require 'bureaucrat/validation_error'
 
 module Bureaucrat
   module Fields

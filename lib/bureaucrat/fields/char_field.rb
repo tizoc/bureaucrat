@@ -1,4 +1,5 @@
 require 'bureaucrat/fields/field'
+require 'bureaucrat/validation_error'
 require 'bureaucrat/validators/max_length'
 require 'bureaucrat/validators/min_length'
 require 'bureaucrat/widgets/text_input'

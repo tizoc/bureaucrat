@@ -1,5 +1,6 @@
 require 'bigdecimal'
 require 'bureaucrat/fields/field'
+require 'bureaucrat/validation_error'
 require 'bureaucrat/validators/max_value'
 require 'bureaucrat/validators/min_value'
 

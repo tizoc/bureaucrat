@@ -1,3 +1,5 @@
+require 'bureaucrat/utils'
+
 module Bureaucrat
   module Widgets
     class Widget

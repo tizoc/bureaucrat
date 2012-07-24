@@ -1,3 +1,6 @@
+require 'bureaucrat/fields'
+require 'bureaucrat/forms'
+require 'bureaucrat/utils'
 require 'bureaucrat/widgets/hidden_input'
 
 module Bureaucrat

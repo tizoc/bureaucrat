@@ -1,5 +1,6 @@
 require 'date'
 require 'bureaucrat/fields/char_field'
+require 'bureaucrat/validation_error'
 require 'bureaucrat/widgets/date_input'
 
 module Bureaucrat
