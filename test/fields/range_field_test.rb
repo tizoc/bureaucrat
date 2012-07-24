@@ -3,7 +3,7 @@ require_relative '../test_helper'
 module RangeFieldTest
   class Test_on_clean < BureaucratTestCase
     def setup
-      @field = Fields::RangeField.new(max_value:10, min_value:1)
+      @field = Fields::RangeField.new(max_value:10, min_value:1, required: false)
       @field.form_name = "blah_form"
       @field.name = "awesomeness"
     end
@@ -17,6 +17,18 @@ module RangeFieldTest
     def test_reverses_min_and_max
       assert_raises(ValidationError) do
         @field.clean({'max' => 2, 'min'=> 5})
+      end
+    end
+
+    def test_no_data
+      assert_nothing_raised do
+        @field.clean({'max' => nil, 'min' => nil})
+      end
+    end
+
+    def test_one_field
+      assert_raises(ValidationError) do
+        @field.clean({'max' => 44, 'min' => nil})
       end
     end
 
