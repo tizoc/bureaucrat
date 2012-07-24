@@ -41,28 +41,37 @@ module Bureaucrat
         )@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$
     /xi
 
-    ValidateEmail =
-      RegexValidator.new(regex: EMAIL_RE,
-                         message: 'Enter a valid e-mail address.')
+    ValidateEmail = lambda do |value|
+      validator = RegexValidator.new(regex: EMAIL_RE,
+                         message: I18n.t('bureaucrat.default_errors.validators.validate_email'))
+      validator.call(value)
+    end
 
     SLUG_RE = /^[-\w]+$/
 
-    ValidateSlug =
-      RegexValidator.new(regex: SLUG_RE,
-                         message: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens.")
+    ValidateSlug = lambda do |value|
+      validator = RegexValidator.new(regex: SLUG_RE,
+                         message: I18n.t('bureaucrat.default_errors.validators.validate_slug'))
+      validator.call(value)
+    end
 
     IPV4_RE = /^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/
 
-    IPV4Validator =
-      RegexValidator.new(regex: IPV4_RE,
-                         message: 'Enter a valid IPv4 address.')
+    ValidateIPV4Address = lambda do |value|
+      validator = RegexValidator.new(regex: IPV4_RE,
+                         message: I18n.t('bureaucrat.default_errors.validators.validate_ipv4_address'))
+      validator.call(value)
+    end
+
+    IPV4Validator = ValidateIPV4Address
 
     COMMA_SEPARATED_INT_LIST_RE = /^[\d,]+$/
 
-    ValidateCommaSeparatedIntegerList =
-      RegexValidator.new(regex: COMMA_SEPARATED_INT_LIST_RE,
-                         message: 'Enter only digits separated by commas.',
-                         code: :invalid)
+    ValidateCommaSeparatedIntegerList = lambda do |value|
+      validator = RegexValidator.new(regex: COMMA_SEPARATED_INT_LIST_RE,
+                         message: I18n.t('bureaucrat.default_errors.validators.validate_comma_separated_integer_list'))
+      validator.call(value)
+    end
 
     class BaseValidator
       def initialize(limit_value)
@@ -70,7 +79,7 @@ module Bureaucrat
       end
 
       def message
-        'Ensure this value is %(limit_value)s (it is %(show_value)s).'
+        I18n.t('bureaucrat.default_errors.validators.base_validator')
       end
 
       def code
@@ -98,7 +107,7 @@ module Bureaucrat
 
     class MaxValueValidator < BaseValidator
       def message
-        'Ensure this value is less than or equal to %(limit_value)s.'
+        I18n.t('bureaucrat.default_errors.validators.max_value_validator')
       end
 
       def code
@@ -112,7 +121,7 @@ module Bureaucrat
 
     class MinValueValidator < BaseValidator
       def message
-        'Ensure this value is greater than or equal to %(limit_value)s.'
+        I18n.t('bureaucrat.default_errors.validators.min_value_validator')
       end
 
       def code
@@ -126,7 +135,7 @@ module Bureaucrat
 
     class MinLengthValidator < BaseValidator
       def message
-        'Ensure this value has at least %(limit_value)d characters (it has %(show_value)d).'
+        I18n.t('bureaucrat.default_errors.validators.min_length_validator')
       end
 
       def code
@@ -144,7 +153,7 @@ module Bureaucrat
 
     class MaxLengthValidator < BaseValidator
       def message
-        'Ensure this value has at most %(limit_value)d characters (it has %(show_value)d).'
+        I18n.t('bureaucrat.default_errors.validators.max_length_validator')
       end
 
       def code

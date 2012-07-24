@@ -44,6 +44,11 @@ module Bureaucrat
       field name, RegexField.new(regexp, options)
     end
 
+    # Declare a +DateField+
+    def date(name, options = {})
+      field name, DateField.new(options)
+    end
+
     # Declare an +EmailField+
     def email(name, options = {})
       field name, EmailField.new(options)
@@ -87,6 +92,10 @@ module Bureaucrat
     # Declare a +MultipleChoiceField+ with the +CheckboxSelectMultiple+ widget
     def checkbox_multiple_choice(name, choices = [], options = {})
       field name, MultipleChoiceField.new(choices, options.merge(widget: Widgets::CheckboxSelectMultiple.new))
+    end
+
+    def range(name, options = {})
+      field name, RangeField.new(options)
     end
   end
 end

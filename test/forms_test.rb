@@ -1,5 +1,21 @@
 require_relative 'test_helper'
 
+module TestNamespace
+  class TestForm < Bureaucrat::Forms::Form
+    include Bureaucrat::Fields
+
+    field :name, CharField.new(required: false)
+  end
+end
+
+class PopulatorForm < Bureaucrat::Forms::Form
+  include Bureaucrat::Fields
+
+  field :name, CharField.new(required: false)
+  field :color, CharField.new(required: false)
+  field :number, IntegerField.new(required: false)
+end
+
 module FormTests
   class Test_inherited_form_with_a_CharField < BureaucratTestCase
     class OneForm < Forms::Form
@@ -89,13 +105,6 @@ module FormTests
   end
 
   class Test_populating_objects < BureaucratTestCase
-    class PopulatorForm < Forms::Form
-      include Bureaucrat::Fields
-
-      field :name, CharField.new(required: false)
-      field :color, CharField.new(required: false)
-      field :number, IntegerField.new(required: false)
-    end
 
     def test_correctly_populate_an_object_with_all_fields
       obj = Struct.new(:name, :color, :number).new
@@ -146,6 +155,24 @@ module FormTests
       assert_equal('', obj.name)
       assert_equal('', obj.color)
       assert_equal(nil, obj.number)
+    end
+
+    def test_attaches_form_name_when_field_is_added
+      form = PopulatorForm.new({})
+
+      assert_equal(form.fields[:name].form_name, 'populator_form')
+    end
+
+    def test_attaches_form_name_with_namespace__when_field_is_added
+      form = TestNamespace::TestForm.new({})
+
+      assert_equal('test_namespace/test_form', form.fields[:name].form_name)
+    end
+
+    def test_attaches_field_name_when_field_is_added
+      form = PopulatorForm.new({})
+
+      assert_equal(:name, form.fields[:name].name)
     end
   end
 end
