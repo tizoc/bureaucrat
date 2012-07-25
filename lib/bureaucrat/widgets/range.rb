@@ -15,11 +15,17 @@ module Bureaucrat
       def render(name, value, attrs={})
         value ||= {}
         html = "<a name=\"#{name}\" />"
-        html << @min.render("#{name}[min]", value[:min], attrs[:min])
+        html << @min.render("#{name}[min]", value['min'], attrs[:min])
         html << " " << @separator << " "
-        html << @max.render("#{name}[max]", value[:max], attrs[:max])
+        html << @max.render("#{name}[max]", value['max'], attrs[:max])
         html << " " << @suffix
         html
+      end
+
+      def value_from_formdata(data, name)
+        return nil if data.nil?
+        {'min'=> @min.value_from_formdata(data[name], 'min'),
+        'max'=> @max.value_from_formdata(data[name], 'max')}
       end
     end
   end
