@@ -35,7 +35,7 @@ module Widgets
     end
 
     def test_converts_value_from_formdata
-      range = Widgets::Range.new({:sub_widget_class => Foo, :separator => "to", :suffix => "pairs of shoes"})
+      range = Bureaucrat::Widgets::Range.new({:sub_widget_class => Foo, :separator => "to", :suffix => "pairs of shoes"})
       data = range.value_from_formdata({'rate' => {'min' => 12, 'max' => 20}}, 'rate')
       assert_equal 1200, data['min']
       assert_equal 2000, data['max']
