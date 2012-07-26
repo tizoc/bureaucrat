@@ -135,7 +135,6 @@ module Bureaucrat
       @cleaned_data = StringAccessHash.new
 
       return if empty_permitted? && !changed?
-
       @fields.each do |name, field|
         value = field.widget.
           value_from_formdata(@data, add_prefix(name))

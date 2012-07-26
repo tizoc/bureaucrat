@@ -29,6 +29,22 @@ module DateFieldTests
       value = Date.parse('1982/10/25')
       assert_equal(value, @field.clean(value))
     end
+
+    def test_date_before_min_is_invalid
+      field = Bureaucrat::Fields::DateField.new({min: Date.today})
+
+      assert_raises(Bureaucrat::ValidationError) do
+        field.clean(Date.parse("1977/1/1"))
+      end
+    end
+
+    def test_date_after_max_is_invalid
+      field = Bureaucrat::Fields::DateField.new({max: Date.parse("1977/1/1")})
+
+      assert_raises(Bureaucrat::ValidationError) do
+        field.clean(Date.today)
+      end
+    end
   end
 
   class Test_translation_errors < BureaucratTestCase

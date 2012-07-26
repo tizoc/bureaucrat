@@ -11,7 +11,7 @@ module Bureaucrat
       def format_value(value)
         if !value.is_a? Date
           begin
-            value = Date.parse(value)
+            value = Date.parse(value || "")
           rescue ArgumentError
             return value
           end
