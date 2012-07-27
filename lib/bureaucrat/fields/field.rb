@@ -51,7 +51,7 @@ module Bureaucrat
     end
 
     class Field
-      attr_accessor :css_class, :required, :initial, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators, :form_name, :name
+      attr_accessor :css_class, :id, :required, :initial, :widget, :hidden_widget, :show_hidden_initial, :help_text, :validators, :form_name, :name
 
       def initialize(options={})
         @required = options.fetch(:required, true)

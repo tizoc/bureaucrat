@@ -20,7 +20,7 @@ module Bureaucrat
       end
 
       def value_from_formdata(data, name)
-        value = data[name]
+        value = data[name] || ""
         @input_formats.each do |format|
           begin
             return Date.strptime(value, format)
