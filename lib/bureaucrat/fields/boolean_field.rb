@@ -18,11 +18,10 @@ module Bureaucrat
 
         value = super(value)
 
-        if !value && required
-          raise ValidationError.new(error_messages[:required])
-        end
-
         value
+      end
+
+      def validate(value)
       end
     end
   end

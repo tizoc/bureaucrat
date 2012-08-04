@@ -29,9 +29,9 @@ module BooleanFieldTests
       end
     end
 
-    def test_not_validate_on_false_values_when_required
+    def test_valid_on_false_values_when_required
       @false_values.each do |false_value|
-        assert_raises(Bureaucrat::ValidationError) do
+        assert_nothing_raised do
           @field.clean(false_value)
         end
       end
