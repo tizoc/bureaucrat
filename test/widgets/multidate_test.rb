@@ -135,5 +135,13 @@ module Widgets
       value = widget.value_from_formdata({date: date}, :date)
       assert_equal(date, value)
     end
+
+    def test_handles_dates
+      widget = Bureaucrat::Widgets::MultiDate.new
+      date = Date.today
+      expected_date = {month: date.month, day: date.day, year: date.year}
+      value = widget.value_from_formdata({date: date}, :date)
+      assert_equal(expected_date, value)
+    end
   end
 end

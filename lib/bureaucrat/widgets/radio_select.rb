@@ -19,7 +19,6 @@ module Bureaucrat
       end
 
       def get_renderer(name, value, attrs=nil, choices=[])
-        value ||= ''
         str_value = value.to_s
         final_attrs = build_attrs(attrs)
         choices = @choices.to_a + choices.to_a
