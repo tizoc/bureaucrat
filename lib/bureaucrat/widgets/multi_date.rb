@@ -33,7 +33,7 @@ module Bureaucrat
       def value_from_formdata(data, name)
         data = destructure_date(data[name]) || {}
         begin
-          Date.strptime("#{data['day']}-#{data['month']}-#{data['year']}", '%d-%m-%Y')
+          Date.strptime("#{data[:day]}-#{data[:month]}-#{data[:year]}", '%d-%m-%Y')
         rescue ArgumentError
           return data
         end
@@ -44,7 +44,7 @@ module Bureaucrat
         if date.is_a?(Date)
           date = {month: date.month, day: date.day, year: date.year}
         end
-        date
+        date.symbolize_keys
       end
     end
   end

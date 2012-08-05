@@ -29,13 +29,13 @@ module Widgets
 
     def test_renders_one_month_with_selected_values
       widget = Bureaucrat::Widgets::MultiDate.new(nil, months: [['first_month', 'My First Month']])
-      html =  widget.render("my_name", {month: 'first_month'})
+      html =  widget.render("my_name", {"month" => 'first_month'})
       assert_equal("<select name=\"my_name[month]\">\n<option value=\"first_month\" selected=\"selected\">My First Month</option>\n</select>", html)
     end
 
     def test_renders_two_months_with_selected_values
       widget = Bureaucrat::Widgets::MultiDate.new(nil, months: [['first_month', 'My First Month'], ['second_month', 'My Second Month']])
-      html =  widget.render("my_name", {month: 'first_month'})
+      html =  widget.render("my_name", {"month" => 'first_month'})
       assert_equal("<select name=\"my_name[month]\">\n<option value=\"first_month\" selected=\"selected\">My First Month</option>\n<option value=\"second_month\">My Second Month</option>\n</select>", html)
     end
 
@@ -59,13 +59,13 @@ module Widgets
 
     def test_renders_one_day_with_selected_values
       widget = Bureaucrat::Widgets::MultiDate.new(nil, days: [['first_day', 'My First day']])
-      html =  widget.render("my_name", {day: 'first_day'})
+      html =  widget.render("my_name", {"day" => 'first_day'})
       assert_equal("<select name=\"my_name[day]\">\n<option value=\"first_day\" selected=\"selected\">My First day</option>\n</select>", html)
     end
 
     def test_renders_two_days_with_selected_values
       widget = Bureaucrat::Widgets::MultiDate.new(nil, days: [['first_day', 'My First day'], ['second_day', 'My Second day']])
-      html =  widget.render("my_name", {day: 'first_day'})
+      html =  widget.render("my_name", {"day" => 'first_day'})
       assert_equal("<select name=\"my_name[day]\">\n<option value=\"first_day\" selected=\"selected\">My First day</option>\n<option value=\"second_day\">My Second day</option>\n</select>", html)
     end
 
@@ -89,13 +89,13 @@ module Widgets
 
     def test_renders_one_year_with_selected_values
       widget = Bureaucrat::Widgets::MultiDate.new(nil, years: [['first_year', 'My First year']])
-      html =  widget.render("my_name", {year: 'first_year'})
+      html =  widget.render("my_name", {"year" => 'first_year'})
       assert_equal("<select name=\"my_name[year]\">\n<option value=\"first_year\" selected=\"selected\">My First year</option>\n</select>", html)
     end
 
     def test_renders_two_years_with_selected_values
       widget = Bureaucrat::Widgets::MultiDate.new(nil, years: [['first_year', 'My First year'], ['second_year', 'My Second year']])
-      html =  widget.render("my_name", {year: 'first_year'})
+      html =  widget.render("my_name", {"year" => 'first_year'})
       assert_equal("<select name=\"my_name[year]\">\n<option value=\"first_year\" selected=\"selected\">My First year</option>\n<option value=\"second_year\">My Second year</option>\n</select>", html)
     end
 
@@ -117,21 +117,21 @@ module Widgets
 
     def test_handles_invalid_month
       widget = Bureaucrat::Widgets::MultiDate.new
-      date = {'month' => '', 'day' => '1', 'year' => '1988'}
+      date = {month: '', day: '1', year: '1988'}
       value = widget.value_from_formdata({date: date}, :date)
       assert_equal(date, value)
     end
 
     def test_handles_invalid_day
       widget = Bureaucrat::Widgets::MultiDate.new
-      date = {'month' => '11', 'day' => '', 'year' => '1988'}
+      date = {month: '11', day: '', year: '1988'}
       value = widget.value_from_formdata({date: date}, :date)
       assert_equal(date, value)
     end
 
     def test_handles_invalid_day
       widget = Bureaucrat::Widgets::MultiDate.new
-      date = {'month' => '11', 'day' => '1', 'year' => ''}
+      date = {month: '11', day: '1', year: ''}
       value = widget.value_from_formdata({date: date}, :date)
       assert_equal(date, value)
     end
@@ -139,9 +139,8 @@ module Widgets
     def test_handles_dates
       widget = Bureaucrat::Widgets::MultiDate.new
       date = Date.today
-      expected_date = {month: date.month, day: date.day, year: date.year}
       value = widget.value_from_formdata({date: date}, :date)
-      assert_equal(expected_date, value)
+      assert_equal(date, value)
     end
   end
 end
