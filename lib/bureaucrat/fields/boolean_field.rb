@@ -12,7 +12,7 @@ module Bureaucrat
       def to_object(value)
         if value.kind_of?(String) && ['false', '0'].include?(value.downcase)
           value = false
-        else
+        elsif !required || !value.nil?
           value = Utils.make_bool(value)
         end
 
@@ -22,6 +22,9 @@ module Bureaucrat
       end
 
       def validate(value)
+        if required && value.nil?
+          raise ValidationError.new(error_messages[:required])
+        end
       end
     end
   end

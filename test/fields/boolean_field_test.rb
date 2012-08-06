@@ -4,7 +4,7 @@ module BooleanFieldTests
   class Test_on_clean < BureaucratTestCase
     def setup
       @true_values = [1, true, 'true', '1']
-      @false_values = [nil, 0, false, 'false', '0']
+      @false_values = [0, false, 'false', '0']
       @field = Bureaucrat::Fields::BooleanField.new
     end
 
@@ -43,6 +43,16 @@ module BooleanFieldTests
         @false_values.each do |false_value|
           @field.clean(false_value)
         end
+      end
+    end
+
+    def test_nil_does_not_get_converted_to_false_if_required
+      assert_nil(@field.to_object(nil))
+    end
+
+    def test_nil_value_is_invalid_if_required
+      assert_raises(Bureaucrat::ValidationError) do
+        @field.clean(nil)
       end
     end
   end
