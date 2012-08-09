@@ -1,5 +1,6 @@
 require 'active_support/core_ext/string'
 require 'bureaucrat/fields/bound_field'
+require 'bureaucrat/fields/field'
 require 'bureaucrat/utils'
 
 module Bureaucrat
