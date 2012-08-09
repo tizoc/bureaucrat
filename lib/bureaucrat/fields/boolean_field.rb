@@ -6,7 +6,7 @@ module Bureaucrat
   module Fields
     class BooleanField < Field
       def default_widget
-        Widgets::CheckboxInput
+        Widgets::CheckboxInput.new(value: '1')
       end
 
       def to_object(value)
