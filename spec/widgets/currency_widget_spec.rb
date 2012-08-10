@@ -20,6 +20,10 @@ describe Bureaucrat::Widgets::CurrencyWidget do
     widget.value_from_formdata({"name" => "8900"}, "name").should == 890000
   end
 
+  it 'accepts already-converted values (for repopulation)' do
+    widget.value_from_formdata({"name" => 1895}, "name").should == 1895
+  end
+
   it "leaves blank entries alone" do
     widget.value_from_formdata({"name" => ""}, "name").should == ""
     widget.value_from_formdata({"name" => nil}, "name").should == nil

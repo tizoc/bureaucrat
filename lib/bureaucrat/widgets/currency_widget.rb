@@ -18,7 +18,9 @@ module Bureaucrat
 
       def value_from_formdata(data, name)
         return nil if data.nil?
-        string_value = data[name]
+        value = data[name]
+        return value if value.is_a? Integer
+        string_value = value.to_s if value
         return string_value if string_value.nil? || string_value.empty?
         match = string_value.match(/\A\$?(\d*\.?\d{,2})\Z/) if string_value
         return (match[1].to_f * 100).to_i if match

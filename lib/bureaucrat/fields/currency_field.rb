@@ -45,11 +45,6 @@ module Bureaucrat
                     max_decimal_places: error_message(:currency, :max_decimal_places, {max: 2}))
       end
 
-      # def validate_ranges(value)
-      #   if value > @min_value
-      #   end
-      # end
-
       def bound_data(data, initial)
         initial
       end
