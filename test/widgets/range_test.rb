@@ -28,6 +28,12 @@ module Widgets
 
     end
 
+    def test_returns_string_access_hash
+      range = Bureaucrat::Widgets::Range.new
+      data = range.value_from_formdata({:name => {:min => 22, :max => 44}}, :name)
+      assert(data.is_a?(Bureaucrat::Utils::StringAccessHash))
+    end
+
     def test_takes_an_alternate_sub_widget
       range = Bureaucrat::Widgets::Range.new(:sub_widget_class => Foo)
       html =  range.render("pay_range", {:min => 5, :max => 12} )

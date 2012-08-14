@@ -1,4 +1,5 @@
 require 'bureaucrat/widgets/widget'
+require 'bureaucrat/utils'
 
 module Bureaucrat
   module Widgets
@@ -24,8 +25,10 @@ module Bureaucrat
 
       def value_from_formdata(data, name)
         return nil if data.nil?
-        {'min'=> @min.value_from_formdata(data[name], 'min'),
-        'max'=> @max.value_from_formdata(data[name], 'max')}
+        Bureaucrat::Utils::StringAccessHash.new({
+          'min'=> @min.value_from_formdata(data[name], 'min'),
+          'max'=> @max.value_from_formdata(data[name], 'max')
+        })
       end
     end
   end
