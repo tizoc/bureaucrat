@@ -14,7 +14,7 @@ module Bureaucrat
 
       def render(name, value, attrs={})
         value ||= {}
-        html = "<a name=\"#{name}\" />"
+        html = "<a name=\"#{name}\"></a>"
         html << @min.render("#{name}[min]", value['min'], attrs[:min])
         html << " " << @separator << " "
         html << @max.render("#{name}[max]", value['max'], attrs[:max])

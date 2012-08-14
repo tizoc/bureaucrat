@@ -6,11 +6,11 @@ module Widgets
     def test_range_widget
       range = Bureaucrat::Widgets::Range.new({:separator => "to", :suffix => "pairs of shoes"})
       html =  range.render("pay_range", {'min' => 5, 'max' => 12}, {min: {class: 'my-class'}})
-      assert_equal("<a name=\"pay_range\" /><input type=\"text\" name=\"pay_range[min]\" class=\"my-class\" value=\"5\" /> to <input type=\"text\" name=\"pay_range[max]\" value=\"12\" /> pairs of shoes", html)
+      assert_equal("<a name=\"pay_range\"></a><input type=\"text\" name=\"pay_range[min]\" class=\"my-class\" value=\"5\" /> to <input type=\"text\" name=\"pay_range[max]\" value=\"12\" /> pairs of shoes", html)
     end
 
     def test_works_with_a_field
-      range = Bureaucrat::Widgets::Range.new()
+      range = Bureaucrat::Widgets::Range.new
       assert_nothing_raised {Bureaucrat::Fields::Field.new(:widget => range)}
     end
 
