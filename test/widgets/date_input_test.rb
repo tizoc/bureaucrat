@@ -30,6 +30,12 @@ module Widget
       assert_equal(Date.parse("1982/11/1"), value)
     end
 
+    def test_handles_already_parsed_date
+      input = Bureaucrat::Widgets::DateInput.new(nil, ['%Y/%m/%d'])
+      value = input.value_from_formdata({date: Date.today}, :date)
+      assert_equal(Date.today, value)
+    end
+
     def test_converts_to_date_with_the_second_format
       input = Bureaucrat::Widgets::DateInput.new(nil, ['%Y/%m/%d', '%Y-%m-%d'])
       value = input.value_from_formdata({date: "1982-11-1"}, :date)

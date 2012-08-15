@@ -25,6 +25,7 @@ module Bureaucrat
           begin
             return Date.strptime(value, format)
           rescue ArgumentError
+          rescue TypeError
           end
         end
         return value
