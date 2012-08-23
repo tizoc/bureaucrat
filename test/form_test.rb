@@ -46,6 +46,7 @@ module FormTests
     class Test_when_calling_errors < BureaucratTestCase
       def test_have_errors_when_invalid
         form = OneForm.new(name: nil)
+        form.valid?
         assert_operator(form.errors.size, :>, 0)
       end
 

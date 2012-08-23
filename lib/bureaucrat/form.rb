@@ -94,15 +94,17 @@ module Bureaucrat
       Fields::BoundField.new(self, field, name)
     end
 
-    # Errors for this forms (runs validations)
     def errors
-      full_clean if @errors.nil?
-      @errors
+      @errors || {}
     end
 
     # Perform validation and returns true if there are no errors
     def valid?
-      @is_bound && (errors.nil? || errors.empty?)
+      if @is_bound
+        full_clean if @errors.nil?
+        return true if @errors.nil? || @errors.empty?
+      end
+      return false
     end
 
     # Generates a prefix for field named +field_name+

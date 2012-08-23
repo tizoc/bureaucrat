@@ -236,6 +236,7 @@ module Bureaucrat
 
       def full_clean
         if @is_bound
+          @forms.each(&:valid?)
           @errors = @forms.collect(&:errors)
 
           begin
