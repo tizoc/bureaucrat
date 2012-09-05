@@ -498,11 +498,10 @@ module BooleanFieldTests
       end
     end
 
-    def test_not_validate_on_false_values_when_required
-      @false_values.each do |false_value|
-        assert_raises(ValidationError) do
-          @field.clean(false_value)
-        end
+    def test_not_validate_on_nil_when_required
+      @field.required = true
+      assert_raises(ValidationError) do
+        @field.clean(nil)
       end
     end
 
