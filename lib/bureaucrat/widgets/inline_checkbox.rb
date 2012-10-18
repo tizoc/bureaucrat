@@ -1,13 +1,8 @@
-require 'bureaucrat/widgets/widget'
+require 'bureaucrat/widgets/base_checkbox_input'
 
 module Bureaucrat
   module Widgets
-    class InlineCheckboxInput < Widget
-      def initialize(attrs=nil, check_test=nil)
-        super(attrs)
-        @check_test = check_test || lambda {|v| make_bool(v)}
-      end
-
+    class InlineCheckboxInput < BaseCheckboxInput
       def render(name, value, attrs=nil)
         final_attrs = build_attrs(attrs, type: 'checkbox', name: name.to_s)
 
