@@ -35,7 +35,7 @@ module Bureaucrat
       def clean(value)
         value = value.to_s.gsub(/^\$/, '') unless value.nil?
         value = super(value)
-        value.to_i
+        value.to_i if value
       end
 
       def default_error_messages

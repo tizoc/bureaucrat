@@ -21,6 +21,11 @@ describe Bureaucrat::Fields::CurrencyField do
     -> {@field.clean(nil)}.should raise_error(Bureaucrat::ValidationError)
   end
 
+  it 'handles nil if not required' do
+    field = described_class.new(required: false)
+    field.clean(nil).should be_nil
+  end
+
   it 'handles min and max cents' do
     field = described_class.new(:min_dollars => 2.00, :max_dollars => 6.00)
     -> {field.clean(50)}.should raise_error(Bureaucrat::ValidationError)
