@@ -5,7 +5,7 @@ module Bureaucrat
     class Widget
       include Utils
 
-      attr_accessor :is_required
+      attr_accessor :is_required, :form_name
       attr_reader :attrs
 
       def initialize(attrs = nil)

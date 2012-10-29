@@ -159,10 +159,16 @@ module FormTests
       assert_equal(form.fields[:name].form_name, 'populator_form')
     end
 
-    def test_attaches_form_name_with_namespace__when_field_is_added
+    def test_attaches_form_name_with_namespace_when_field_is_added
       form = TestNamespace::TestForm.new({})
 
       assert_equal('test_namespace/test_form', form.fields[:name].form_name)
+    end
+
+    def test_attaches_form_name_to_widget_when_field_is_added
+      form = PopulatorForm.new({})
+
+      assert_equal(form.fields[:name].widget.form_name, 'populator_form')
     end
 
     def test_attaches_field_name_when_field_is_added
