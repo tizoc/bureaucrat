@@ -1,4 +1,5 @@
 require 'bureaucrat'
+require 'bureaucrat/form'
 require 'bureaucrat/fields/boolean_field'
 require 'bureaucrat/fields/integer_field'
 require 'bureaucrat/utils'

@@ -1,7 +1,7 @@
 class TimeSlotWidget < Bureaucrat::Widgets::Widget
 
   DAYS_OF_THE_WEEK = [:sunday, :monday, :tuesday, :wednesday, :thursday, :friday, :saturday]
-  TIME_SLOTS = [:early_morning, :late_morning, :early_afternoon, :early_evening, :late_evening, :overnight]
+  TIME_SLOTS = [:early_morning, :late_morning, :early_afternoon, :late_afternoon, :early_evening, :late_evening, :overnight]
 
   def render(name, value, attrs={})
     value ||= {}
