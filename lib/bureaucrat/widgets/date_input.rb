@@ -8,15 +8,24 @@ module Bureaucrat
         super(attrs)
       end
 
+      def format_date(date)
+        date.strftime(@input_formats.first)
+      end
+
       def format_value(value)
-        if !value.is_a? Date
+        if value.is_a?(Date)
+          format_date(value)
+        elsif value.is_a?(Time)
+          format_date(value.to_date)
+        elsif value.is_a?(DateTime)
+          format_date(value.to_date)
+        else
           begin
             value = Date.parse(value || "")
           rescue ArgumentError
             return value
           end
         end
-        return value.strftime(@input_formats.first)
       end
 
       def value_from_formdata(data, name)
