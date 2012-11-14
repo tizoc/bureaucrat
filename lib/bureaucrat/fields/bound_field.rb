@@ -128,6 +128,10 @@ module Bureaucrat
         @field.widget.hidden?
       end
 
+      def pass_thru?
+        @field.widget.pass_thru?
+      end
+
       # Generates the id for this field.
       def auto_id
         fauto_id = @form.auto_id

@@ -13,6 +13,7 @@ require 'bureaucrat/fields/regex_field'
 require 'bureaucrat/fields/typed_choice_field'
 require 'bureaucrat/widgets/checkbox_select_multiple'
 require 'bureaucrat/widgets/hidden_input'
+require 'bureaucrat/widgets/pass_thru'
 require 'bureaucrat/widgets/password_input'
 require 'bureaucrat/widgets/radio_select'
 require 'bureaucrat/widgets/text_area'
@@ -26,6 +27,11 @@ module Bureaucrat
     def hide(name)
       base_fields[name] = base_fields[name].dup
       base_fields[name].widget = Widgets::HiddenInput.new
+    end
+
+    def pass_thru(name)
+      base_fields[name] = base_fields[name].dup
+      base_fields[name].widget = Widgets::PassThru.new
     end
 
     # Delete field named +name+

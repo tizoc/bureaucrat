@@ -48,6 +48,10 @@ module Bureaucrat
       def hidden?
         false
       end
+
+      def pass_thru?
+        false
+      end
     end
   end
 end
