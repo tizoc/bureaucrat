@@ -110,4 +110,11 @@ module FieldTests
       assert_equal('Test field', @field.label)
     end
   end
+
+  class Test_widget_options < BureaucratTestCase
+    def test_can_take_widget_options
+      @field = Bureaucrat::Fields::Field.new(widget_options: {something: 'howdy'})
+      assert_equal('howdy', @field.widget.attrs[:something])
+    end
+  end
 end

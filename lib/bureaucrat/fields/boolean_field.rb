@@ -6,7 +6,7 @@ module Bureaucrat
   module Fields
     class BooleanField < Field
       def default_widget
-        Widgets::CheckboxInput.new(value: '1')
+        Widgets::CheckboxInput
       end
 
       def to_object(value)
@@ -25,6 +25,10 @@ module Bureaucrat
         if required && value.nil?
           raise ValidationError.new(error_messages[:required])
         end
+      end
+
+      def widget_attrs(widget)
+        {value: '1'}
       end
     end
   end

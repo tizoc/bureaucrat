@@ -66,6 +66,7 @@ module Bureaucrat
 
         @widget = @widget.new if @widget.is_a?(Class)
         @widget.attrs.update(widget_attrs(@widget))
+        @widget.attrs.update(options[:widget_options]) if options[:widget_options]
         @widget.is_required = @required
 
         @hidden_widget = options.fetch(:hidden_widget, default_hidden_widget)
