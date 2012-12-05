@@ -9,6 +9,7 @@ module Bureaucrat
         sub_widget_class = options[:sub_widget_class] || TextInput
         @min = sub_widget_class.new(options[:min])
         @max = sub_widget_class.new(options[:max])
+        @prefix = options.fetch(:prefix, '').to_s
         @separator = options[:separator].to_s
         @suffix = options[:suffix].to_s
       end
@@ -16,6 +17,7 @@ module Bureaucrat
       def render(name, value, attrs={})
         value ||= {}
         html = "<a name=\"#{name}\"></a>"
+        html << @prefix << " "
         html << @min.render("#{name}[min]", value['min'], attrs[:min])
         html << " " << @separator << " "
         html << @max.render("#{name}[max]", value['max'], attrs[:max])

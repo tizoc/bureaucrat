@@ -29,7 +29,8 @@ module Bureaucrat
 
       def render
         list = []
-        each {|radio| list << "<li>#{radio}</li>"}
+        li_attrs = @attrs.delete(:li_attrs) { {} }
+        each {|radio| list << "<li#{flatatt(li_attrs)}>#{radio}</li>"}
         mark_safe("<ul>\n#{list.join("\n")}\n</ul>")
       end
     end

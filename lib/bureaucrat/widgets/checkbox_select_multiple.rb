@@ -11,15 +11,19 @@ module Bureaucrat
         values ||= []
         multi_name = "#{name}[]"
         has_id = attrs && attrs.include?(:id)
+        columns = @attrs.delete(:columns) { 1 }
         final_attrs = build_attrs(attrs, name: multi_name)
-        output = ['<ul>']
+        output = []
         str_values = {}
         values.each {|val| str_values[(val.to_s)] = true}
 
-        (@choices.to_a + choices.to_a).each_with_index do |opt_pair, i|
+        choice_index = 0
+        choice_collection(@choices.to_a + choices.to_a, columns).each_with_index do |coll, column_index|
+          output << "<ul#{column_class(columns, column_index)}>"
+          coll.each do |opt_pair|
             opt_val, opt_label = opt_pair
             if has_id
-              final_attrs[:id] = "#{attrs[:id]}_#{i}"
+              final_attrs[:id] = "#{attrs[:id]}_#{choice_index}"
               label_for = " for=\"#{final_attrs[:id]}\""
             else
               label_for = ''
@@ -31,9 +35,29 @@ module Bureaucrat
             rendered_cb = cb.render(multi_name, opt_val)
             opt_label = conditional_escape(opt_label.to_s)
             output << "<li><label#{label_for}>#{rendered_cb} #{opt_label}</label></li>"
+            choice_index += 1
           end
-        output << '</ul>'
+          output << '</ul>'
+        end
         mark_safe(output.join("\n"))
+      end
+
+      private
+
+      def choice_collection(choices, columns)
+        if columns > 1
+          choices.partition {|x| choices.index(x) < choices.length/2.0}
+        else
+          [choices]
+        end
+      end
+
+      def column_class(columns, column_index)
+        if columns > 1
+          " class=\"column-#{column_index}\""
+        else
+          ''
+        end
       end
     end
   end

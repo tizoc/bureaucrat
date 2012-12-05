@@ -4,9 +4,9 @@ require 'bureaucrat/widgets/range'
 module Widgets
   class Test_RangeWidget < BureaucratTestCase
     def test_range_widget
-      range = Bureaucrat::Widgets::Range.new({:separator => "to", :suffix => "pairs of shoes"})
+      range = Bureaucrat::Widgets::Range.new({:separator => "to", :prefix => 'I gots',:suffix => "pairs of shoes"})
       html =  range.render("pay_range", {'min' => 5, 'max' => 12}, {min: {class: 'my-class'}})
-      assert_equal("<a name=\"pay_range\"></a><input type=\"text\" name=\"pay_range[min]\" class=\"my-class\" value=\"5\" /> to <input type=\"text\" name=\"pay_range[max]\" value=\"12\" /> pairs of shoes", html)
+      assert_equal("<a name=\"pay_range\"></a>I gots <input type=\"text\" name=\"pay_range[min]\" class=\"my-class\" value=\"5\" /> to <input type=\"text\" name=\"pay_range[max]\" value=\"12\" /> pairs of shoes", html)
     end
 
     def test_works_with_a_field

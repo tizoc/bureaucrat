@@ -17,8 +17,9 @@ module Bureaucrat
 
       def to_s
         label_for = @attrs.include?(:id) ? " for=\"#{@attrs[:id]}_#{@index}\"" : ''
+        label_attrs = @attrs.delete(:label_attrs) { {} }
         choice_label = conditional_escape(@choice_label.to_s)
-        mark_safe("<label#{label_for}>#{tag} #{choice_label}</label>")
+        mark_safe("<label#{label_for}#{flatatt(label_attrs)}>#{tag} #{choice_label}</label>")
       end
 
       def checked?
