@@ -10,10 +10,10 @@ Gem::Specification.new do |s|
   s.files       += Dir[File.join('locales', '**', '*.yml')]
 
   s.add_runtime_dependency 'i18n',          '0.6.0'
-  s.add_runtime_dependency 'activesupport', '3.2.10'
+  s.add_runtime_dependency 'activesupport', '3.2.11'
 
-  s.add_development_dependency 'rake',  '0.9.2.2'
-  s.add_development_dependency 'rspec', '2.11.0'
+  s.add_development_dependency 'rake',  '10.0.3'
+  s.add_development_dependency 'rspec', '2.12.0'
 
   s.require_paths = ['lib']
 end
