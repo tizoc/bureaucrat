@@ -4,7 +4,7 @@ module Bureaucrat
   module Validators
     class MaxValueValidator < BaseValidator
       def message
-        I18n.t('bureaucrat.default_errors.validators.max_value_validator')
+        I18n.t('bureaucrat.default_errors.validators.max_value_validator', limit_value: @formatted_value)
       end
 
       def code

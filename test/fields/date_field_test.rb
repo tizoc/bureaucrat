@@ -48,12 +48,81 @@ module DateFieldTests
   end
 
   class Test_translation_errors < BureaucratTestCase
+    def test_translates_invalid_default
+      field = Bureaucrat::Fields::DateField.new
+      assert_equal(I18n.t('bureaucrat.default_errors.fields.date.invalid'), field.error_messages[:invalid])
+    end
+  end
+
+  class Test_date_input_limit_translation_errors < BureaucratTestCase
     def setup
-      @field = Bureaucrat::Fields::DateField.new
+      @format = '%m-%d-%Y'
+      @today = Date.today
+      @tomorrow = Date.today + 1
+      @field = Bureaucrat::Fields::DateField.new(
+        min: @today, max: @tomorrow,
+        widget: Bureaucrat::Widgets::DateInput.new(nil, ['%m-%d-%Y'])
+      )
     end
 
-    def test_translates_invalid_default
-      assert_equal(I18n.t('bureaucrat.default_errors.fields.date.invalid'), @field.error_messages[:invalid])
+    def test_errors_format_date_to_given_date_format_for_min_date
+      date = Date.today - 1
+      @field.clean(date)
+
+    rescue Bureaucrat::ValidationError => e
+      expected_errors = I18n.t(
+        "bureaucrat.default_errors.validators.min_value_validator",
+        limit_value: @today.strftime(@format)
+      )
+      assert_equal(expected_errors, e.messages.first)
+    end
+
+    def test_errors_format_date_to_given_date_format_for_max_date
+      date = Date.today + 3
+      @field.clean(date)
+
+    rescue Bureaucrat::ValidationError => e
+      expected_errors = I18n.t(
+        "bureaucrat.default_errors.validators.max_value_validator",
+        limit_value: @tomorrow.strftime(@format)
+      )
+      assert_equal(expected_errors, e.messages.first)
+    end
+
+    class Test_multidate_limit_translation_errors < BureaucratTestCase
+      def setup
+        @format = '%m-%d-%Y'
+        @today = Date.today
+        @tomorrow = Date.today + 1
+        @field = Bureaucrat::Fields::DateField.new(
+          min: @today, max: @tomorrow,
+          widget: Bureaucrat::Widgets::MultiDate.new({}, {}, '%m-%d-%Y')
+        )
+      end
+
+      def test_errors_format_date_to_given_date_format_for_min_date
+        date = Date.today - 1
+        @field.clean(date)
+
+      rescue Bureaucrat::ValidationError => e
+        expected_errors = I18n.t(
+          "bureaucrat.default_errors.validators.min_value_validator",
+          limit_value: @today.strftime(@format)
+        )
+        assert_equal(expected_errors, e.messages.first)
+      end
+
+      def test_errors_format_date_to_given_date_format_for_max_date
+        date = Date.today + 3
+        @field.clean(date)
+
+      rescue Bureaucrat::ValidationError => e
+        expected_errors = I18n.t(
+          "bureaucrat.default_errors.validators.max_value_validator",
+          limit_value: @tomorrow.strftime(@format)
+        )
+        assert_equal(expected_errors, e.messages.first)
+      end
     end
   end
 end

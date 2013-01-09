@@ -12,8 +12,9 @@ module Bureaucrat
         @min = options[:min]
         @max = options[:max]
         super(options)
-        validators << Validators::MinValueValidator.new(@min) if @min
-        validators << Validators::MaxValueValidator.new(@max) if @max
+        formatter = lambda { |date| widget.format_date(date) }
+        validators << Validators::MinValueValidator.new(@min, formatter) if @min
+        validators << Validators::MaxValueValidator.new(@max, formatter) if @max
       end
 
       def default_error_messages

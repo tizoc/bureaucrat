@@ -3,8 +3,9 @@ require 'bureaucrat'
 module Bureaucrat
   module Validators
     class BaseValidator
-      def initialize(limit_value)
+      def initialize(limit_value, formatter=nil)
         @limit_value = limit_value
+        @formatted_value = formatter ? formatter.call(limit_value) : limit_value
       end
 
       def message
@@ -25,7 +26,7 @@ module Bureaucrat
 
       def call(value)
         cleaned = clean(value)
-        params = { limit_value: @limit_value, show_value: cleaned }
+        params = { limit_value: @formatted_value, show_value: cleaned }
 
         if compare(cleaned, @limit_value)
           msg = Utils.format_string(message, params)

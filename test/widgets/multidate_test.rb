@@ -143,4 +143,22 @@ module Widgets
       assert_equal(date, value)
     end
   end
+
+  class Test_format_date < BureaucratTestCase
+    def test_format_date_uses_given_date_format
+      format = '%m-%d-%Y'
+      widget = Bureaucrat::Widgets::MultiDate.new({}, {}, format)
+      date = Date.today
+      value = widget.format_date(date)
+      assert_equal(date.strftime(format), value)
+    end
+
+    def test_format_date_defaults_to_year_month_day
+      format = '%Y-%m-%d'
+      widget = Bureaucrat::Widgets::MultiDate.new({}, {})
+      date = Date.today
+      value = widget.format_date(date)
+      assert_equal(date.strftime(format), value)
+    end
+  end
 end

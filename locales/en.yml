@@ -44,8 +44,8 @@ en:
         validate_slug: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
         validate_ipv4_address: "Enter a valid IPv4 address."
         validate_comma_separated_integer_list: 'Enter only digits separated by commas.'
-        max_value_validator: 'Ensure this value is less than or equal to %(limit_value)s.'
-        min_value_validator: 'Ensure this value is greater than or equal to %(limit_value)s.'
+        max_value_validator: 'Ensure this value is less than or equal to %{limit_value}.'
+        min_value_validator: 'Ensure this value is greater than or equal to %{limit_value}.'
         max_length_validator: 'Ensure this value has at most %(limit_value)s characters (it has %(show_value)s).'
         min_length_validator: 'Ensure this value has at least %(limit_value)s characters (it has %(show_value)s).'
         base_validator: 'Ensure this value is %(limit_value)s (it is %(show_value)s).'

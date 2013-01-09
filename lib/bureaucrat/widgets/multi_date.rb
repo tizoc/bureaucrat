@@ -4,7 +4,7 @@ require 'bureaucrat/widgets/widget'
 module Bureaucrat
   module Widgets
     class MultiDate < Widget
-      def initialize(given_attrs={}, choices={})
+      def initialize(given_attrs={}, choices={}, format='%Y-%m-%d')
         super(given_attrs)
         choices ||= {}
         @month_choices = choices[:months] || []
@@ -13,6 +13,7 @@ module Bureaucrat
         @day = Select.new(attrs[:day], @day_choices)
         @year_choices = choices[:years] || []
         @year = Select.new(attrs[:year], @year_choices)
+        @format = format
       end
 
       def render(name, value, attrs={})
@@ -45,6 +46,10 @@ module Bureaucrat
           date = {month: date.month, day: date.day, year: date.year}
         end
         date.symbolize_keys
+      end
+
+      def format_date(date)
+        date.strftime(@format)
       end
     end
   end
