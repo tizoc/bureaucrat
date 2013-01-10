@@ -32,7 +32,7 @@ module Bureaucrat
         value = data[name] || ""
         @input_formats.each do |format|
           begin
-            return Date.strptime(value, format)
+            return Date.strptime(value, strptime_supported_format(format))
           rescue ArgumentError
           rescue TypeError
           end
@@ -43,6 +43,12 @@ module Bureaucrat
       def render(name, value, attrs=nil)
         value = format_value(value)
         super(name, value, attrs)
+      end
+
+      private
+
+      def strptime_supported_format(format)
+        format.gsub("%-m", "%m").gsub("%-d", "%d")
       end
     end
   end

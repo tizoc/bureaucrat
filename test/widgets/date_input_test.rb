@@ -62,5 +62,12 @@ module Widget
       value = input.value_from_formdata({date: str_value}, :date)
       assert_equal(str_value, value)
     end
+
+    def test_ignore_dashes_in_day_month_options_when_parsing_date_string
+      input = Bureaucrat::Widgets::DateInput.new(nil, ['%-m/%-d/%Y'])
+      str_value = '4/30/1982'
+      value = input.value_from_formdata({date: str_value}, :date)
+      assert_equal(Date.strptime(str_value, "%m/%d/%Y"), value)
+    end
   end
 end
