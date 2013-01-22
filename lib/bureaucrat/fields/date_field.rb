@@ -30,7 +30,7 @@ module Bureaucrat
           return nil
         end
 
-        if value.is_a? Date
+        if value.is_a?(Date) || value.is_a?(Time)
           return value
         end
 

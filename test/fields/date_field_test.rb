@@ -45,6 +45,14 @@ module DateFieldTests
         field.clean(Date.today)
       end
     end
+
+    def test_time_objects_are_also_acceptable
+      field = Bureaucrat::Fields::DateField.new({max: Date.today + 1})
+
+      assert_nothing_raised do
+        field.clean(Time.now)
+      end
+    end
   end
 
   class Test_translation_errors < BureaucratTestCase
