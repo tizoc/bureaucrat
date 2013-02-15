@@ -19,7 +19,24 @@ class OneForm < Bureaucrat::Form
   field :name, Bureaucrat::Fields::CharField.new
 end
 
+class StringNameForm < Bureaucrat::Form
+  field 'string_name', Bureaucrat::Fields::CharField.new
+end
+
 module FormTests
+  class Test_field_names < BureaucratTestCase
+    def test_names_are_converted_to_symbols
+      form = StringNameForm.new
+      assert_equal(:string_name, form[:string_name].name)
+    end
+
+    def test_can_access_fields_as_string_or_symbol
+      form = StringNameForm.new(string_name: 'blah')
+      assert_equal('blah', form[:string_name].value)
+      assert_equal('blah', form['string_name'].value)
+    end
+  end
+
   class Test_inherited_form_with_a_CharField < BureaucratTestCase
     def test_have_a_BoundField
       form = OneForm.new
