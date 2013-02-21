@@ -54,5 +54,19 @@ describe Bureaucrat::Widgets::CurrencyWidget do
     widget.value_from_formdata(data, "name")
     data["name"].should == "12.53"
   end
+
+  context '#form_value' do
+    it 'returns the amount in dollars for a string' do
+      widget.form_value({"name" => "31.01"}, "name").should == '31.01'
+    end
+
+    it 'returns the amount in dollars for an amount in pennies' do
+      widget.form_value({"name" => 1895}, "name").should == '18.95'
+    end
+
+    it 'disallows invalid data' do
+      widget.form_value({"name" => 'b3'}, "name").should == '0.00'
+    end
+  end
 end
 
