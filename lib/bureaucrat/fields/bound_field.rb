@@ -69,7 +69,8 @@ module Bureaucrat
       end
 
       def form_data
-        @field.widget.form_value(@form.data, @html_name)
+        value = @field.widget.form_value(@form.data, @html_name)
+        (value.nil? || value.empty?) ? @form.initial[@field.name.to_s] : value
       end
 
       # The data associated to this field.
