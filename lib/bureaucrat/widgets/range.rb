@@ -32,6 +32,14 @@ module Bureaucrat
           'max'=> @max.value_from_formdata(data[name], 'max')
         })
       end
+
+      def form_value(data, name)
+        return nil if data.nil?
+        Bureaucrat::Utils::StringAccessHash.new({
+          'min'=> @min.form_value(data[name], 'min'),
+          'max'=> @max.form_value(data[name], 'max')
+        })
+      end
     end
   end
 end

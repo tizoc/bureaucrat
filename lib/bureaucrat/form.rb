@@ -14,6 +14,7 @@ module Bureaucrat
 
     # Declares a named field to be used on this form.
     def self.field(name, field_obj)
+      name = name.to_sym
       form_name = self.to_s.underscore
       field_obj.form_name = form_name
       field_obj.name = name
@@ -92,7 +93,7 @@ module Bureaucrat
 
     # Access a named field
     def [](name)
-      field = @fields[name] or return nil
+      field = @fields[name.to_sym] or return nil
       Fields::BoundField.new(self, field, name)
     end
 

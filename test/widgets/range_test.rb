@@ -26,6 +26,10 @@ module Widgets
         return data[name]*100
       end
 
+      def form_value(data, name)
+        return data[name]*20
+      end
+
     end
 
     def test_returns_string_access_hash
@@ -45,6 +49,13 @@ module Widgets
       data = range.value_from_formdata({'rate' => {'min' => 12, 'max' => 20}}, 'rate')
       assert_equal 1200, data['min']
       assert_equal 2000, data['max']
+    end
+
+    def test_form_value_delegates_to_the_sub_widget
+      range = Bureaucrat::Widgets::Range.new({:sub_widget_class => Foo, :separator => "to", :suffix => "pairs of shoes"})
+      data = range.form_value({'rate' => {'min' => 12, 'max' => 20}}, 'rate')
+      assert_equal 240, data['min']
+      assert_equal 400, data['max']
     end
 
   end

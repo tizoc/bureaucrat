@@ -31,6 +31,10 @@ module Bureaucrat
         data[name]
       end
 
+      def form_value(data, name)
+        value_from_formdata(data, name)
+      end
+
       def self.id_for_label(id_)
         id_
       end

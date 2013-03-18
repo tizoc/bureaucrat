@@ -68,6 +68,11 @@ module Bureaucrat
         as_widget(@field.hidden_widget, attrs, only_initial)
       end
 
+      def form_data
+        value = @field.widget.form_value(@form.data, @html_name)
+        (value.nil? || value.empty?) ? @form.initial[@field.name.to_s] : value
+      end
+
       # The data associated to this field.
       def data
         @field.widget.value_from_formdata(@form.data, @html_name)
