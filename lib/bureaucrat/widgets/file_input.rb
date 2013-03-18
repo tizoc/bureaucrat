@@ -1,4 +1,5 @@
 require 'bureaucrat/widgets/input'
+require 'bureaucrat/temporary_uploaded_file'
 
 module Bureaucrat
   module Widgets
