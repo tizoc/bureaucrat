@@ -1,0 +1,51 @@
+en:
+  bureaucrat:
+    default_errors:
+      fields:
+        field:
+          required: "This field is required"
+          invalid: "Enter a valid value"
+        char:
+          max_length: 'Ensure this value is less than or equal to %(max)s.'
+          min_length: 'Ensure this value is greater than or equal to %(min)s.'
+        integer:
+          invalid: 'Enter a whole number.'
+          min_value: "Ensure this value is greater than or equal to %(min)s."
+          max_value: "Ensure this value is less than or equal to %(max)s."
+        float:
+          invalid: 'Enter a number.'
+        big_decimal:
+          invalid: 'Enter a number.'
+          max_value: 'Ensure this value is less than or equal to %(max)s.'
+          min_value: 'Ensure this value is greater than or equal to %(min)s.'
+          max_digits: 'Ensure that there are no more than %(max)s digits in total.'
+          max_decimal_places: 'Ensure that there are no more than %(max)s decimal places.'
+          max_whole_digits: 'Ensure that there are no more than %(max)s digits before the decimal point.'
+        date:
+          invalid: 'Enter a valid date.'
+        email:
+          invalid: 'Enter a valid e-mail address.'
+        file:
+          invalid: 'No file was submitted. Check the encoding type on the form.'
+          missing: 'No file was submitted.'
+          empty: 'The submitted file is empty.'
+          max_length: 'Ensure this filename has at most %(max)s characters (it has %(length)s).'
+          contradiction: 'Please either submit a file or check the clear checkbox, not both.'
+        choice:
+          invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.'
+        multiple_choice:
+          invalid_choice: 'Select a valid choice. %(value)s is not one of the available choices.'
+          invalid_list: 'Enter a list of values.'
+        ip_address:
+          :invalid: 'Enter a valid IPv4 address.'
+
+      validators:
+        validate_email: 'Enter a valid e-mail address.'
+        validate_slug: "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
+        validate_ipv4_address: "Enter a valid IPv4 address."
+        validate_comma_separated_integer_list: 'Enter only digits separated by commas.'
+        max_value_validator: 'Ensure this value is less than or equal to %{limit_value}.'
+        min_value_validator: 'Ensure this value is greater than or equal to %{limit_value}.'
+        max_length_validator: 'Ensure this value has at most %(limit_value)s characters (it has %(show_value)s).'
+        min_length_validator: 'Ensure this value has at least %(limit_value)s characters (it has %(show_value)s).'
+        base_validator: 'Ensure this value is %(limit_value)s (it is %(show_value)s).'
