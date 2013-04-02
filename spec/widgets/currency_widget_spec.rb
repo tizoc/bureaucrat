@@ -18,6 +18,8 @@ describe Bureaucrat::Widgets::CurrencyWidget do
     widget.value_from_formdata({"name" => "89.0"}, "name").should == 8900
     widget.value_from_formdata({"name" => "89.00"}, "name").should == 8900
     widget.value_from_formdata({"name" => "8900"}, "name").should == 890000
+    widget.value_from_formdata({"name" => "-0.01"}, "name").should == -1
+    widget.value_from_formdata({"name" => "-12"}, "name").should == -1200
   end
 
   it 'accepts already-converted values (for repopulation)' do
