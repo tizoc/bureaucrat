@@ -66,8 +66,8 @@ describe Bureaucrat::Widgets::CurrencyWidget do
       widget.form_value({"name" => 1895}, "name").should == '18.95'
     end
 
-    it 'disallows invalid data' do
-      widget.form_value({"name" => 'b3'}, "name").should == '0.00'
+    it 'clears invalid data' do
+      widget.form_value({"name" => 'b3'}, "name").should be_empty
     end
   end
 end

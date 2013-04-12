@@ -33,6 +33,7 @@ module Bureaucrat
       private
 
       def format_dollars(value)
+        return '' if /[^0-9.]/ =~ value.to_s
         '%.2f' % (value.to_f / 100) unless value.nil? || value.to_s.empty?
       end
     end

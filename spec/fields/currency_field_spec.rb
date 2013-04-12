@@ -13,6 +13,10 @@ describe Bureaucrat::Fields::CurrencyField do
     -> {@field.clean('1$4.98')}.should raise_error(Bureaucrat::ValidationError)
   end
 
+  it 'disallows e-notation' do
+    -> {@field.clean('1300e-2')}.should raise_error(Bureaucrat::ValidationError)
+  end
+
   it 'disallows 3 decimal places' do
     -> {@field.clean('1.001')}.should raise_error(Bureaucrat::ValidationError)
   end

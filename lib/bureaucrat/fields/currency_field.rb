@@ -32,6 +32,13 @@ module Bureaucrat
 
       end
 
+      def to_object(value)
+        if value && value.include?("e") #e-notation detecting
+          raise ValidationError.new(error_messages[:invalid])
+        end
+        super
+      end
+
       def clean(value)
         value = value.to_s.gsub(/^\$/, '') unless value.nil?
         value = super(value)
