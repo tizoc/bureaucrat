@@ -15,21 +15,27 @@ module RangeFieldTest
       end
     end
 
-    def test_reverses_min_and_max
-      assert_raises(Bureaucrat::ValidationError) do
-        @field.clean({'max' => 2, 'min'=> 5})
-      end
-    end
-
     def test_no_data
       assert_nothing_raised do
         @field.clean({'max' => nil, 'min' => nil})
       end
     end
 
-    def test_one_field
+    def test_min_field_present
       assert_raises(Bureaucrat::ValidationError) do
         @field.clean({'max' => 44, 'min' => nil})
+      end
+    end
+
+    def test_max_field_present
+      assert_raises(Bureaucrat::ValidationError) do
+        @field.clean({'max' => nil, 'min' => 55})
+      end
+    end
+
+    def test_reverses_min_and_max
+      assert_raises(Bureaucrat::ValidationError) do
+        @field.clean({'max' => 2, 'min'=> 5})
       end
     end
 
