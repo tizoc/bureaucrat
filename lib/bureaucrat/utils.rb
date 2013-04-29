@@ -84,10 +84,6 @@ module Bureaucrat
       output
     end
 
-    def pretty_name(name)
-      name.to_s.capitalize.gsub(/_/, ' ')
-    end
-
     def make_float(value)
       value += '0' if value.is_a?(String) && value != '.' && value[-1,1] == '.'
       Float(value)

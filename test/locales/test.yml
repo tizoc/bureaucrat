@@ -1,0 +1,19 @@
+en:
+  bureaucrat:
+    test_form:
+      test_field:
+        label: 'test-label'
+        errors:
+          required: "test-required"
+          invalid: "test-invalid"
+          invalid_choice: "test-invalid-choice"
+          max_value: "test-max-value"
+          min_value: "test-min-value"
+          max_digits: "test-max-digits"
+          max_decimal_places: "test-max-decimal-places"
+          max_whole_digits: "test-max-whole-digits"
+          missing: "test-missing"
+          empty: "test-empty"
+          max_length: "test-max-length"
+          contradiction: "test-contradiction"
+          invalid_list: "test-invalid-list"

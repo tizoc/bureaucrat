@@ -3,12 +3,12 @@ module Bureaucrat
     attr_accessor :filename, :content_type, :name, :tempfile, :head, :size
 
     def initialize(data)
-      @filename = data[:filename]
-      @content_type = data[:content_type]
-      @name = data[:name]
-      @tempfile = data[:tempfile]
+      @filename = data.original_filename
+      @content_type = data.content_type
+      @tempfile = data.tempfile
+      @name = @filename
       @size = @tempfile.size
-      @head = data[:head]
+      @head = data.headers
     end
   end
 end

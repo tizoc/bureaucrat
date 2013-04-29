@@ -1,10 +1,11 @@
 require_relative 'test_helper'
+require 'bureaucrat/formsets'
+require 'bureaucrat/fields/char_field'
 
 module FormsetTests
-  class SimpleForm < Bureaucrat::Forms::Form
-    include Bureaucrat::Fields
+  class SimpleForm < Bureaucrat::Form
 
-    field :name, CharField.new
+    field :name, Bureaucrat::Fields::CharField.new
   end
 
   SimpleFormFormSet =

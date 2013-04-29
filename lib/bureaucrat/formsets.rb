@@ -1,3 +1,10 @@
+require 'bureaucrat'
+require 'bureaucrat/form'
+require 'bureaucrat/fields/boolean_field'
+require 'bureaucrat/fields/integer_field'
+require 'bureaucrat/utils'
+require 'bureaucrat/widgets/hidden_input'
+
 module Bureaucrat
   module Formsets
     TOTAL_FORM_COUNT = :'TOTAL_FORMS'
@@ -6,20 +13,18 @@ module Bureaucrat
     ORDERING_FIELD_NAME = :'ORDER'
     DELETION_FIELD_NAME = :'DELETE'
 
-    class ManagementForm < Forms::Form
+    class ManagementForm < Form
       include Fields
       include Widgets
 
-      field TOTAL_FORM_COUNT, IntegerField.new(widget: HiddenInput)
-      field INITIAL_FORM_COUNT, IntegerField.new(widget: HiddenInput)
-      field MAX_NUM_FORM_COUNT, IntegerField.new(widget: HiddenInput,
-                                                 required: false)
+      field TOTAL_FORM_COUNT, Fields::IntegerField.new(widget: Widgets::HiddenInput)
+      field INITIAL_FORM_COUNT, Fields::IntegerField.new(widget: Widgets::HiddenInput)
+      field MAX_NUM_FORM_COUNT, Fields::IntegerField.new(widget: Widgets::HiddenInput,
+                                                         required: false)
     end
 
     class BaseFormSet
       include Utils
-      include Fields
-      include Forms
 
       def self.default_prefix
         'form'
@@ -55,7 +60,7 @@ module Bureaucrat
         @auto_id = options.fetch(:auto_id, 'id_%s')
         @data = data || {}
         @initial = options[:initial]
-        @error_class = options.fetch(:error_class, ErrorList)
+        @error_class = options.fetch(:error_class, Fields::ErrorList)
         @errors = nil
         @non_form_errors = nil
 
@@ -232,6 +237,7 @@ module Bureaucrat
 
       def full_clean
         if @is_bound
+          @forms.each(&:valid?)
           @errors = @forms.collect(&:errors)
 
           begin
@@ -254,7 +260,7 @@ module Bureaucrat
           form.fields[ORDERING_FIELD_NAME] = IntegerField.new(attrs)
         end
         if can_delete
-          field = BooleanField.new(label: 'Delete', required: false)
+          field = Fields::BooleanField.new(label: 'Delete', required: false)
           form.fields[DELETION_FIELD_NAME] = field
         end
       end
