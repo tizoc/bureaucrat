@@ -33,12 +33,15 @@ module Bureaucrat
         value['min'] = @min.clean(value['min'])
         value['max'] = @max.clean(value['max'])
 
-        non_nil_fields_count = [value['min'],value['max']].count{|field| !field.nil?}
+        return if value['min'].nil? && value['max'].nil?
 
-        if non_nil_fields_count == 1
-          raise ValidationError.new(error_message("range", :needs_both_fields))
-        elsif non_nil_fields_count == 2
-          raise ValidationError.new(error_message("range", :reversed)) if value['min'] > value['max']
+        case
+        when value['min'].nil? && !value['max'].nil?
+          raise ValidationError.new(error_message("range", :missing_min_field))
+        when !value['min'].nil? && value['max'].nil?
+          raise ValidationError.new(error_message("range", :missing_max_field))
+        when value['min'] > value['max']
+          raise ValidationError.new(error_message("range", :reversed))
         end
 
         super(value)
