@@ -5,7 +5,7 @@ require 'bureaucrat/version'
 
 Gem::Specification.new do |s|
   s.name        = 'bureaucrat-sc'
-  s.version     = '0.11.6'
+  s.version     = Bureaucrat::VERSION
   s.summary     = "Form handling for Ruby inspired by Django forms."
   s.description = "Bureaucrat is a form handling library for Ruby."
   s.author      = "Bruno Deferrari"
