@@ -20,6 +20,9 @@ module Bureaucrat
       end
 
       def []=(key, value)
+        if value.respond_to? :gsub
+          value = Utils.escape(value)
+        end
         super(key.to_s, value)
       end
 
