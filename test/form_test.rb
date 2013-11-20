@@ -117,6 +117,15 @@ module FormTests
 
   end
 
+  class Test_form_escapes_data < BureaucratTestCase
+    def test_escapes_malicious_input
+      form = OneForm.new(name: "<script>alert('XSS')</script>")
+      refute_includes(form.data["name"], "<script>alert('XSS')</script>")
+      form.full_clean
+      refute_includes(form.cleaned_data["name"], "<script>alert('XSS')</script>")
+    end
+  end
+
   class Test_populating_objects < BureaucratTestCase
 
     def test_correctly_populate_an_object_with_all_fields

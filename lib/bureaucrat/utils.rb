@@ -8,6 +8,10 @@ module Bureaucrat
     class SafeString < String
       include SafeData
 
+      def to_s
+        SafeString.new(self)
+      end
+
       def +(rhs)
         rhs.is_a?(SafeString) ? SafeString.new(super(rhs)) : super(rhs)
       end
@@ -20,6 +24,9 @@ module Bureaucrat
       end
 
       def []=(key, value)
+        if value.respond_to? :gsub
+          value = Utils.escape(value)
+        end
         super(key.to_s, value)
       end
 
