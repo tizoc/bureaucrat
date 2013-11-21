@@ -24,9 +24,6 @@ module Bureaucrat
       end
 
       def []=(key, value)
-        if value.respond_to? :gsub
-          value = Utils.escape(value)
-        end
         super(key.to_s, value)
       end
 
@@ -86,7 +83,7 @@ module Bureaucrat
     def format_string(string, values)
       output = string.dup
       values.each_pair do |variable, value|
-        output.gsub!(/%\(#{variable}\)s/, value.to_s)
+        output.gsub!(/%\(#{variable}\)s/, conditional_escape(value.to_s))
       end
       output
     end
