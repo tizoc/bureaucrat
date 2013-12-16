@@ -8,6 +8,7 @@ describe Bureaucrat::Widgets::CurrencyWidget do
     widget.render('name', 100, nil).should be_include '1.00'
     widget.render('name', nil, nil).should_not be_include '0.00'
     widget.render('name', '', nil).should_not be_include '0.00'
+    widget.render('name', '1.001', nil).should include '1.001'
   end
 
   it "converts formdata to a value" do
