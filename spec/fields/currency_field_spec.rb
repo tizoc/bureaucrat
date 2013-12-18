@@ -6,7 +6,7 @@ describe Bureaucrat::Fields::CurrencyField do
   end
 
   it 'allows dollar signs' do
-    @field.clean('123').should == 123
+    @field.clean('$123').should == 123
   end
 
   it 'disallows dollar signs in the middle' do
@@ -17,8 +17,12 @@ describe Bureaucrat::Fields::CurrencyField do
     -> {@field.clean('1300e-2')}.should raise_error(Bureaucrat::ValidationError)
   end
 
-  it 'disallows 3 decimal places' do
+  it 'disallows 3 significant decimal places' do
     -> {@field.clean('1.001')}.should raise_error(Bureaucrat::ValidationError)
+  end
+
+  it 'allows trailing zeroes' do
+    -> {@field.clean('15.000')}.should_not raise_error
   end
 
   it 'handles nil' do

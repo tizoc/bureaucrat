@@ -8,6 +8,7 @@ describe Bureaucrat::Widgets::CurrencyWidget do
     widget.render('name', 100, nil).should be_include '1.00'
     widget.render('name', nil, nil).should_not be_include '0.00'
     widget.render('name', '', nil).should_not be_include '0.00'
+    widget.render('name', '1.001', nil).should include '1.001'
   end
 
   it "converts formdata to a value" do
@@ -47,8 +48,12 @@ describe Bureaucrat::Widgets::CurrencyWidget do
     widget.value_from_formdata({"name" => "8$9.27"}, "name").should == "8$9.27"
   end
 
-  it 'disallows 3 decimal places' do
+  it 'disallows 3 significant decimal places' do
     widget.value_from_formdata({"name" => "1.001"}, "name").should == "1.001"
+  end
+
+  it 'allows trailing zeroes' do
+    widget.value_from_formdata({"name" => "15.000"}, "name").should == 1500
   end
 
   it "doesn't change the data in the form" do
