@@ -116,7 +116,8 @@ module Bureaucrat
 
     # Declare a +MultipleChoiceField+ with the +CheckboxSelectMultiple+ widget
     def checkbox_multiple_choice(name, choices = [], options = {})
-      field name, MultipleChoiceField.new(choices, options.merge(widget: Widgets::CheckboxSelectMultiple.new))
+      widget = options.delete(:widget) { Widgets::CheckboxSelectMultiple.new }
+      field name, MultipleChoiceField.new(choices, options.merge(widget: widget))
     end
 
     def range(name, options = {})
