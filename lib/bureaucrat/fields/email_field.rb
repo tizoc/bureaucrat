@@ -17,6 +17,10 @@ module Bureaucrat
         value = to_object(value).strip
         super(value)
       end
+
+      def input_type
+        "email"
+      end
     end
   end
 end
