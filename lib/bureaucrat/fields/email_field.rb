@@ -18,8 +18,10 @@ module Bureaucrat
         super(value)
       end
 
-      def input_type
-        "email"
+      def widget_attrs(widget)
+        super(widget).tap do |attrs|
+          attrs.merge(type: 'email')
+        end
       end
     end
   end
