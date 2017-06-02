@@ -19,13 +19,13 @@ describe Bureaucrat::Fields::PhoneNumberField do
     '     123.4438     '
   ].each do |phone_number|
     it "allows #{phone_number}" do
-      @field.clean(phone_number).should == phone_number.strip
+      expect(@field.clean(phone_number)).to eq(phone_number.strip)
     end
   end
 
   ['a', '1-789-67', '7644'].each do |phone_number|
     it "disallows #{phone_number}" do
-      -> {@field.clean(phone_number)}.should raise_error(Bureaucrat::ValidationError)
+      expect {@field.clean(phone_number)}.to raise_error(Bureaucrat::ValidationError)
     end
   end
 end

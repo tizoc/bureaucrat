@@ -6,38 +6,38 @@ describe Bureaucrat::Fields::CurrencyField do
   end
 
   it 'allows dollar signs' do
-    @field.clean('$123').should == 123
+    expect(@field.clean('$123')).to eq(123)
   end
 
   it 'disallows dollar signs in the middle' do
-    -> {@field.clean('1$4.98')}.should raise_error(Bureaucrat::ValidationError)
+    expect {@field.clean('1$4.98')}.to raise_error(Bureaucrat::ValidationError)
   end
 
   it 'disallows e-notation' do
-    -> {@field.clean('1300e-2')}.should raise_error(Bureaucrat::ValidationError)
+    expect {@field.clean('1300e-2')}.to raise_error(Bureaucrat::ValidationError)
   end
 
   it 'disallows 3 significant decimal places' do
-    -> {@field.clean('1.001')}.should raise_error(Bureaucrat::ValidationError)
+    expect {@field.clean('1.001')}.to raise_error(Bureaucrat::ValidationError)
   end
 
   it 'allows trailing zeroes' do
-    -> {@field.clean('15.000')}.should_not raise_error
+    expect {@field.clean('15.000')}.not_to raise_error
   end
 
   it 'handles nil' do
-    -> {@field.clean(nil)}.should raise_error(Bureaucrat::ValidationError)
+    expect {@field.clean(nil)}.to raise_error(Bureaucrat::ValidationError)
   end
 
   it 'handles nil if not required' do
     field = described_class.new(required: false)
-    field.clean(nil).should be_nil
+    expect(field.clean(nil)).to be_nil
   end
 
   it 'handles min and max cents' do
     field = described_class.new(:min_dollars => 2.00, :max_dollars => 6.00)
-    -> {field.clean(50)}.should raise_error(Bureaucrat::ValidationError)
-    -> {field.clean(750)}.should raise_error(Bureaucrat::ValidationError)
+    expect {field.clean(50)}.to raise_error(Bureaucrat::ValidationError)
+    expect {field.clean(750)}.to raise_error(Bureaucrat::ValidationError)
   end
 end
 

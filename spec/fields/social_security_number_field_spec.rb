@@ -10,7 +10,7 @@ describe Bureaucrat::Fields::SocialSecurityNumberField do
     '      123-45-6789      '
   ].each do |ssn|
     it "allows #{ssn}" do
-      field.clean(ssn).should == ssn.strip
+      expect(field.clean(ssn)).to eq(ssn.strip)
     end
   end
 

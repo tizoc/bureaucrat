@@ -22,10 +22,10 @@ describe Bureaucrat::Widgets::TimeSlotWidget do
   }}
 
   it 'does nothing to data that has not been cleaned yet' do
-    widget.normalize_for_view(uncleaned_data).should == uncleaned_data
+    expect(widget.normalize_for_view(uncleaned_data)).to eq(uncleaned_data)
   end
 
   it 'converts cleaned data' do
-    widget.normalize_for_view(cleaned_data).should == uncleaned_data
+    expect(widget.normalize_for_view(cleaned_data)).to eq(uncleaned_data)
   end
 end
