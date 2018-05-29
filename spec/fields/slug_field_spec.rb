@@ -10,7 +10,7 @@ describe Bureaucrat::Fields::SlugField do
     abc-abc
     -abc-abc-).each do |slug|
     it "passes for #{slug.inspect}" do
-      field.clean(slug).should == slug.strip
+      expect(field.clean(slug)).to eq(slug.strip)
     end
   end
 

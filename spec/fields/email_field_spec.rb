@@ -17,7 +17,7 @@ describe Bureaucrat::Fields::EmailField do
     'email@domain.co.uk'
   ].each do |email|
     it "passes for #{email.inspect}" do
-      field.clean(email).should == email.strip
+      expect(field.clean(email)).to eq(email.strip)
     end
   end
 

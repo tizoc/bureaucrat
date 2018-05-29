@@ -4,7 +4,7 @@ describe Bureaucrat::Widgets::CheckboxSelectMultiple do
 
   it "renders the widget" do
     widget = described_class.new(nil, ['blah', 'blee', 'bloo'])
-    widget.render('something', ['blah'], {id: 'hi'}).should ==
+    expect(widget.render('something', ['blah'], {id: 'hi'})).to eq(
       "<ul>\n<li><label for=\"hi_0\">" +
       "<input name=\"something[]\" id=\"hi_0\" type=\"checkbox\" checked=\"checked\" value=\"blah\" />" +
       " </label></li>\n" +
@@ -14,11 +14,12 @@ describe Bureaucrat::Widgets::CheckboxSelectMultiple do
       "<li><label for=\"hi_2\">" +
       "<input name=\"something[]\" id=\"hi_2\" type=\"checkbox\" value=\"bloo\" />" +
       " </label></li>\n</ul>"
+    )
   end
 
   it 'renders the widget into the given number of lists' do
     widget = described_class.new({columns: 2}, ['blah', 'blee', 'bloo'])
-    widget.render('something', ['blah'], {id: 'hi'}).should ==
+    expect(widget.render('something', ['blah'], {id: 'hi'})).to eq(
       "<ul class=\"column-0\">\n<li><label for=\"hi_0\">" +
       "<input name=\"something[]\" id=\"hi_0\" type=\"checkbox\" checked=\"checked\" value=\"blah\" />" +
       " </label></li>\n" +
@@ -29,11 +30,12 @@ describe Bureaucrat::Widgets::CheckboxSelectMultiple do
       "<li><label for=\"hi_2\">" +
       "<input name=\"something[]\" id=\"hi_2\" type=\"checkbox\" value=\"bloo\" />" +
       " </label></li>\n</ul>"
+    )
   end
 
   it 'renders the widget into the given number of lists evenly' do
     widget = described_class.new({columns: 2}, ['blah', 'blee', 'bloo', 'blargh'])
-    widget.render('something', ['blah'], {id: 'hi'}).should ==
+    expect(widget.render('something', ['blah'], {id: 'hi'})).to eq(
       "<ul class=\"column-0\">\n<li><label for=\"hi_0\">" +
       "<input name=\"something[]\" id=\"hi_0\" type=\"checkbox\" checked=\"checked\" value=\"blah\" />" +
       " </label></li>\n" +
@@ -47,5 +49,6 @@ describe Bureaucrat::Widgets::CheckboxSelectMultiple do
       "<li><label for=\"hi_3\">" +
       "<input name=\"something[]\" id=\"hi_3\" type=\"checkbox\" value=\"blargh\" />" +
       " </label></li>\n</ul>"
+    )
   end
 end

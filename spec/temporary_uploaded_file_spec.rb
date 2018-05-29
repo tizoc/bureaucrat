@@ -26,11 +26,11 @@ describe Bureaucrat::TemporaryUploadedFile do
     file = MockUploadedFile.new(original_filename, content_type, tempfile, headers)
     temporary_uploaded_file = described_class.new(file)
 
-    temporary_uploaded_file.filename.should     == original_filename
-    temporary_uploaded_file.content_type.should == content_type
-    temporary_uploaded_file.tempfile.should     == tempfile
-    temporary_uploaded_file.name.should         == original_filename
-    temporary_uploaded_file.size.should         == tempfile.size
-    temporary_uploaded_file.head.should         == headers
+    expect(temporary_uploaded_file.filename).to     eq(original_filename)
+    expect(temporary_uploaded_file.content_type).to eq(content_type)
+    expect(temporary_uploaded_file.tempfile).to     eq(tempfile)
+    expect(temporary_uploaded_file.name).to         eq(original_filename)
+    expect(temporary_uploaded_file.size).to         eq(tempfile.size)
+    expect(temporary_uploaded_file.head).to         eq(headers)
   end
 end
