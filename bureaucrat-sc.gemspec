@@ -3,9 +3,15 @@ $:.unshift lib unless $:.include?(lib)
 
 require 'bureaucrat/version'
 
+prerelease = ENV['SC_PRERELEASE'] == 'true'
+
 Gem::Specification.new do |s|
   s.name        = 'bureaucrat-sc'
-  s.version     = Bureaucrat::VERSION
+  s.version = if prerelease
+                "#{Bureaucrat::VERSION}.pre#{Time.now.to_i}"
+              else
+                Bureaucrat::VERSION
+              end
   s.summary     = "Form handling for Ruby inspired by Django forms."
   s.description = "Bureaucrat is a form handling library for Ruby."
   s.author      = "Bruno Deferrari"
