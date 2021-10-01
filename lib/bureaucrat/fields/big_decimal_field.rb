@@ -44,7 +44,7 @@ module Bureaucrat
 
         begin
           Utils.make_float(value)
-          BigDecimal.new(value)
+          BigDecimal(value)
         rescue ArgumentError
           raise ValidationError.new(error_messages[:invalid])
         end
