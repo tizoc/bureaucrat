@@ -8,7 +8,7 @@ env:
 jobs:
   build:
     name: Test + Build + Publish
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     env:
       BUNDLER_ACCESS_TOKEN: ${{ secrets.TECH_OPS_ACCESS_TOKEN }}
 
