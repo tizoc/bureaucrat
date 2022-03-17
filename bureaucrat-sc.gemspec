@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.metadata    = { "github_repo" => "ssh://github.com/sittercity/bureaucrat" }
 
   s.add_runtime_dependency 'i18n'
-  s.add_runtime_dependency 'activesupport', '5.2'
+  s.add_runtime_dependency 'activesupport', '~>6.0.4'
 
   s.add_development_dependency 'rake',  '12.0.0'
   s.add_development_dependency 'rspec', '3.6.0'
